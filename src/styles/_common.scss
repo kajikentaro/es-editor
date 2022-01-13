@@ -3,3 +3,12 @@ $content_width: 1200px;
 $base-color-a: #101841;
 $base-color-b: #144da0;
 $base-color-c: #70acce;
+
+@mixin font-awesome-btn {
+  font-size: 1rem;
+  display: inline-flex;
+  align-items: center;
+  .icon {
+    width: 1em;
+  }
+}

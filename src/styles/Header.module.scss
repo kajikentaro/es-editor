@@ -1,0 +1,19 @@
+@use "common" as c;
+
+.header {
+  background-color: c.$base-color-a;
+}
+.content {
+  margin: 0 auto;
+  max-width: c.$content_width;
+  height: 40px;
+  width: 100%;
+  background-color: c.$base-color-a;
+  display: flex;
+  align-items: center;
+}
+.icon {
+  height: 30px;
+  width: 60px;
+  background-color: white;
+}

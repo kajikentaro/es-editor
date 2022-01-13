@@ -9,3 +9,9 @@ body {
 * {
   box-sizing: border-box;
 }
+
+main {
+  min-height: 100vh;
+  display: block;
+  width: 100%;
+}

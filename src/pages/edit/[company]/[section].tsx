@@ -31,8 +31,7 @@ interface creatableOption {
 
 let preEditUnix = 0;
 let viewingHistoryIdx = 0;
-let preEditText = "";
-let editHistory: string[] = [];
+let editHistory: string[] = [""];
 
 const Home: NextPage = () => {
   const router = useRouter();
@@ -63,12 +62,10 @@ const Home: NextPage = () => {
   const rollBackText = (distance: number) => {
     const newIdx = viewingHistoryIdx + distance;
     const canRollBack = 0 <= newIdx && newIdx <= editHistory.length - 1;
-    if (!canRollBack) return;
-    if (viewingHistoryIdx === editHistory.length) {
-      editHistory.push(preEditText);
+    if (canRollBack) {
+      viewingHistoryIdx = newIdx;
+      setDocumentText(editHistory[viewingHistoryIdx]);
     }
-    viewingHistoryIdx = newIdx;
-    setDocumentText(editHistory[viewingHistoryIdx]);
   };
 
   return (
@@ -148,27 +145,30 @@ const Home: NextPage = () => {
             value={documentText}
             onChange={(e) => {
               const nowUnix = new Date().getTime();
-              if (viewingHistoryIdx !== editHistory.length) {
+              if (viewingHistoryIdx !== editHistory.length - 1) {
                 // UNDO後に編集した場合
                 const removeLen = Math.min(
                   editHistory.length - viewingHistoryIdx - 1,
-                  editHistory.length
+                  editHistory.length - 1
                 );
                 for (let i = 0; i < removeLen; i++) {
                   editHistory.pop();
                 }
-                viewingHistoryIdx = editHistory.length;
-              } else if (nowUnix - preEditUnix >= 2000) {
+                preEditUnix = 0;
+              }
+              if (nowUnix - preEditUnix >= 2000) {
                 // 前回の編集から2秒以上経過した場合は履歴に保存する
-                editHistory.push(preEditText);
-                viewingHistoryIdx = editHistory.length;
+                editHistory.push(e.target.value);
+                viewingHistoryIdx = editHistory.length - 1;
+              } else {
+                editHistory[viewingHistoryIdx] = e.target.value;
               }
               preEditUnix = nowUnix;
-              preEditText = e.target.value;
               setDocumentText(e.target.value);
             }}
           />
         </div>
+        {viewingHistoryIdx}/{editHistory.length}
       </div>
       <div className={styles.third}></div>
     </div>

@@ -29,10 +29,15 @@ interface creatableOption {
   label: string;
 }
 
+let preEditUnix = 0;
+let viewingHistoryIdx = 0;
+let preEditText = "";
+let editHistory: string[] = [];
+
 const Home: NextPage = () => {
   const router = useRouter();
   const { company, section } = router.query;
-  console.log(company, section);
+  //console.log(company, section);
   const [document, setDocument] = useState<Document>(initialDocument);
   const [documentText, setDocumentText] = useState<string>("");
   const [companyName, setCompanyName] = useState<string>("〇〇株式会社");
@@ -55,6 +60,17 @@ const Home: NextPage = () => {
     console.groupEnd();
   };
 
+  const rollBackText = (distance: number) => {
+    const newIdx = viewingHistoryIdx + distance;
+    const canRollBack = 0 <= newIdx && newIdx <= editHistory.length - 1;
+    if (!canRollBack) return;
+    if (viewingHistoryIdx === editHistory.length) {
+      editHistory.push(preEditText);
+    }
+    viewingHistoryIdx = newIdx;
+    setDocumentText(editHistory[viewingHistoryIdx]);
+  };
+
   return (
     <div className={styles.content}>
       <div className={styles.first}>
@@ -64,6 +80,7 @@ const Home: NextPage = () => {
             <Creatable
               onChange={handleChange}
               onInputChange={handleInputChange}
+              //defaultValue="ここに項目名を入力"
               options={[
                 { value: "default-1", label: "志望動機" },
                 { value: "default-2", label: "ガクチカ(勉強)" },
@@ -103,13 +120,17 @@ const Home: NextPage = () => {
           <div className={styles.left}>
             <button
               onClick={() => {
-                window.history.back();
+                rollBackText(-1);
               }}
             >
               <FontAwesomeIcon className={styles.icon} icon={faUndo} />
               戻る
             </button>
-            <button>
+            <button
+              onClick={() => {
+                rollBackText(+1);
+              }}
+            >
               <FontAwesomeIcon className={styles.icon} icon={faRedo} />
               進む
             </button>
@@ -126,6 +147,24 @@ const Home: NextPage = () => {
           <textarea
             value={documentText}
             onChange={(e) => {
+              const nowUnix = new Date().getTime();
+              if (viewingHistoryIdx !== editHistory.length) {
+                // UNDO後に編集した場合
+                const removeLen = Math.min(
+                  editHistory.length - viewingHistoryIdx - 1,
+                  editHistory.length
+                );
+                for (let i = 0; i < removeLen; i++) {
+                  editHistory.pop();
+                }
+                viewingHistoryIdx = editHistory.length;
+              } else if (nowUnix - preEditUnix >= 2000) {
+                // 前回の編集から2秒以上経過した場合は履歴に保存する
+                editHistory.push(preEditText);
+                viewingHistoryIdx = editHistory.length;
+              }
+              preEditUnix = nowUnix;
+              preEditText = e.target.value;
               setDocumentText(e.target.value);
             }}
           />

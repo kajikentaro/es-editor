@@ -1,0 +1,49 @@
+@use "common" as c;
+
+.content {
+  max-width: c.$content-width;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.search_wrapper {
+  width: 100%;
+  text-align: center;
+  margin: 5rem 0;
+}
+.select_wrapper {
+  display: flex;
+  flex-direction: row;
+}
+// 企業, 項目から選ぶ
+.tag_wrapper,
+.company_wrapper {
+  width: 50%;
+}
+.document_list {
+  margin: 2rem;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+
+  .new_document {
+    margin: 0.7rem;
+    height: 250px;
+    width: 250px;
+    line-height: 250px;
+    text-align: center;
+    border: #999 solid 1px;
+    background-color: c.$base-color-b;
+    color: white;
+  }
+  .document {
+    margin: 0.7rem;
+    height: 250px;
+    width: 250px;
+    background-color: #ddd;
+    padding: 1rem;
+    text-decoration: none;
+    color: black;
+  }
+}

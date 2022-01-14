@@ -3,6 +3,7 @@ import {
   faHistory,
   faRedo,
   faSave,
+  faTrash,
   faUndo,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -60,8 +61,6 @@ const Home: NextPage = () => {
     if (editedDoc) {
       editHistory[viewingHistoryIdx] = editedDoc.text as string;
       setDocumentText(editedDoc.text as string);
-    } else {
-      alert("文書が見つかりませんでした");
     }
   }, [documentId]);
 
@@ -80,9 +79,22 @@ const Home: NextPage = () => {
     console.log(`action: ${actionMeta.action}`);
     console.groupEnd();
   };
+  const onClickDelete = () => {
+    if (!confirm("削除しますか")) return;
+    const savedDocListStr = window.localStorage.getItem(DOCUMENT_KEY);
+    let savedDocList = JSON.parse(savedDocListStr || "[]") as Document[];
+    savedDocList = savedDocList.filter((v) => {
+      return v.documentId !== documentId;
+    });
+    window.localStorage.setItem(DOCUMENT_KEY, JSON.stringify(savedDocList));
+    router.push("/list");
+  };
   const onClickSave = () => {
     const savedDocListStr = window.localStorage.getItem(DOCUMENT_KEY);
-    const savedDocList = JSON.parse(savedDocListStr || "[]") as Document[];
+    let savedDocList = JSON.parse(savedDocListStr || "[]") as Document[];
+    savedDocList = savedDocList.filter((v) => {
+      return v.documentId !== documentId;
+    });
     const editedDoc: Document = {
       companyId: "test",
       tagId: "test",
@@ -172,6 +184,10 @@ const Home: NextPage = () => {
           </div>
           <div className={styles.right}></div>
           <div className={styles.right}>
+            <button onClick={onClickDelete}>
+              <FontAwesomeIcon className={styles.icon} icon={faTrash} />
+              削除
+            </button>
             <button onClick={onClickSave}>
               <FontAwesomeIcon className={styles.icon} icon={faSave} />
               保存

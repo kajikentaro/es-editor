@@ -1,20 +1,20 @@
-import type { NextPage } from "next";
-import Image from "next/image";
-import styles from "styles/Edit.module.scss";
-import Creatable from "react-select/creatable";
+//import Creatable from "react-select/creatable";
 import {
-  faEdit,
-  faUndo,
-  faRedo,
   faHistory,
-  faCheckCircle,
-  faCheck,
+  faRedo,
+  faSave,
+  faUndo,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useRouter } from "next/router";
+import { DOCUMENT_KEY } from "consts/local-storage";
 import { Document } from "interfaces/interfaces";
-import { useState } from "react";
+import type { NextPage } from "next";
+import dynamic from "next/dynamic";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
 import { ActionMeta, OnChangeValue } from "react-select";
+import styles from "styles/Edit.module.scss";
+const Creatable = dynamic(import("react-select/creatable"), { ssr: false });
 
 const initialDocument: Document = {
   companyId: "",
@@ -35,7 +35,7 @@ let editHistory: string[] = [""];
 
 const Home: NextPage = () => {
   const router = useRouter();
-  const { company, section } = router.query;
+  const { documentId } = router.query;
   //console.log(company, section);
   const [document, setDocument] = useState<Document>(initialDocument);
   const [documentText, setDocumentText] = useState<string>("");
@@ -43,9 +43,31 @@ const Home: NextPage = () => {
   const [tagName, setTagName] = useState<string>("志望動機");
   const [isEditTag, setIsEditTag] = useState<boolean>(false);
 
+  useEffect(() => {
+    if (!documentId) return;
+    const savedDocListStr = window.localStorage.getItem(DOCUMENT_KEY);
+    const savedDocList = JSON.parse(savedDocListStr || "[]") as Document[];
+    console.log(savedDocList);
+    const editedDoc = savedDocList.find((v) => {
+      console.log(
+        v.documentId,
+        documentId,
+        v.documentId === (documentId as string)
+      );
+      return v.documentId === (documentId as string);
+    });
+    console.log(editedDoc);
+    if (editedDoc) {
+      editHistory[viewingHistoryIdx] = editedDoc.text as string;
+      setDocumentText(editedDoc.text as string);
+    } else {
+      alert("文書が見つかりませんでした");
+    }
+  }, [documentId]);
+
   const handleChange = (
-    newValue: OnChangeValue<creatableOption, false>,
-    actionMeta: ActionMeta<creatableOption>
+    newValue: OnChangeValue<unknown, false>,
+    actionMeta: ActionMeta<unknown>
   ) => {
     console.group("Value Changed");
     console.log(newValue);
@@ -57,6 +79,20 @@ const Home: NextPage = () => {
     console.log(inputValue);
     console.log(`action: ${actionMeta.action}`);
     console.groupEnd();
+  };
+  const onClickSave = () => {
+    const savedDocListStr = window.localStorage.getItem(DOCUMENT_KEY);
+    const savedDocList = JSON.parse(savedDocListStr || "[]") as Document[];
+    const editedDoc: Document = {
+      companyId: "test",
+      tagId: "test",
+      documentId: documentId as string,
+      text: editHistory[viewingHistoryIdx],
+      wordCount: editHistory[viewingHistoryIdx].length,
+    };
+    savedDocList.push(editedDoc);
+    window.localStorage.setItem(DOCUMENT_KEY, JSON.stringify(savedDocList));
+    console.log("保存しました");
   };
 
   const rollBackText = (distance: number) => {
@@ -77,7 +113,7 @@ const Home: NextPage = () => {
             <Creatable
               onChange={handleChange}
               onInputChange={handleInputChange}
-              //defaultValue="ここに項目名を入力"
+              defaultValue={{ value: "default-0", label: "ここに項目を入力" }}
               options={[
                 { value: "default-1", label: "志望動機" },
                 { value: "default-2", label: "ガクチカ(勉強)" },
@@ -91,11 +127,12 @@ const Home: NextPage = () => {
         <div className={styles.section}>
           <h2>企業名</h2>
           <div className={styles.row}>
-            <input
-              value={companyName}
-              onChange={(e) => {
-                setCompanyName(e.target.value);
-              }}
+            <Creatable
+              onChange={handleChange}
+              onInputChange={handleInputChange}
+              defaultValue={{ value: "default-0", label: "ここに企業名を入力" }}
+              options={[]}
+              className={styles.creatable}
             />
           </div>
         </div>
@@ -133,7 +170,12 @@ const Home: NextPage = () => {
             </button>
             <p>{documentText.length}文字</p>
           </div>
+          <div className={styles.right}></div>
           <div className={styles.right}>
+            <button onClick={onClickSave}>
+              <FontAwesomeIcon className={styles.icon} icon={faSave} />
+              保存
+            </button>
             <button>
               <FontAwesomeIcon className={styles.icon} icon={faHistory} />
               変更履歴

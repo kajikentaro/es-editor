@@ -1,7 +1,5 @@
 import { faFile, faSearch, faTimes } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { DOCUMENT_KEY } from "consts/local-storage";
-import cryptoRandomString from "crypto-random-string";
 import { Document } from "interfaces/interfaces";
 import type { NextPage } from "next";
 import dynamic from "next/dynamic";
@@ -9,6 +7,8 @@ import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
 import { ActionMeta, OnChangeValue } from "react-select";
 import styles from "styles/List.module.scss";
+import { RESTDocument } from "utils/REST";
+import { genRandomId } from "utils/utils";
 const Select = dynamic(import("react-select"), { ssr: false });
 
 const initialDocument: Document = {
@@ -40,9 +40,7 @@ const Home: NextPage = () => {
   const searchInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    const savedDocListStr = window.localStorage.getItem(DOCUMENT_KEY);
-    savedDocList = JSON.parse(savedDocListStr || "[]") as Document[];
-    setfilterdDocList(savedDocList);
+    setfilterdDocList(RESTDocument.getList());
   }, []);
 
   const handleSearchDocument = (strip: string) => {
@@ -161,10 +159,7 @@ const Home: NextPage = () => {
           className={styles.new_document}
           onClick={() => {
             const N = 50;
-            const randomId = cryptoRandomString({
-              length: 100,
-              type: "url-safe",
-            });
+            const randomId = genRandomId();
             router.push("/edit/" + randomId);
           }}
         >

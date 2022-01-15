@@ -1,4 +1,3 @@
-//import Creatable from "react-select/creatable";
 import {
   faHistory,
   faRedo,
@@ -7,25 +6,23 @@ import {
   faUndo,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { DOCUMENT_KEY } from "consts/local-storage";
-import { Document } from "interfaces/interfaces";
+import { defaultDocument } from "consts/default-value";
+import { Company, Tag } from "interfaces/interfaces";
 import type { NextPage } from "next";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
-import { ActionMeta, OnChangeValue } from "react-select";
+import React, { useEffect, useState } from "react";
+import { ActionMeta, GroupBase } from "react-select";
 import styles from "styles/Edit.module.scss";
+import { RESTCompany, RESTDocument, RESTTag } from "utils/REST";
 const Creatable = dynamic(import("react-select/creatable"), { ssr: false });
 
-const initialDocument: Document = {
-  companyId: "",
-  tagId: "",
-  documentId: "",
-  text: "",
-  wordCount: 0,
-};
+let document = defaultDocument;
+let company: Company | undefined;
+let tag: Tag | undefined;
 
-interface creatableOption {
+interface CompanyOption {
+  company: Company;
   value: string;
   label: string;
 }
@@ -34,76 +31,85 @@ let preEditUnix = 0;
 let viewingHistoryIdx = 0;
 let editHistory: string[] = [""];
 
+const Select = <
+  Option,
+  IsMulti extends boolean = false,
+  Group extends GroupBase<Option> = GroupBase<Option>
+>(
+  props: Option | IsMulti | Group
+) => {
+  return (
+    <Creatable {...props} theme={(theme) => ({ ...theme, borderRadius: 0 })} />
+  );
+};
+
 const Home: NextPage = () => {
   const router = useRouter();
   const { documentId } = router.query;
-  //console.log(company, section);
-  const [document, setDocument] = useState<Document>(initialDocument);
   const [documentText, setDocumentText] = useState<string>("");
-  const [companyName, setCompanyName] = useState<string>("〇〇株式会社");
-  const [tagName, setTagName] = useState<string>("志望動機");
-  const [isEditTag, setIsEditTag] = useState<boolean>(false);
+  const [companyList, setCompanyList] = useState<Company[]>([]);
+  const [tagList, setTagList] = useState<Tag[]>([]);
 
   useEffect(() => {
     if (!documentId) return;
-    const savedDocListStr = window.localStorage.getItem(DOCUMENT_KEY);
-    const savedDocList = JSON.parse(savedDocListStr || "[]") as Document[];
-    console.log(savedDocList);
-    const editedDoc = savedDocList.find((v) => {
-      console.log(
-        v.documentId,
-        documentId,
-        v.documentId === (documentId as string)
-      );
-      return v.documentId === (documentId as string);
-    });
-    console.log(editedDoc);
-    if (editedDoc) {
-      editHistory[viewingHistoryIdx] = editedDoc.text as string;
-      setDocumentText(editedDoc.text as string);
+    document = RESTDocument.get(documentId as string) || document;
+    if (document.documentId) {
+      // 存在した場合
+      company = RESTCompany.get(document.companyId);
+      tag = RESTTag.get(document.tagId);
+      editHistory[viewingHistoryIdx] = document.text;
+      setDocumentText(document.text);
+    } else {
+      // 存在しない場合
+      document.documentId = documentId as string;
     }
+    console.log(document);
   }, [documentId]);
+  useEffect(() => {
+    setCompanyList(RESTCompany.getList());
+    setTagList(RESTTag.getList());
+  }, []);
 
-  const handleChange = (
-    newValue: OnChangeValue<unknown, false>,
-    actionMeta: ActionMeta<unknown>
+  const onSelectCompany = (
+    option: CompanyOption | null,
+    actionMeta: ActionMeta<CompanyOption>
   ) => {
-    console.group("Value Changed");
-    console.log(newValue);
-    console.log(`action: ${actionMeta.action}`);
-    console.groupEnd();
+    if (!option || !option.value) return;
+    if (actionMeta.action === "create-option") {
+      company = {
+        companyName: option.value,
+        companyId: document.companyId,
+      };
+    }
+    if (actionMeta.action === "select-option") {
+      company = {
+        companyName: option.company.companyName,
+        companyId: option.company.companyId,
+      };
+    }
   };
-  const handleInputChange = (inputValue: any, actionMeta: any) => {
-    console.group("Input Changed");
-    console.log(inputValue);
-    console.log(`action: ${actionMeta.action}`);
-    console.groupEnd();
-  };
+
   const onClickDelete = () => {
     if (!confirm("削除しますか")) return;
-    const savedDocListStr = window.localStorage.getItem(DOCUMENT_KEY);
-    let savedDocList = JSON.parse(savedDocListStr || "[]") as Document[];
-    savedDocList = savedDocList.filter((v) => {
-      return v.documentId !== documentId;
-    });
-    window.localStorage.setItem(DOCUMENT_KEY, JSON.stringify(savedDocList));
+    RESTDocument.delete_(document.documentId);
     router.push("/list");
   };
+
   const onClickSave = () => {
-    const savedDocListStr = window.localStorage.getItem(DOCUMENT_KEY);
-    let savedDocList = JSON.parse(savedDocListStr || "[]") as Document[];
-    savedDocList = savedDocList.filter((v) => {
-      return v.documentId !== documentId;
-    });
-    const editedDoc: Document = {
-      companyId: "test",
-      tagId: "test",
-      documentId: documentId as string,
-      text: editHistory[viewingHistoryIdx],
-      wordCount: editHistory[viewingHistoryIdx].length,
-    };
-    savedDocList.push(editedDoc);
-    window.localStorage.setItem(DOCUMENT_KEY, JSON.stringify(savedDocList));
+    document.text = editHistory[viewingHistoryIdx];
+    document.wordCount = editHistory[viewingHistoryIdx].length;
+    RESTDocument.put(document.documentId, document);
+    // TODO: アラートではなくメッセージを出す
+    if (!company) {
+      alert("企業名を入力してください");
+      return;
+    }
+    if (!tag) {
+      alert("項目名を入力してください");
+      return;
+    }
+    RESTCompany.put(document.companyId, company);
+    RESTTag.put(document.tagId, tag);
     console.log("保存しました");
   };
 
@@ -122,16 +128,16 @@ const Home: NextPage = () => {
         <div className={styles.section}>
           <h2>題名</h2>
           <div className={styles.row}>
-            <Creatable
-              onChange={handleChange}
-              onInputChange={handleInputChange}
+            <Select
+              onChange={onSelectCompany}
               defaultValue={{ value: "default-0", label: "ここに項目を入力" }}
-              options={[
-                { value: "default-1", label: "志望動機" },
-                { value: "default-2", label: "ガクチカ(勉強)" },
-                { value: "default-3", label: "長所" },
-                { value: "default-4", label: "自己PR" },
-              ]}
+              options={companyList.map((v) => {
+                return {
+                  value: v.companyName,
+                  label: v.companyName,
+                  company: v,
+                };
+              })}
               className={styles.creatable}
             />
           </div>
@@ -139,11 +145,16 @@ const Home: NextPage = () => {
         <div className={styles.section}>
           <h2>企業名</h2>
           <div className={styles.row}>
-            <Creatable
-              onChange={handleChange}
-              onInputChange={handleInputChange}
-              defaultValue={{ value: "default-0", label: "ここに企業名を入力" }}
-              options={[]}
+            <Select
+              onChange={onSelectCompany}
+              defaultValue={{ label: "ここに項目を入力" }}
+              options={companyList.map((v) => {
+                return {
+                  value: v.companyName,
+                  label: v.companyName,
+                  company: v,
+                };
+              })}
               className={styles.creatable}
             />
           </div>

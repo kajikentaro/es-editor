@@ -5,3 +5,12 @@ export interface Document {
   text: string;
   wordCount: number;
 }
+
+export interface Tag {
+  tagId: string;
+  tagName: string;
+}
+export interface Company {
+  companyId: string;
+  companyName: string;
+}

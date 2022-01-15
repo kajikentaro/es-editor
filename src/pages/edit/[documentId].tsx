@@ -1,10 +1,4 @@
-import {
-  faHistory,
-  faRedo,
-  faSave,
-  faTrash,
-  faUndo,
-} from "@fortawesome/free-solid-svg-icons";
+import { faHistory, faRedo, faSave, faTrash, faUndo } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { defaultDocument } from "consts/default-value";
 import { Company, Tag } from "interfaces/interfaces";
@@ -18,29 +12,49 @@ import { RESTCompany, RESTDocument, RESTTag } from "utils/REST";
 const Creatable = dynamic(import("react-select/creatable"), { ssr: false });
 
 let document = defaultDocument;
-let company: Company | undefined;
-let tag: Tag | undefined;
-
-interface CompanyOption {
-  company: Company;
-  value: string;
-  label: string;
-}
 
 let preEditUnix = 0;
 let viewingHistoryIdx = 0;
 let editHistory: string[] = [""];
 
-const Select = <
-  Option,
-  IsMulti extends boolean = false,
-  Group extends GroupBase<Option> = GroupBase<Option>
->(
-  props: Option | IsMulti | Group
-) => {
-  return (
-    <Creatable {...props} theme={(theme) => ({ ...theme, borderRadius: 0 })} />
-  );
+type OptionType<T> = {
+  item: T;
+  value: string;
+  label: string;
+};
+type JSXType<T> = {
+  item: T | undefined;
+  onSelectItem: (option: OptionType<T> | null, actionMeta: ActionMeta<OptionType<T>>) => void;
+  itemList: T[];
+};
+
+const CompanyJSX: React.VFC<JSXType<Company>> = (props) => {
+  const { item, onSelectItem, itemList } = props;
+
+  const Select = <CompanyOption, IsMulti extends boolean = false, Group extends GroupBase<CompanyOption> = GroupBase<CompanyOption>>(
+    props: CompanyOption | IsMulti | Group
+  ) => {
+    return <Creatable {...props} className={styles.creatable} theme={(theme) => ({ ...theme, borderRadius: 0 })} />;
+  };
+  const SelectProps = {
+    onChange: onSelectItem,
+    defaultValue: { value: "default-0", label: "ここに項目を入力" },
+    formatCreateLabel: (inputValue: string) => {
+      if (item) {
+        return inputValue + " に名前変更";
+      } else {
+        return inputValue + " を新規作成";
+      }
+    },
+    options: itemList.map((v) => {
+      return {
+        value: v.companyName,
+        label: v.companyName,
+        item: v,
+      };
+    }),
+  };
+  return Select(SelectProps);
 };
 
 const Home: NextPage = () => {
@@ -49,15 +63,17 @@ const Home: NextPage = () => {
   const [documentText, setDocumentText] = useState<string>("");
   const [companyList, setCompanyList] = useState<Company[]>([]);
   const [tagList, setTagList] = useState<Tag[]>([]);
+  const [company, setCompany] = useState<Company | undefined>(undefined);
+  const [tag, setTag] = useState<Tag | undefined>(undefined);
 
   useEffect(() => {
     if (!documentId) return;
     document = RESTDocument.get(documentId as string) || document;
     if (document.documentId) {
       // 存在した場合
-      company = RESTCompany.get(document.companyId);
-      tag = RESTTag.get(document.tagId);
       editHistory[viewingHistoryIdx] = document.text;
+      setCompany(RESTCompany.get(document.companyId));
+      setTag(RESTTag.get(document.tagId));
       setDocumentText(document.text);
     } else {
       // 存在しない場合
@@ -70,22 +86,20 @@ const Home: NextPage = () => {
     setTagList(RESTTag.getList());
   }, []);
 
-  const onSelectCompany = (
-    option: CompanyOption | null,
-    actionMeta: ActionMeta<CompanyOption>
-  ) => {
+  const onSelectCompany = (option: OptionType<Company> | null, actionMeta: ActionMeta<OptionType<Company>>) => {
     if (!option || !option.value) return;
     if (actionMeta.action === "create-option") {
-      company = {
+      setCompany({
         companyName: option.value,
         companyId: document.companyId,
-      };
+      });
     }
     if (actionMeta.action === "select-option") {
-      company = {
-        companyName: option.company.companyName,
-        companyId: option.company.companyId,
-      };
+      console.log("!!!", option);
+      setCompany({
+        companyName: option.item.companyName,
+        companyId: option.item.companyId,
+      });
     }
   };
 
@@ -128,35 +142,13 @@ const Home: NextPage = () => {
         <div className={styles.section}>
           <h2>題名</h2>
           <div className={styles.row}>
-            <Select
-              onChange={onSelectCompany}
-              defaultValue={{ value: "default-0", label: "ここに項目を入力" }}
-              options={companyList.map((v) => {
-                return {
-                  value: v.companyName,
-                  label: v.companyName,
-                  company: v,
-                };
-              })}
-              className={styles.creatable}
-            />
+            <CompanyJSX item={company} onSelectItem={onSelectCompany} itemList={companyList} />
           </div>
         </div>
         <div className={styles.section}>
           <h2>企業名</h2>
           <div className={styles.row}>
-            <Select
-              onChange={onSelectCompany}
-              defaultValue={{ label: "ここに項目を入力" }}
-              options={companyList.map((v) => {
-                return {
-                  value: v.companyName,
-                  label: v.companyName,
-                  company: v,
-                };
-              })}
-              className={styles.creatable}
-            />
+            <CompanyJSX item={company} onSelectItem={onSelectCompany} itemList={companyList} />
           </div>
         </div>
         <div className={styles.section}>
@@ -216,10 +208,7 @@ const Home: NextPage = () => {
               const nowUnix = new Date().getTime();
               if (viewingHistoryIdx !== editHistory.length - 1) {
                 // UNDO後に編集した場合
-                const removeLen = Math.min(
-                  editHistory.length - viewingHistoryIdx - 1,
-                  editHistory.length - 1
-                );
+                const removeLen = Math.min(editHistory.length - viewingHistoryIdx - 1, editHistory.length - 1);
                 for (let i = 0; i < removeLen; i++) {
                   editHistory.pop();
                 }
@@ -237,7 +226,7 @@ const Home: NextPage = () => {
             }}
           />
         </div>
-        {viewingHistoryIdx}/{editHistory.length}
+        {company?.companyId}/{company?.companyName}
       </div>
       <div className={styles.third}></div>
     </div>

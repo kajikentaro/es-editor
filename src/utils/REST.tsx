@@ -44,8 +44,8 @@ export namespace RESTTag {
     return res;
   };
   // 取得
-  export const get = (id: string) => {
-    const res = getList().find((v) => {
+  export const get = (id: string, cache: Tag[] | undefined = undefined) => {
+    const res = (cache || getList()).find((v) => {
       return v.tagId === id;
     });
     return res;
@@ -77,8 +77,8 @@ export namespace RESTCompany {
     return res;
   };
   // 取得
-  export const get = (id: string) => {
-    const res = getList().find((v) => {
+  export const get = (id: string, cache: Company[] | undefined = undefined) => {
+    const res = (cache || getList()).find((v) => {
       return v.companyId === id;
     });
     return res;

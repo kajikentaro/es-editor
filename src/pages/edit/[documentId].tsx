@@ -1,7 +1,7 @@
 import { faHistory, faList, faRedo, faSave, faTrash, faUndo } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { defaultDocument } from "consts/default-value";
-import { Company, Tag } from "interfaces/interfaces";
+import { Company, Document, Tag } from "interfaces/interfaces";
 import type { NextPage } from "next";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
@@ -40,10 +40,13 @@ const TagJSX = (props: JSXType<Tag>) => {
   };
   const SelectProps = {
     onChange: onSelectItem,
+    noOptionsMessage: () => {
+      return "入力中";
+    },
     defaultValue: item ? { label: item?.tagName } : { label: "ここに項目名を入力" },
     formatCreateLabel: (inputValue: string) => {
       if (item) {
-        return inputValue + " に名前変更";
+        return item.tagName + " を " + inputValue + " に名前変更";
       } else {
         return inputValue + " を新規作成";
       }
@@ -68,13 +71,16 @@ const CompanyJSX = (props: JSXType<Company>) => {
   ) => {
     return <Creatable {...props} className={styles.creatable} />;
   };
-  console.log("セレクタ構築", item);
+  //console.log("セレクタ構築", item);
   const SelectProps = {
     onChange: onSelectItem,
+    noOptionsMessage: () => {
+      return "入力中";
+    },
     defaultValue: item === undefined ? { label: "ここに企業名を入力" } : { label: item?.companyName },
     formatCreateLabel: (inputValue: string) => {
       if (item) {
-        return inputValue + " に名前変更";
+        return item.companyName + " を " + inputValue + " に名前変更";
       } else {
         return inputValue + " を新規作成";
       }
@@ -87,7 +93,7 @@ const CompanyJSX = (props: JSXType<Company>) => {
       };
     }),
   };
-  console.log(SelectProps);
+  //console.log(SelectProps);
   return <Select {...SelectProps} />;
 };
 
@@ -97,15 +103,17 @@ const Home: NextPage = () => {
   const [documentText, setDocumentText] = useState<string>("");
   const [companyList, setCompanyList] = useState<Company[]>([]);
   const [tagList, setTagList] = useState<Tag[]>([]);
+  const [documentList, setDocumentList] = useState<Document[]>([]);
   const [company, setCompany] = useState<Company | undefined>(undefined);
   const [tag, setTag] = useState<Tag | undefined>(undefined);
   const [isHistoryActive, setIsHistoryActive] = useState<boolean>(false);
+  const [canEdit, setCanEdit] = useState<boolean>(true);
 
   useEffect(() => {
     if (!documentId) return;
     document = RESTDocument.get(documentId as string) || document;
     if (document.documentId) {
-      console.log("存在した", document);
+      //console.log("存在した", document);
       // 存在した場合
       editHistory[viewingHistoryIdx] = document.text;
       setCompany(RESTCompany.get(document.companyId));
@@ -113,7 +121,7 @@ const Home: NextPage = () => {
       setDocumentText(document.text);
     } else {
       // 存在しない場合
-      console.log("存在しない", document);
+      //console.log("存在しない", document);
       document.documentId = documentId as string;
     }
   }, [documentId]);
@@ -122,17 +130,23 @@ const Home: NextPage = () => {
   useEffect(() => {
     setCompanyList(RESTCompany.getList());
     setTagList(RESTTag.getList());
+    setDocumentList(RESTDocument.getList());
   }, []);
 
   // タグのセレクタ選択時
   const onSelectTag = (option: OptionType<Tag> | null, actionMeta: ActionMeta<OptionType<Tag>>) => {
     if (!option || !option.value) return;
     if (actionMeta.action === "create-option") {
-      document.tagId = genRandomId();
-      setTag({
+      if (!tag) {
+        document.tagId = genRandomId();
+      }
+      const newTag = {
         tagName: option.value,
         tagId: document.tagId,
-      });
+      };
+      RESTTag.put(newTag.tagId, newTag);
+      setTagList(RESTTag.getList());
+      setTag(newTag);
     }
     if (actionMeta.action === "select-option") {
       document.tagId = option.item.tagId;
@@ -147,11 +161,16 @@ const Home: NextPage = () => {
   const onSelectCompany = (option: OptionType<Company> | null, actionMeta: ActionMeta<OptionType<Company>>) => {
     if (!option || !option.value) return;
     if (actionMeta.action === "create-option") {
-      document.companyId = genRandomId();
-      setCompany({
+      if (!company) {
+        document.companyId = genRandomId();
+      }
+      const newCompany = {
         companyName: option.value,
         companyId: document.companyId,
-      });
+      };
+      RESTCompany.put(newCompany.companyId, newCompany);
+      setCompanyList(RESTCompany.getList());
+      setCompany(newCompany);
     }
     if (actionMeta.action === "select-option") {
       document.companyId = option.item.companyId;
@@ -184,6 +203,7 @@ const Home: NextPage = () => {
     RESTCompany.put(document.companyId, company);
     RESTTag.put(document.tagId, tag);
     alert("保存しました");
+    router.reload();
   };
 
   // 過去のバージョンに戻す
@@ -214,19 +234,32 @@ const Home: NextPage = () => {
           <div className={styles.section + " " + styles.file_list}>
             <h2>目次</h2>
             <div className={styles.files}>
-              <div className={styles.row}>
-                <input />
-              </div>
-              <div className={styles.row}>
-                <input />
-              </div>
-              <div className={styles.row}>
-                <input />
-              </div>
+              {documentList
+                .filter((v) => {
+                  return v.companyId === document.companyId;
+                })
+                .map((v) => {
+                  return (
+                    <button
+                      className={styles.tag}
+                      key={v.tagId}
+                      onMouseOver={() => {
+                        setDocumentText(v.text);
+                        setCanEdit(false);
+                      }}
+                      onMouseLeave={() => {
+                        setDocumentText(editHistory[viewingHistoryIdx]);
+                        setCanEdit(true);
+                      }}
+                    >
+                      {RESTTag.get(v.tagId, tagList)?.tagName}
+                    </button>
+                  );
+                })}
             </div>
             <div className={styles.button}>
               <button
-                className={isHistoryActive ? "" : styles.active}
+                className={!isHistoryActive ? styles.active : styles.disable}
                 onClick={() => {
                   setIsHistoryActive(false);
                 }}
@@ -235,7 +268,7 @@ const Home: NextPage = () => {
                 目次
               </button>
               <button
-                className={isHistoryActive ? styles.active : ""}
+                className={isHistoryActive ? styles.active : styles.disable}
                 onClick={() => {
                   setIsHistoryActive(true);
                 }}
@@ -250,6 +283,7 @@ const Home: NextPage = () => {
           <div className={styles.row}>
             <div className={styles.left}>
               <button
+                className={styles.operation_btn}
                 onClick={() => {
                   rollBackText(viewingHistoryIdx - 1);
                 }}
@@ -258,10 +292,9 @@ const Home: NextPage = () => {
                 戻る
               </button>
               <button
+                className={styles.operation_btn}
                 onClick={() => {
                   rollBackText(viewingHistoryIdx + 1);
-                  console.log(document.companyId, company?.companyId, document.tagId, tag?.tagId);
-                  console.log(document);
                 }}
               >
                 <FontAwesomeIcon className={styles.icon} icon={faRedo} />
@@ -270,11 +303,11 @@ const Home: NextPage = () => {
             </div>
             <p>{documentText.length}文字</p>
             <div className={styles.right}>
-              <button onClick={onClickDelete}>
+              <button className={styles.operation_btn} onClick={onClickDelete}>
                 <FontAwesomeIcon className={styles.icon} icon={faTrash} />
                 削除
               </button>
-              <button onClick={onClickSave}>
+              <button className={styles.operation_btn} onClick={onClickSave}>
                 <FontAwesomeIcon className={styles.icon} icon={faSave} />
                 保存
               </button>
@@ -282,6 +315,7 @@ const Home: NextPage = () => {
           </div>
           <div className={styles.edit}>
             <textarea
+              {...(!canEdit && { readOnly: true, style: { backgroundColor: "#ccc" } })}
               value={documentText}
               onChange={(e) => {
                 const nowUnix = new Date().getTime();
@@ -306,8 +340,7 @@ const Home: NextPage = () => {
             />
           </div>
         </div>
-        <div className={styles.third}></div>
-      </div>{" "}
+      </div>
     </div>
   );
 };

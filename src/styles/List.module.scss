@@ -84,6 +84,7 @@
     }
   }
   .document {
+    overflow: hidden;
     margin: 0.7rem;
     height: 250px;
     width: 250px;
@@ -95,6 +96,9 @@
     cursor: pointer;
     &:hover {
       opacity: c.$opacity-hover;
+    }
+    .tec {
+      text-align: center;
     }
   }
 }

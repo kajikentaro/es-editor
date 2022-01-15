@@ -1,32 +1,21 @@
 import { faFile, faSearch, faTimes } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Document } from "interfaces/interfaces";
+import { Company, Document, Tag } from "interfaces/interfaces";
 import type { NextPage } from "next";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
 import { ActionMeta, OnChangeValue } from "react-select";
 import styles from "styles/List.module.scss";
-import { RESTDocument } from "utils/REST";
+import { RESTCompany, RESTDocument, RESTTag } from "utils/REST";
 import { genRandomId } from "utils/utils";
 const Select = dynamic(import("react-select"), { ssr: false });
-
-const initialDocument: Document = {
-  companyId: "",
-  tagId: "",
-  documentId: "",
-  text: "",
-  wordCount: 0,
-};
-
-interface creatableOption {
-  value: string;
-  label: string;
-}
 
 const DocumentTile: React.VFC<{ document: Document }> = (props) => {
   return (
     <a className={styles.document} href={"/edit/" + props.document.documentId}>
+      <p className={styles.tec}>{RESTCompany.get(props.document.companyId, cacheCompany)?.companyName}</p>
+      <p className={styles.tec}>{RESTTag.get(props.document.tagId, cacheTag)?.tagName}</p>
       <p>{props.document.text}</p>
     </a>
   );
@@ -34,6 +23,9 @@ const DocumentTile: React.VFC<{ document: Document }> = (props) => {
 
 let searchInputText = "";
 let savedDocList: Document[] = [];
+let cacheTag: undefined | Tag[] = undefined;
+let cacheCompany: undefined | Company[] = undefined;
+
 const Home: NextPage = () => {
   const router = useRouter();
   const [filterdDocList, setfilterdDocList] = useState<Document[]>([]);
@@ -41,6 +33,8 @@ const Home: NextPage = () => {
 
   useEffect(() => {
     setfilterdDocList(RESTDocument.getList());
+    cacheCompany = RESTCompany.getList();
+    cacheTag = RESTTag.getList();
   }, []);
 
   const handleSearchDocument = (strip: string) => {
@@ -56,10 +50,7 @@ const Home: NextPage = () => {
     setfilterdDocList(filterdDocList);
   };
 
-  const handleChange = (
-    newValue: OnChangeValue<unknown, false>,
-    actionMeta: ActionMeta<unknown>
-  ) => {
+  const handleChange = (newValue: OnChangeValue<unknown, false>, actionMeta: ActionMeta<unknown>) => {
     console.group("Value Changed");
     console.log(newValue);
     console.log(`action: ${actionMeta.action}`);
@@ -105,11 +96,7 @@ const Home: NextPage = () => {
                   }
                 }}
               >
-                <FontAwesomeIcon
-                  className={styles.icon}
-                  icon={faTimes}
-                  color="hsl(0, 0%, 80%)"
-                />
+                <FontAwesomeIcon className={styles.icon} icon={faTimes} color="hsl(0, 0%, 80%)" />
               </button>
             </div>
             <button className={styles.search_btn}>
@@ -169,6 +156,7 @@ const Home: NextPage = () => {
           </div>
         </button>
         {filterdDocList &&
+          cacheCompany &&
           filterdDocList.map((v, idx) => {
             return <DocumentTile document={v} key={v.documentId} />;
           })}

@@ -14,15 +14,15 @@ const Select = dynamic(import("react-select"), { ssr: false });
 const DocumentTile: React.VFC<{ document: Document }> = (props) => {
   return (
     <a className={styles.document} href={"/edit/" + props.document.documentId}>
-      <p className={styles.tec}>{RESTCompany.get(props.document.companyId, cacheCompany)?.companyName}</p>
-      <p className={styles.tec}>{RESTTag.get(props.document.tagId, cacheTag)?.tagName}</p>
+      <p className={styles.tec}>{RESTCompany.get(props.document.companyId, cacheCompany)?.name}</p>
+      <p className={styles.tec}>{RESTTag.get(props.document.tagId, cacheTag)?.name}</p>
       <p>{props.document.text}</p>
     </a>
   );
 };
 
 let searchInputText = "";
-let savedDocList: Document[] = [];
+let documentList: Document[] = [];
 let cacheTag: undefined | Tag[] = undefined;
 let cacheCompany: undefined | Company[] = undefined;
 
@@ -32,21 +32,22 @@ const Home: NextPage = () => {
   const searchInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    setfilterdDocList(RESTDocument.getList());
+    documentList = RESTDocument.getList();
+    setfilterdDocList(documentList);
     cacheCompany = RESTCompany.getList();
     cacheTag = RESTTag.getList();
   }, []);
 
   const handleSearchDocument = (strip: string) => {
-    console.log(strip);
+    console.log(strip, !strip || strip === "");
+    console.log(documentList);
     if (!strip || strip === "") {
-      setfilterdDocList(savedDocList);
+      setfilterdDocList(documentList);
       return;
     }
-    const filterdDocList = savedDocList.filter((v) => {
+    const filterdDocList = documentList.filter((v) => {
       return v.text.indexOf(strip) !== -1;
     });
-    console.log(filterdDocList, savedDocList);
     setfilterdDocList(filterdDocList);
   };
 
@@ -94,6 +95,7 @@ const Home: NextPage = () => {
                     searchInputText = "";
                     searchInputRef.current.value = "";
                   }
+                  setfilterdDocList(documentList);
                 }}
               >
                 <FontAwesomeIcon className={styles.icon} icon={faTimes} color="hsl(0, 0%, 80%)" />

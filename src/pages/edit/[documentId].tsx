@@ -29,46 +29,11 @@ type JSXType<T> = {
   itemList: T[];
 };
 
-// 項目名のセレクタ
-const TagJSX = (props: JSXType<Tag>) => {
-  const { item, onSelectItem, itemList } = props;
-
-  const Select = <CompanyOption, IsMulti extends boolean = false, Group extends GroupBase<CompanyOption> = GroupBase<CompanyOption>>(
-    props: CompanyOption | IsMulti | Group
-  ) => {
-    return <Creatable {...props} className={styles.creatable} />;
-  };
-  const SelectProps = {
-    onChange: onSelectItem,
-    noOptionsMessage: () => {
-      return "入力中";
-    },
-    defaultValue: item ? { label: item?.tagName } : { label: "ここに項目名を入力" },
-    formatCreateLabel: (inputValue: string) => {
-      if (item) {
-        return item.tagName + " を " + inputValue + " に名前変更";
-      } else {
-        return inputValue + " を新規作成";
-      }
-    },
-    options: itemList.map((v) => {
-      return {
-        value: v.tagName,
-        label: v.tagName,
-        item: v,
-      };
-    }),
-  };
-  return <Select {...SelectProps} />;
-};
-
 // 企業名のセレクタ
-const CompanyJSX = (props: JSXType<Company>) => {
+const CompanyJSX = <T extends Company | Tag>(props: JSXType<T>) => {
   const { item, onSelectItem, itemList } = props;
 
-  const Select = <CompanyOption, IsMulti extends boolean = false, Group extends GroupBase<CompanyOption> = GroupBase<CompanyOption>>(
-    props: CompanyOption | IsMulti | Group
-  ) => {
+  const Select = <TOption, IsMulti extends boolean = false, Group extends GroupBase<TOption> = GroupBase<TOption>>(props: TOption | IsMulti | Group) => {
     return <Creatable {...props} className={styles.creatable} />;
   };
   //console.log("セレクタ構築", item);
@@ -77,18 +42,19 @@ const CompanyJSX = (props: JSXType<Company>) => {
     noOptionsMessage: () => {
       return "入力中";
     },
-    defaultValue: item === undefined ? { label: "ここに企業名を入力" } : { label: item?.companyName },
+    placeholder: "ここに入力",
+    ...(item && { defaultValue: { label: item?.name } }),
     formatCreateLabel: (inputValue: string) => {
       if (item) {
-        return item.companyName + " を " + inputValue + " に名前変更";
+        return item.name + " を " + inputValue + " に名前変更";
       } else {
         return inputValue + " を新規作成";
       }
     },
     options: itemList.map((v) => {
       return {
-        value: v.companyName,
-        label: v.companyName,
+        value: v.name,
+        label: v.name,
         item: v,
       };
     }),
@@ -141,18 +107,18 @@ const Home: NextPage = () => {
         document.tagId = genRandomId();
       }
       const newTag = {
-        tagName: option.value,
-        tagId: document.tagId,
+        name: option.value,
+        id: document.tagId,
       };
-      RESTTag.put(newTag.tagId, newTag);
+      RESTTag.put(newTag.id, newTag);
       setTagList(RESTTag.getList());
       setTag(newTag);
     }
     if (actionMeta.action === "select-option") {
-      document.tagId = option.item.tagId;
+      document.tagId = option.item.id;
       setTag({
-        tagName: option.item.tagName,
-        tagId: option.item.tagId,
+        name: option.item.name,
+        id: option.item.id,
       });
     }
   };
@@ -165,18 +131,18 @@ const Home: NextPage = () => {
         document.companyId = genRandomId();
       }
       const newCompany = {
-        companyName: option.value,
-        companyId: document.companyId,
+        name: option.value,
+        id: document.companyId,
       };
-      RESTCompany.put(newCompany.companyId, newCompany);
+      RESTCompany.put(newCompany.id, newCompany);
       setCompanyList(RESTCompany.getList());
       setCompany(newCompany);
     }
     if (actionMeta.action === "select-option") {
-      document.companyId = option.item.companyId;
+      document.companyId = option.item.id;
       setCompany({
-        companyName: option.item.companyName,
-        companyId: option.item.companyId,
+        name: option.item.name,
+        id: option.item.id,
       });
     }
   };
@@ -222,7 +188,7 @@ const Home: NextPage = () => {
           <div className={styles.section}>
             <h2>項目</h2>
             <div className={styles.row}>
-              <TagJSX item={tag} onSelectItem={onSelectTag} itemList={tagList} />
+              <CompanyJSX item={tag} onSelectItem={onSelectTag} itemList={tagList} />
             </div>
           </div>
           <div className={styles.section}>
@@ -252,7 +218,7 @@ const Home: NextPage = () => {
                         setCanEdit(true);
                       }}
                     >
-                      {RESTTag.get(v.tagId, tagList)?.tagName}
+                      {RESTTag.get(v.tagId, tagList)?.name}
                     </button>
                   );
                 })}

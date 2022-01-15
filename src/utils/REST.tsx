@@ -46,7 +46,7 @@ export namespace RESTTag {
   // 取得
   export const get = (id: string, cache: Tag[] | undefined = undefined) => {
     const res = (cache || getList()).find((v) => {
-      return v.tagId === id;
+      return v.id === id;
     });
     return res;
   };
@@ -63,7 +63,7 @@ export namespace RESTTag {
   // 削除(削除後のデータ返す)
   export const delete_ = (id: string) => {
     let list = getList().filter((v) => {
-      return v.tagId !== id;
+      return v.id !== id;
     });
     putList(list);
     return list;
@@ -79,7 +79,7 @@ export namespace RESTCompany {
   // 取得
   export const get = (id: string, cache: Company[] | undefined = undefined) => {
     const res = (cache || getList()).find((v) => {
-      return v.companyId === id;
+      return v.id === id;
     });
     return res;
   };
@@ -96,7 +96,7 @@ export namespace RESTCompany {
   // 削除(削除後のデータ返す)
   export const delete_ = (id: string) => {
     let list = getList().filter((v) => {
-      return v.companyId !== id;
+      return v.id !== id;
     });
     putList(list);
     return list;

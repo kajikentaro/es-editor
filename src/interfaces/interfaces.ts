@@ -7,10 +7,10 @@ export interface Document {
 }
 
 export interface Tag {
-  tagId: string;
-  tagName: string;
+  id: string;
+  name: string;
 }
 export interface Company {
-  companyId: string;
-  companyName: string;
+  id: string;
+  name: string;
 }

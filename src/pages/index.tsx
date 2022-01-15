@@ -1,5 +1,5 @@
 import type { NextPage } from "next";
-import Image from "next/image";
+import Link from "next/link";
 import styles from "styles/Home.module.scss";
 
 const Home: NextPage = () => {
@@ -9,7 +9,7 @@ const Home: NextPage = () => {
         <div className={styles.first}>
           <h2>就活生のための</h2>
           <h1>ESエディター</h1>
-          <button>始める</button>
+          <Link href="/list">始める</Link>
         </div>
         <div className={styles.second}>
           <div className={styles.image} />

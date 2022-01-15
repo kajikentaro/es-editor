@@ -1,42 +1,85 @@
 @use "common" as c;
 
 .content {
+  background-color: c.$white-color-b;
   max-width: c.$content-width;
+  height: calc(100vh - c.$header-height);
   margin: 0 auto;
-  display: flex;
+  .content_editor {
+    height: 100%;
+    padding: 2rem;
+    display: flex;
+  }
 }
 
 // メニューバー
 .first {
+  padding: 1rem 1rem 0 1rem;
   width: 30%;
+  display: flex;
+  flex-direction: column;
   .section {
-    margin: 0 1rem 1.5rem 1rem;
+    margin-bottom: 1.5rem;
+    .row {
+      display: flex;
+      input,
+      .creatable {
+        width: 0;
+        flex: 1;
+      }
+    }
   }
-  .row {
+  .file_list {
     display: flex;
-    input,
-    .creatable {
-      width: 0;
+    flex-direction: column;
+    flex: 1;
+    margin-bottom: 0;
+    .files {
       flex: 1;
     }
     button {
-      @include c.font-awesome-btn;
+      width: 50%;
+      height: 3rem;
+      margin: 0;
+      border-radius: none;
+      justify-content: center;
+      border: none;
+      &.active {
+        background-color: c.$base-color-a;
+        color: white;
+      }
     }
+  }
+  button {
+    @include c.font-awesome-btn;
   }
 }
 
 // 編集エリア
 .second {
   width: 70%;
+  display: flex;
+  flex-direction: column;
   button {
     @include c.font-awesome-btn;
+    margin-bottom: -1px;
+    background-color: #ccc;
+    border: none;
+    margin: 0 2px;
   }
 
   // 戻る進むなどの操作パネル
   .row {
+    margin: 0 -2px;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+    p {
+      font-size: 1.3rem;
+      align-items: flex-end;
+      padding-bottom: 4px;
+      display: flex;
+    }
     .left {
       display: flex;
       flex-direction: row;
@@ -44,10 +87,13 @@
     }
   }
   .edit {
+    flex: 1;
     textarea {
       resize: none;
       width: 100%;
-      height: 70vh;
+      height: 100%;
+      outline: none;
+      font-size: 1.5rem;
     }
   }
 }

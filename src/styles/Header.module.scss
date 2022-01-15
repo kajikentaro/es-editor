@@ -6,7 +6,7 @@
 .content {
   margin: 0 auto;
   max-width: c.$content_width;
-  height: 40px;
+  height: c.$header-height;
   width: 100%;
   background-color: c.$base-color-a;
   display: flex;

@@ -1,18 +1,19 @@
-import { faTimes } from "@fortawesome/free-solid-svg-icons";
+import { faCheck } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Item } from "interfaces/interfaces";
 import { useEffect, useRef, useState } from "react";
 import styles from "styles/TermSelect.module.scss";
+import { genRandomId } from "utils/utils";
 
 type Props<T> = {
   item: T | undefined;
   itemList: T[];
-  onDefineItem: (item: T | undefined) => void;
+  onDefineItem: (item: T) => void;
 };
 
 let isHoverCandidate = false;
 
-const TermSelect = <T extends Item>(props: Props<T>) => {
+const TermCreate = <T extends Item>(props: Props<T>) => {
   const { item, onDefineItem, itemList } = props;
   const [filterdItemList, setFilterdItemList] = useState<T[]>([]);
   const [inputText, setInputText] = useState<string>("");
@@ -58,7 +59,7 @@ const TermSelect = <T extends Item>(props: Props<T>) => {
       </div>
       <input
         className={styles[inputState]}
-        placeholder="クリックして選択"
+        placeholder="ここに入力"
         onFocus={() => {
           setInputState("focus");
         }}
@@ -66,8 +67,11 @@ const TermSelect = <T extends Item>(props: Props<T>) => {
           if (isHoverCandidate) {
             return;
           }
-          setInputState("blur");
-          setInputText("");
+          if (inputText.length === 0) {
+            setInputState("blur");
+          } else {
+            setInputState("define");
+          }
         }}
         onChange={(v) => {
           v.preventDefault();
@@ -77,16 +81,16 @@ const TermSelect = <T extends Item>(props: Props<T>) => {
         ref={inputRef}
       />
       <button
-        type="reset"
         onClick={() => {
-          setInputState("blur");
-          onDefineItem(undefined);
-          setInputText("");
+          if (inputText.length === 0) return;
+          setInputState("define");
+          const newItem: Item = { name: inputText, id: genRandomId() };
+          onDefineItem(newItem as T);
         }}
         className={styles.check_btn}
-        style={{ display: inputText.length > 0 ? "inherit" : "none" }}
+        style={{ display: inputText.length > 0 && inputState === "focus" ? "inherit" : "none" }}
       >
-        <FontAwesomeIcon icon={faTimes} color="hsl(0, 0%, 80%)" />
+        <FontAwesomeIcon icon={faCheck} color="#228B22" />
       </button>
       {filterdItemList.length > 0 && (
         <ul className={styles.candidate + " " + styles[inputState]}>
@@ -115,4 +119,4 @@ const TermSelect = <T extends Item>(props: Props<T>) => {
     </form>
   );
 };
-export default TermSelect;
+export default TermCreate;

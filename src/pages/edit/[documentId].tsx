@@ -1,16 +1,13 @@
 import { faHistory, faList, faRedo, faSave, faTrash, faUndo } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import TermSelect from "components/TermSelect";
+import TermCreateSelect from "components/TermCreateSelect";
 import { defaultDocument } from "consts/default-value";
 import { Company, Document, Tag } from "interfaces/interfaces";
 import type { NextPage } from "next";
-import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
-import { ActionMeta } from "react-select";
 import styles from "styles/Edit.module.scss";
 import { RESTCompany, RESTDocument, RESTTag } from "utils/REST";
-const Creatable = dynamic(import("react-select/creatable"), { ssr: false });
 
 let document = defaultDocument;
 
@@ -22,11 +19,6 @@ type OptionType<T> = {
   item: T;
   value: string;
   label: string;
-};
-type JSXType<T> = {
-  item: T | undefined;
-  onSelectItem: (option: OptionType<T> | null, actionMeta: ActionMeta<OptionType<T>>) => void;
-  itemList: T[];
 };
 
 const Home: NextPage = () => {
@@ -106,7 +98,7 @@ const Home: NextPage = () => {
           <div className={styles.section}>
             <h2>項目</h2>
             <div className={styles.row}>
-              <TermSelect
+              <TermCreateSelect
                 item={tag}
                 itemList={tagList}
                 onDefineItem={(item) => {
@@ -118,7 +110,7 @@ const Home: NextPage = () => {
           <div className={styles.section}>
             <h2>企業名</h2>
             <div className={styles.row}>
-              <TermSelect
+              <TermCreateSelect
                 item={company}
                 itemList={companyList}
                 onDefineItem={(item) => {

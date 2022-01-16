@@ -39,14 +39,14 @@ const Home: NextPage = () => {
         <div className={styles.title_wrapper}>
           <div className={styles.first}>
             <div className={styles.title_img}>
-              <Image src={title} />
+              <Image src={title} alt="タイトル画像" />
             </div>
             <Link href="/list">
               <a className={styles.start_btn}>始める</a>
             </Link>
           </div>
           <div className={styles.mockup_img}>
-            <Image src={mockup} />
+            <Image src={mockup} alt="モックアップ画像" />
           </div>
         </div>
       </div>
@@ -57,7 +57,7 @@ const Home: NextPage = () => {
             <ul>
               {feature_str.map((v, idx) => {
                 return (
-                  <li>
+                  <li key={idx}>
                     <h2 className={styles.feature_title}>
                       <span className={styles.character_large}>{v.title[0]}</span>
                       {v.title.slice(1)}

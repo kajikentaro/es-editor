@@ -20,9 +20,9 @@ const Header: NextPage = () => {
     <header className={styles.header}>
       <div className={injectClassName()}>
         {router.pathname !== "/" && (
-          <Link href="/">
+          <Link href="/" passHref>
             <div className={styles.icon}>
-              <Image src={logo} height={60} width={271} />
+              <Image src={logo} height={60} width={271} alt="ロゴ" />
             </div>
           </Link>
         )}

@@ -1,8 +1,16 @@
-import { COMPANY_KEY, DOCUMENT_KEY, TAG_KEY } from "consts/key";
-import { Company, Document, Item, REST, Tag } from "interfaces/interfaces";
+import { COMPANY_KEY, DOCUMENT_KEY, HISTORY_KEY, TAG_KEY } from "consts/key";
+import {
+  Company,
+  Document,
+  DocumentHistory,
+  Item,
+  REST,
+  Tag,
+} from "interfaces/interfaces";
 import { getLocalStorage } from "utils/storage";
 import { setLocalStorage } from "./storage";
 
+// ストレージとのデータのやり取りはすべてこのクラスを介して行う。
 class RESTMother<T extends Item> implements REST<T> {
   KEY: string;
   constructor(KEY: string) {
@@ -53,3 +61,4 @@ class RESTMother<T extends Item> implements REST<T> {
 export const RESTCompany = new RESTMother<Company>(COMPANY_KEY);
 export const RESTTag = new RESTMother<Tag>(TAG_KEY);
 export const RESTDocument = new RESTMother<Document>(DOCUMENT_KEY);
+export const RESTHistory = new RESTMother<DocumentHistory>(HISTORY_KEY);

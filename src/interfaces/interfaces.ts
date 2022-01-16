@@ -7,6 +7,16 @@ export interface Document extends Item {
   wordCount: number;
 }
 
+export interface DocumentHistory extends Item {
+  id: string;
+  documentId: string; //重複があり得る
+  name: string; //使わない
+  companyId: string;
+  tagId: string;
+  text: string;
+  wordCount: number;
+}
+
 export interface Item {
   id: string;
   name: string;
@@ -18,6 +28,7 @@ export interface Tag extends Item {
   name: string;
   updateDate?: number;
 }
+
 export interface Company extends Item {
   id: string;
   name: string;

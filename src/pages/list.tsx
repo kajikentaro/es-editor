@@ -2,21 +2,29 @@ import { faFile, faSearch, faTimes } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import EditItemList from "components/EditItemList";
 import TermSelect from "components/TermSelect";
-import { Company, Document, Tag } from "interfaces/interfaces";
+import { Company, Document, PageProps, Tag } from "interfaces/interfaces";
 import type { NextPage } from "next";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
 import styles from "styles/List.module.scss";
-import { RESTCompany, RESTDocument, RESTTag } from "utils/REST";
+import { RESTCompany, RESTTag } from "utils/REST";
 import { genRandomId } from "utils/utils";
 const Select = dynamic(import("react-select"), { ssr: false });
 
-const DocumentTile: React.VFC<{ document: Document; companyList: Company[]; tagList: Tag[] }> = (props) => {
+const DocumentTile: React.VFC<{
+  document: Document;
+  companyList: Company[];
+  tagList: Tag[];
+}> = (props) => {
   return (
     <a className={styles.document} href={"/edit/" + props.document.id}>
-      <p className={styles.tec}>{RESTCompany.get(props.document.companyId, props.companyList)?.name}</p>
-      <p className={styles.tec}>{RESTTag.get(props.document.tagId, props.tagList)?.name}</p>
+      <p className={styles.tec}>
+        {RESTCompany.get(props.document.companyId, props.companyList)?.name}
+      </p>
+      <p className={styles.tec}>
+        {RESTTag.get(props.document.tagId, props.tagList)?.name}
+      </p>
       <p>{props.document.text}</p>
     </a>
   );
@@ -26,22 +34,18 @@ let searchInputText = "";
 let selectTagId = "";
 let selectCompanyId = "";
 
-const Home: NextPage = () => {
+const Home: NextPage<PageProps> = (props) => {
+  const {
+    companyList,
+    tagList,
+    documentList,
+    updateTagList,
+    updateCompanyList,
+    updateDocumentList,
+  } = props;
   const router = useRouter();
-
   const searchInputRef = useRef<HTMLInputElement>(null);
-
-  const [companyList, setCompanyList] = useState<Company[]>([]);
-  const [tagList, setTagList] = useState<Tag[]>([]);
-  const [documentList, setDocumentList] = useState<Document[]>([]);
   const [filterdDocList, setfilterdDocList] = useState<Document[]>([]);
-
-  // タグ一覧と企業一覧を取得する
-  useEffect(() => {
-    setCompanyList(RESTCompany.getList());
-    setTagList(RESTTag.getList());
-    setDocumentList(RESTDocument.getList());
-  }, []);
 
   useEffect(() => {
     setfilterdDocList(documentList);
@@ -97,7 +101,11 @@ const Home: NextPage = () => {
                   search();
                 }}
               >
-                <FontAwesomeIcon className={styles.icon} icon={faTimes} color="hsl(0, 0%, 80%)" />
+                <FontAwesomeIcon
+                  className={styles.icon}
+                  icon={faTimes}
+                  color="hsl(0, 0%, 80%)"
+                />
               </button>
             </div>
             <button className={styles.search_btn}>
@@ -146,7 +154,14 @@ const Home: NextPage = () => {
           </div>
         </button>
         {filterdDocList.map((v, idx) => {
-          return <DocumentTile document={v} key={v.id} tagList={tagList} companyList={companyList} />;
+          return (
+            <DocumentTile
+              document={v}
+              key={v.id}
+              tagList={tagList}
+              companyList={companyList}
+            />
+          );
         })}
       </div>
 
@@ -154,13 +169,25 @@ const Home: NextPage = () => {
         {tagList.length > 0 && (
           <div className={styles.first}>
             <h2>企業名前編集</h2>
-            <EditItemList items={tagList} rest={RESTTag} />
+            <EditItemList
+              items={tagList}
+              rest={RESTTag}
+              onUpdate={() => {
+                updateTagList();
+              }}
+            />
           </div>
         )}
         {companyList.length > 0 && (
           <div className={styles.second}>
             <h2>項目名編集</h2>
-            <EditItemList items={companyList} rest={RESTCompany} />
+            <EditItemList
+              items={companyList}
+              rest={RESTCompany}
+              onUpdate={() => {
+                updateCompanyList();
+              }}
+            />
           </div>
         )}
       </div>

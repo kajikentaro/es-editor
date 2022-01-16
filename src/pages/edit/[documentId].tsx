@@ -2,7 +2,7 @@ import { faHistory, faList, faRedo, faSave, faTrash, faUndo } from "@fortawesome
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import TermCreateSelect from "components/TermCreateSelect";
 import { defaultDocument } from "consts/default-value";
-import { Company, Document, Tag } from "interfaces/interfaces";
+import { Company, PageProps, Tag } from "interfaces/interfaces";
 import type { NextPage } from "next";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
@@ -15,29 +15,20 @@ let preEditUnix = 0;
 let viewingHistoryIdx = 0;
 let editHistory: string[] = [""];
 
-type OptionType<T> = {
-  item: T;
-  value: string;
-  label: string;
-};
-
-const Home: NextPage = () => {
+const Home: NextPage<PageProps> = (props) => {
   const router = useRouter();
+  const { companyList, tagList, documentList, updateTagList, updateCompanyList, updateDocumentList } = props;
   const { documentId } = router.query;
   const [documentText, setDocumentText] = useState<string>("");
   const [company, setCompany] = useState<Company | undefined>(undefined);
   const [tag, setTag] = useState<Tag | undefined>(undefined);
   const [isHistoryActive, setIsHistoryActive] = useState<boolean>(false);
   const [canEdit, setCanEdit] = useState<boolean>(true);
-  const [companyList, setCompanyList] = useState<Company[]>([]);
-  const [tagList, setTagList] = useState<Tag[]>([]);
-  const [documentList, setDocumentList] = useState<Document[]>([]);
 
   useEffect(() => {
     if (!documentId) return;
     document = RESTDocument.get(documentId as string) || document;
     if (document.id) {
-      //console.log("存在した", document);
       // 存在した場合
       editHistory[viewingHistoryIdx] = document.text;
       setCompany(RESTCompany.get(document.companyId));
@@ -45,17 +36,9 @@ const Home: NextPage = () => {
       setDocumentText(document.text);
     } else {
       // 存在しない場合
-      //console.log("存在しない", document);
       document.id = documentId as string;
     }
   }, [documentId]);
-
-  // タグ一覧と企業一覧を取得する
-  useEffect(() => {
-    setCompanyList(RESTCompany.getList());
-    setTagList(RESTTag.getList());
-    setDocumentList(RESTDocument.getList());
-  }, []);
 
   const onClickDelete = () => {
     if (!confirm("削除しますか")) return;
@@ -79,7 +62,6 @@ const Home: NextPage = () => {
     document.tagId = tag.id;
     RESTDocument.put(document.id, document);
     alert("保存しました");
-    router.reload();
   };
 
   // 過去のバージョンに戻す
@@ -96,7 +78,7 @@ const Home: NextPage = () => {
       <div className={styles.content_editor}>
         <div className={styles.first}>
           <div className={styles.section}>
-            <h2>項目</h2>
+            <h2>この企業の他の項目</h2>
             <div className={styles.row}>
               <TermCreateSelect
                 item={tag}
@@ -104,7 +86,7 @@ const Home: NextPage = () => {
                 onDefineItem={(item) => {
                   setTag(item);
                   RESTTag.put(item.id, item);
-                  setTagList(RESTTag.getList());
+                  updateTagList();
                 }}
               />
             </div>
@@ -118,7 +100,7 @@ const Home: NextPage = () => {
                 onDefineItem={(item) => {
                   setCompany(item);
                   RESTCompany.put(item.id, item);
-                  setCompanyList(RESTCompany.getList());
+                  updateCompanyList();
                 }}
               />
             </div>
@@ -128,7 +110,7 @@ const Home: NextPage = () => {
             <div className={styles.files}>
               {documentList
                 .filter((v) => {
-                  return v.companyId === document.companyId;
+                  return v.companyId === company?.id && v.id !== document.id;
                 })
                 .map((v) => {
                   return (

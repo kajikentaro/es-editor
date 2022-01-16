@@ -4,16 +4,28 @@ import { Item, REST } from "interfaces/interfaces";
 import { useEffect, useRef, useState } from "react";
 import styles from "styles/EditItemList.module.scss";
 
-const EditItem = <T extends Item>(props: { item: T; isEdit: boolean; onEditCancel: () => void; onEditClick: () => void; rest: REST<T> }) => {
-  const { item, isEdit, onEditClick, rest, onEditCancel } = props;
+const EditItem = <T extends Item>(props: {
+  item: T;
+  isEdit: boolean;
+  rest: REST<T>;
+  onEditOver: () => void;
+  onEditStart: () => void;
+}) => {
+  const { item, isEdit, onEditStart, rest, onEditOver } = props;
   const [inputText, setInputText] = useState<string>(item.name);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    if (inputRef && inputRef.current) {
+    if (isEdit && inputRef && inputRef.current) {
       inputRef.current.focus();
     }
   }, [isEdit]);
+
+  const handleUpdate = () => {
+    const newItem = { name: inputText, id: item.id };
+    rest.put(item.id, newItem as T);
+    onEditOver();
+  };
 
   return (
     <li key={item.id}>
@@ -22,44 +34,45 @@ const EditItem = <T extends Item>(props: { item: T; isEdit: boolean; onEditCance
           className={isEdit ? styles.edit : styles.noedit}
           ref={inputRef}
           value={inputText}
-          onClick={onEditClick}
+          onClick={onEditStart}
           onChange={(e) => {
             setInputText(e.target.value);
           }}
           onBlur={() => {
-            setInputText(item.name);
-            onEditCancel();
+            // 何も無い所をクリックしたとき
+            handleUpdate();
           }}
         />
       </div>
       {isEdit ? (
-        // 編集モード
+        // 編集モード時表示
         <div className={styles.right}>
+          {/* 適用ボタン */}
           <button
             onClick={() => {
-              const newItem = { name: inputText, id: item.id };
-              rest.put(item.id, newItem as T);
-              onEditCancel();
+              handleUpdate();
             }}
           >
             <FontAwesomeIcon className={styles.icon} icon={faCheck} />
           </button>
+          {/* キャンセルボタン */}
           <button
             onClick={() => {
-              console.log(item.name);
               setInputText(item.name);
-              onEditCancel();
+              onEditOver();
             }}
           >
             <FontAwesomeIcon className={styles.icon} icon={faBan} />
           </button>
         </div>
       ) : (
-        // 表示モード
+        // 表示モード時表示
         <div className={styles.right}>
-          <button onClick={onEditClick}>
+          {/* 編集ボタン */}
+          <button onClick={onEditStart}>
             <FontAwesomeIcon className={styles.icon} icon={faEdit} />
           </button>
+          {/* 削除ボタン */}
           <button
             onClick={() => {
               rest.delete_(item.id);
@@ -73,24 +86,41 @@ const EditItem = <T extends Item>(props: { item: T; isEdit: boolean; onEditCance
   );
 };
 
-const EditItemList = <T extends Item>(props: { items: T[]; rest: REST<T> }) => {
+const EditItemList = <T extends Item>(props: {
+  items: T[];
+  rest: REST<T>;
+  onUpdate: () => void;
+}) => {
   const [editingIdx, setEditingIdx] = useState<number>(-1);
-  const { items, rest } = props;
-  const onEditClick = (idx: number) => {
+  const { items, rest, onUpdate } = props;
+  const onEditStart = (idx: number) => {
     return () => {
       setEditingIdx(idx);
     };
   };
-  const onEditCancel = () => {
+  const onEditOver = () => {
     setEditingIdx(-1);
+    onUpdate();
   };
   if (items.length === 0) {
     return <></>;
   }
+  const handOverProps = {
+    onEditOver,
+    rest,
+  };
   return (
     <ul className={styles.edit_item_list}>
       {items.map((v, idx) => {
-        return <EditItem item={v} key={v.id} isEdit={editingIdx === idx} onEditCancel={onEditCancel} onEditClick={onEditClick(idx)} rest={rest} />;
+        return (
+          <EditItem
+            item={v}
+            key={v.id}
+            isEdit={editingIdx === idx}
+            onEditStart={onEditStart(idx)}
+            {...handOverProps}
+          />
+        );
       })}
     </ul>
   );

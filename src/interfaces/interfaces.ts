@@ -29,3 +29,12 @@ export interface REST<T extends Item> {
   put: (id: string, body: T) => void;
   delete_: (id: string) => T[];
 }
+
+export interface PageProps {
+  companyList: Company[];
+  tagList: Tag[];
+  documentList: Document[];
+  updateCompanyList: () => void;
+  updateTagList: () => void;
+  updateDocumentList: () => void;
+}

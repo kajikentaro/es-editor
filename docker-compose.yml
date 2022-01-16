@@ -1,0 +1,17 @@
+version: "3.2"
+
+services:
+  develop:
+    container_name: es_manager_dev
+    build:
+      context: .
+    tty: true
+    volumes:
+      - type: volume
+        source: develop_volume
+        target: /root/
+    ports:
+      - 3000:3000
+
+volumes:
+  develop_volume:

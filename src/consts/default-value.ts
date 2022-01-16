@@ -1,7 +1,8 @@
 import { Document } from "interfaces/interfaces";
 
 export const defaultDocument: Document = {
-  documentId: "",
+  id: "",
+  name: "",
   companyId: "",
   tagId: "",
   text: "",

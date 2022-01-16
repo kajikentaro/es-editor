@@ -25,18 +25,18 @@ const Home: NextPage = () => {
   const router = useRouter();
   const { documentId } = router.query;
   const [documentText, setDocumentText] = useState<string>("");
-  const [companyList, setCompanyList] = useState<Company[]>([]);
-  const [tagList, setTagList] = useState<Tag[]>([]);
-  const [documentList, setDocumentList] = useState<Document[]>([]);
   const [company, setCompany] = useState<Company | undefined>(undefined);
   const [tag, setTag] = useState<Tag | undefined>(undefined);
   const [isHistoryActive, setIsHistoryActive] = useState<boolean>(false);
   const [canEdit, setCanEdit] = useState<boolean>(true);
+  const [companyList, setCompanyList] = useState<Company[]>([]);
+  const [tagList, setTagList] = useState<Tag[]>([]);
+  const [documentList, setDocumentList] = useState<Document[]>([]);
 
   useEffect(() => {
     if (!documentId) return;
     document = RESTDocument.get(documentId as string) || document;
-    if (document.documentId) {
+    if (document.id) {
       //console.log("存在した", document);
       // 存在した場合
       editHistory[viewingHistoryIdx] = document.text;
@@ -46,7 +46,7 @@ const Home: NextPage = () => {
     } else {
       // 存在しない場合
       //console.log("存在しない", document);
-      document.documentId = documentId as string;
+      document.id = documentId as string;
     }
   }, [documentId]);
 
@@ -59,14 +59,13 @@ const Home: NextPage = () => {
 
   const onClickDelete = () => {
     if (!confirm("削除しますか")) return;
-    RESTDocument.delete_(document.documentId);
+    RESTDocument.delete_(document.id);
     router.push("/list");
   };
 
   const onClickSave = () => {
     document.text = editHistory[viewingHistoryIdx];
     document.wordCount = editHistory[viewingHistoryIdx].length;
-    RESTDocument.put(document.documentId, document);
     // TODO: アラートではなくメッセージを出す
     if (!company) {
       alert("企業名を入力してください");
@@ -76,8 +75,9 @@ const Home: NextPage = () => {
       alert("項目名を入力してください");
       return;
     }
-    RESTCompany.put(document.companyId, company);
-    RESTTag.put(document.tagId, tag);
+    document.companyId = company.id;
+    document.tagId = tag.id;
+    RESTDocument.put(document.id, document);
     alert("保存しました");
     router.reload();
   };
@@ -102,7 +102,9 @@ const Home: NextPage = () => {
                 item={tag}
                 itemList={tagList}
                 onDefineItem={(item) => {
+                  setTag(item);
                   RESTTag.put(item.id, item);
+                  setTagList(RESTTag.getList());
                 }}
               />
             </div>
@@ -114,7 +116,9 @@ const Home: NextPage = () => {
                 item={company}
                 itemList={companyList}
                 onDefineItem={(item) => {
+                  setCompany(item);
                   RESTCompany.put(item.id, item);
+                  setCompanyList(RESTCompany.getList());
                 }}
               />
             </div>

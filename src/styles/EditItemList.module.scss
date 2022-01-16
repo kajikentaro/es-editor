@@ -1,0 +1,49 @@
+@use "common" as c;
+.edit_item_list {
+  width: 100%;
+  max-height: 30rem;
+  overflow-y: scroll;
+  list-style: none;
+  border: 1px solid #ccc;
+  background-color: white;
+  box-sizing: content-box;
+  &.focus {
+    display: inherit;
+  }
+  li {
+    padding: 1rem;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    //&:hover {
+    //background-color: c.$background-color-a;
+    //}
+    .input_wrapper {
+      flex: 1;
+      input {
+        width: 100%;
+        border: none;
+        outline: none;
+        &.edit {
+          border-bottom: 2px solid #aaa;
+        }
+      }
+    }
+    .right {
+      display: flex;
+      button {
+        background-color: white;
+        border: none;
+        cursor: pointer;
+        height: 2rem;
+        display: flex;
+        align-items: center;
+        svg {
+          margin: 0.2em;
+          width: 1em;
+        }
+      }
+    }
+  }
+}

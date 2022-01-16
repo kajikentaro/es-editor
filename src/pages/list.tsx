@@ -1,5 +1,6 @@
 import { faFile, faSearch, faTimes } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import EditItemList from "components/EditItemList";
 import TermSelect from "components/TermSelect";
 import { Company, Document, Tag } from "interfaces/interfaces";
 import type { NextPage } from "next";
@@ -13,7 +14,7 @@ const Select = dynamic(import("react-select"), { ssr: false });
 
 const DocumentTile: React.VFC<{ document: Document; companyList: Company[]; tagList: Tag[] }> = (props) => {
   return (
-    <a className={styles.document} href={"/edit/" + props.document.documentId}>
+    <a className={styles.document} href={"/edit/" + props.document.id}>
       <p className={styles.tec}>{RESTCompany.get(props.document.companyId, props.companyList)?.name}</p>
       <p className={styles.tec}>{RESTTag.get(props.document.tagId, props.tagList)?.name}</p>
       <p>{props.document.text}</p>
@@ -145,8 +146,23 @@ const Home: NextPage = () => {
           </div>
         </button>
         {filterdDocList.map((v, idx) => {
-          return <DocumentTile document={v} key={v.documentId} tagList={tagList} companyList={companyList} />;
+          return <DocumentTile document={v} key={v.id} tagList={tagList} companyList={companyList} />;
         })}
+      </div>
+
+      <div className={styles.edit_item}>
+        {tagList.length > 0 && (
+          <div className={styles.first}>
+            <h2>企業名前編集</h2>
+            <EditItemList items={tagList} rest={RESTTag} />
+          </div>
+        )}
+        {companyList.length > 0 && (
+          <div className={styles.second}>
+            <h2>項目名編集</h2>
+            <EditItemList items={companyList} rest={RESTCompany} />
+          </div>
+        )}
       </div>
     </div>
   );

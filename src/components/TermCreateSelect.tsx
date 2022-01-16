@@ -39,6 +39,21 @@ const TermCreate = <T extends Item>(props: Props<T>) => {
     }
   }, [inputText, itemList]);
 
+  const handleDefineItem = () => {
+    if (inputText.length === 0) return;
+    const sameItem = filterdItemList.find((v) => {
+      return v.name === inputText;
+    });
+    console.log(sameItem);
+    if (sameItem) {
+      onDefineItem(sameItem);
+    } else {
+      const newItem: Item = { name: inputText, id: genRandomId() };
+      onDefineItem(newItem as T);
+    }
+    setInputState("define");
+  };
+
   return (
     <form
       className={styles.term_select + " " + styles[inputState]}
@@ -64,13 +79,8 @@ const TermCreate = <T extends Item>(props: Props<T>) => {
           setInputState("focus");
         }}
         onBlur={() => {
-          if (isHoverCandidate) {
-            return;
-          }
-          if (inputText.length === 0) {
-            setInputState("blur");
-          } else {
-            setInputState("define");
+          if (!isHoverCandidate) {
+            handleDefineItem();
           }
         }}
         onChange={(v) => {
@@ -82,10 +92,7 @@ const TermCreate = <T extends Item>(props: Props<T>) => {
       />
       <button
         onClick={() => {
-          if (inputText.length === 0) return;
-          setInputState("define");
-          const newItem: Item = { name: inputText, id: genRandomId() };
-          onDefineItem(newItem as T);
+          handleDefineItem();
         }}
         className={styles.check_btn}
         style={{ display: inputText.length > 0 && inputState === "focus" ? "inherit" : "none" }}

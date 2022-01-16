@@ -8,7 +8,7 @@ import styles from "styles/Home.module.scss";
 const feature_str = [
   {
     title: "バージョン管理",
-    desc: "変更履歴をすべて保存",
+    desc: "変更履歴をすべて保存し、好きなバージョンにロールバック",
   },
   {
     title: "検索機能",

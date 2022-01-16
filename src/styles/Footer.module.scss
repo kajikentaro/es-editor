@@ -1,0 +1,59 @@
+@use "common" as c;
+
+.footer {
+  background-color: c.$base-color-a;
+  img {
+    width: 30px;
+  }
+  p,
+  a {
+    color: white;
+    text-decoration: none;
+    font-size: 0.9rem;
+    &:visited {
+      color: white;
+    }
+  }
+}
+
+.content {
+  max-width: c.$content-width;
+  margin: 0 auto;
+}
+
+.section_list {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  padding: 3rem;
+  @include c.mq(md) {
+    padding: 1.5rem;
+  }
+  .section {
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+
+    .section_title {
+      text-align: center;
+      padding: 0.3rem;
+    }
+
+    .link {
+      padding: 4px 0;
+      display: flex;
+      align-items: center;
+      svg {
+        width: 1em;
+        margin-right: 4px;
+      }
+    }
+  }
+}
+
+.footer_message {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  padding: 0 1rem 1rem 1rem;
+}

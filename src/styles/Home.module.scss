@@ -10,6 +10,7 @@
     flex-direction: row;
     max-width: c.$content-width;
     margin: 0 auto;
+    border-top: 1px solid white;
 
     .first,
     .mockup_img {
@@ -42,6 +43,7 @@
     max-width: c.$content-width;
     margin: 0 auto;
     background-color: c.$base-color-a;
+    border-bottom: 1px solid white;
   }
 }
 
@@ -58,17 +60,17 @@
       padding-bottom: 6rem;
       list-style: none;
       .feature_title {
-        font-size: 2rem;
+        font-size: 2.7rem;
         .character_large {
-          font-size: 5rem;
-          font-weight: bolder;
-          margin-right: 10px;
+          font-size: 4rem;
+          font-weight: normal;
+          margin-right: 0.05em;
         }
         font-weight: normal;
       }
       .desc {
         padding-top: 1rem;
-        font-size: 1.2rem;
+        font-size: 1.3rem;
       }
     }
   }

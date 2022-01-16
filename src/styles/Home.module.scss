@@ -1,8 +1,4 @@
 @use "common" as c;
-.content {
-  max-width: c.$content-width;
-  margin: 0 auto;
-}
 
 .title_bg {
   background-color: c.$base-color-a;
@@ -12,6 +8,8 @@
     width: 100%;
     display: flex;
     flex-direction: row;
+    max-width: c.$content-width;
+    margin: 0 auto;
 
     .first,
     .mockup_img {
@@ -33,6 +31,44 @@
         color: c.$base-color-a;
         font-size: 1.3rem;
         font-weight: bolder;
+      }
+    }
+  }
+}
+
+.content_bg {
+  background-color: c.$base-color-a;
+  .content {
+    max-width: c.$content-width;
+    margin: 0 auto;
+    background-color: c.$base-color-a;
+  }
+}
+
+.feature {
+  padding: 0 5rem;
+  .title {
+    font-size: 4rem;
+    color: white;
+    padding-bottom: 5rem;
+  }
+  ul {
+    li {
+      color: white;
+      padding-bottom: 6rem;
+      list-style: none;
+      .feature_title {
+        font-size: 2rem;
+        .character_large {
+          font-size: 5rem;
+          font-weight: bolder;
+          margin-right: 10px;
+        }
+        font-weight: normal;
+      }
+      .desc {
+        padding-top: 1rem;
+        font-size: 1.2rem;
       }
     }
   }

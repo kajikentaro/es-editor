@@ -1,38 +1,77 @@
 @use "common" as c;
-.content {
-  max-width: c.$content-width;
-  margin: 0 auto;
-}
 
-.title_wrapper {
-  height: 300px;
-  width: 100%;
-  display: flex;
-  flex-direction: row;
-  .first {
-    width: 50%;
+.title_bg {
+  background-color: c.$base-color-a;
+  .title_wrapper {
+    //height: calc(100vh - c.$header-height);
+    height: 600px;
+    width: 100%;
     display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    h2 {
-      font-size: 2rem;
+    flex-direction: row;
+    max-width: c.$content-width;
+    margin: 0 auto;
+    border-top: 1px solid white;
+
+    .first,
+    .mockup_img {
+      width: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
-    h1 {
-      font-size: 3rem;
+
+    .first {
+      display: flex;
+      flex-direction: column;
+      .start_btn {
+        background-color: white;
+        padding: 0.7rem 2rem;
+        margin-top: 3.5rem;
+        border-radius: 7px;
+        text-decoration: none;
+        color: c.$base-color-a;
+        font-size: 1.3rem;
+        font-weight: bolder;
+      }
     }
   }
+}
 
-  .second {
-    width: 50%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    .image {
-      height: 200px;
-      width: 200px;
-      background-color: black;
+.content_bg {
+  background-color: c.$base-color-a;
+  .content {
+    max-width: c.$content-width;
+    margin: 0 auto;
+    background-color: c.$base-color-a;
+    border-bottom: 1px solid white;
+  }
+}
+
+.feature {
+  padding: 0 5rem;
+  .title {
+    font-size: 4rem;
+    color: white;
+    padding-bottom: 5rem;
+  }
+  ul {
+    li {
+      color: white;
+      padding-bottom: 6rem;
+      list-style: none;
+      .feature_title {
+        font-size: 2.7rem;
+        .character_large {
+          font-size: 4rem;
+          font-weight: normal;
+          margin-right: 0.05em;
+        }
+        font-weight: normal;
+      }
+      .desc {
+        padding-top: 1rem;
+        font-size: 1.3rem;
+      }
     }
   }
 }

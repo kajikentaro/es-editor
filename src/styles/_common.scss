@@ -9,7 +9,7 @@ $black-color-b: #474747;
 $white-color-a: #eeeeee;
 $white-color-b: #fafafa;
 
-$header-height: 50px;
+$header-height: 65px;
 
 $hr-color: #ccc;
 $background-color-a: #eaf2ff;
@@ -29,5 +29,18 @@ $opacity-hover: 0.8;
   }
   &:hover {
     opacity: $opacity-hover;
+  }
+}
+
+$breakpoints: (
+  "sm": 576px,
+  "md": 768px,
+  "lg": 992px,
+  "xl": 1200px,
+);
+
+@mixin mq($size) {
+  @media screen and (max-width: #{map-get($breakpoints, $size)}) {
+    @content;
   }
 }

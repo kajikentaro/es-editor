@@ -1,13 +1,35 @@
+import logo from "img/logo.png";
 import type { NextPage } from "next";
-import Head from "next/head";
 import Image from "next/image";
+import Link from "next/link";
+import { useRouter } from "next/router";
 import styles from "styles/Header.module.scss";
 
 const Header: NextPage = () => {
+  const router = useRouter();
+
+  const injectClassName = () => {
+    let className = styles.content;
+    if (router.pathname === "/") {
+      className += " " + styles.reverse;
+    }
+    return className;
+  };
+
   return (
     <header className={styles.header}>
-      <div className={styles.content}>
-        <div className={styles.icon} />
+      <div className={injectClassName()}>
+        {router.pathname !== "/" && (
+          <Link href="/">
+            <div className={styles.icon}>
+              <Image src={logo} height={60} width={271} />
+            </div>
+          </Link>
+        )}
+        <div className={styles.operation_btn}>
+          <Link href="/">サイトトップ</Link>
+          <Link href="/list">一覧</Link>
+        </div>
       </div>
     </header>
   );

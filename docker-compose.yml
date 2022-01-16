@@ -1,10 +1,11 @@
 version: "3.2"
 
 services:
-  develop:
-    container_name: es_manager_dev
+  dev:
+    container_name: es_editor_prod
     build:
       context: .
+      dockerfile: dev.Dockerfile
     tty: true
     volumes:
       - type: volume
@@ -12,6 +13,16 @@ services:
         target: /root/
     ports:
       - 3000:3000
+
+  # ローカルにgit cloneしておく必要有り
+  prod:
+    container_name: es_editor_prod
+    build:
+      context: .
+      dockerfile: prod.Dockerfile
+    tty: true
+    ports:
+      - 4125:3000
 
 volumes:
   develop_volume:

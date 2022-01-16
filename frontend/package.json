@@ -1,5 +1,5 @@
 {
-  "name": "es-manager",
+  "name": "es-editor",
   "private": true,
   "scripts": {
     "dev": "next dev",

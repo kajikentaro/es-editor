@@ -2,7 +2,7 @@ version: "3.2"
 
 services:
   dev:
-    container_name: es_editor_prod
+    container_name: es_editor_dev
     build:
       context: .
       dockerfile: dev.Dockerfile

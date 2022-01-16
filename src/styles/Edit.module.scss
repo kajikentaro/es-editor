@@ -28,40 +28,36 @@
       }
     }
   }
-  .file_list {
+
+  // この企業の他の文章, 変更履歴
+  .other_document {
     display: flex;
     flex-direction: column;
     flex: 1;
     margin-bottom: 0;
-    .files {
+    ul.list_wrapper {
+      margin: 1rem 0.5rem;
       flex: 1;
-      p {
-        margin: 1rem;
-        font-size: 1.5rem;
-        width: calc(100% - 2rem);
-        border: #aaa solid 1px;
+      li {
         background-color: white;
-        padding: 0.5rem;
-      }
-      .tag {
-        width: calc(100% - 2rem);
-        margin: 0.3rem 1rem;
-        background-color: white;
-        border: #aaa solid 2px;
+        padding: 0.8rem 1rem;
+        list-style: none;
+        border: #ccc solid 1px;
       }
     }
-    button.active,
-    button.disable {
-      @include c.font-awesome-btn;
-      width: 50%;
-      height: 3rem;
-      margin: 0;
-      border-radius: none;
-      justify-content: center;
-      border: none;
-      &.active {
-        background-color: c.$base-color-a;
-        color: white;
+    .toggle_btn_wrapper {
+      button {
+        @include c.font-awesome-btn;
+        width: 50%;
+        height: 3rem;
+        margin: 0;
+        border-radius: none;
+        justify-content: center;
+        border: none;
+        &.active {
+          background-color: c.$base-color-a;
+          color: white;
+        }
       }
     }
   }

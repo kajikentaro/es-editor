@@ -39,6 +39,7 @@ const Home: NextPage<PageProps> = (props) => {
   const [isHistoryActive, setIsHistoryActive] = useState<boolean>(false);
   const [canEdit, setCanEdit] = useState<boolean>(true);
 
+  // 文書読み込み
   useEffect(() => {
     if (!documentId) return;
     document = RESTDocument.get(documentId as string) || document;
@@ -63,19 +64,11 @@ const Home: NextPage<PageProps> = (props) => {
   const onClickSave = () => {
     document.text = editHistory[viewingHistoryIdx];
     document.wordCount = editHistory[viewingHistoryIdx].length;
-    // TODO: アラートではなくメッセージを出す
-    if (!company) {
-      alert("企業名を入力してください");
-      return;
-    }
-    if (!tag) {
-      alert("項目名を入力してください");
-      return;
-    }
-    document.companyId = company.id;
-    document.tagId = tag.id;
+    document.companyId = company?.id || "";
+    document.tagId = tag?.id || "";
     RESTDocument.put(document.id, document);
     updateDocumentList();
+    // TODO: アラートではなくメッセージを出す
     alert("保存しました");
   };
 
@@ -93,7 +86,7 @@ const Home: NextPage<PageProps> = (props) => {
       <div className={styles.content_editor}>
         <div className={styles.first}>
           <div className={styles.section}>
-            <h2>この企業の他の項目</h2>
+            <h2>項目名</h2>
             <div className={styles.row}>
               <TermCreateSelect
                 item={tag}
@@ -120,18 +113,18 @@ const Home: NextPage<PageProps> = (props) => {
               />
             </div>
           </div>
-          <div className={styles.section + " " + styles.file_list}>
-            <h2>目次</h2>
-            <div className={styles.files}>
+          <div className={styles.section + " " + styles.other_document}>
+            <h2>この企業の他の文章</h2>
+            <ul className={styles.list_wrapper}>
               {documentList
                 .filter((v) => {
                   return v.companyId === company?.id && v.id !== document.id;
                 })
                 .map((v) => {
                   return (
-                    <button
-                      className={styles.tag}
+                    <li
                       key={v.tagId}
+                      className={styles.tag}
                       onMouseOver={() => {
                         setDocumentText(v.text);
                         setCanEdit(false);
@@ -141,12 +134,12 @@ const Home: NextPage<PageProps> = (props) => {
                         setCanEdit(true);
                       }}
                     >
-                      {RESTTag.get(v.tagId, tagList)?.name}
-                    </button>
+                      {RESTTag.get(v.tagId, tagList)?.name || "項目未設定"}
+                    </li>
                   );
                 })}
-            </div>
-            <div className={styles.button}>
+            </ul>
+            <div className={styles.toggle_btn_wrapper}>
               <button
                 className={!isHistoryActive ? styles.active : styles.disable}
                 onClick={() => {

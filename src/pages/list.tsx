@@ -4,37 +4,36 @@ import EditItemList from "components/EditItemList";
 import TermSelect from "components/TermSelect";
 import { Company, Document, PageProps, Tag } from "interfaces/interfaces";
 import type { NextPage } from "next";
-import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
 import styles from "styles/List.module.scss";
 import { RESTCompany, RESTTag } from "utils/REST";
 import { genRandomId } from "utils/utils";
-const Select = dynamic(import("react-select"), { ssr: false });
 
+// 文書のタイル
 const DocumentTile: React.VFC<{
   document: Document;
   companyList: Company[];
   tagList: Tag[];
 }> = (props) => {
+  const attachedCompany = RESTCompany.get(props.document.companyId, props.companyList);
+  const attachedTag = RESTTag.get(props.document.tagId, props.tagList);
+
   return (
     <a className={styles.document} href={"/edit/" + props.document.id}>
-      <p className={styles.tec}>
-        {RESTCompany.get(props.document.companyId, props.companyList)?.name}
-      </p>
-      <p className={styles.tec}>
-        {RESTTag.get(props.document.tagId, props.tagList)?.name}
-      </p>
+      <p className={styles.tec}>{attachedCompany?.name || "企業未選択"}</p>
+      <p className={styles.tec}>{attachedTag?.name || "項目未選択"}</p>
       <p>{props.document.text}</p>
     </a>
   );
 };
 
+// 選択中のアイテムと検索中の文字列
 let searchInputText = "";
 let selectTagId = "";
 let selectCompanyId = "";
 
-const Home: NextPage<PageProps> = (props) => {
+const List: NextPage<PageProps> = (props) => {
   const {
     companyList,
     tagList,
@@ -195,4 +194,4 @@ const Home: NextPage<PageProps> = (props) => {
   );
 };
 
-export default Home;
+export default List;

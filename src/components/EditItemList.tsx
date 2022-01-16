@@ -4,6 +4,7 @@ import { Item, REST } from "interfaces/interfaces";
 import { useEffect, useRef, useState } from "react";
 import styles from "styles/EditItemList.module.scss";
 
+// リスト内要素
 const EditItem = <T extends Item>(props: {
   item: T;
   isEdit: boolean;
@@ -76,6 +77,7 @@ const EditItem = <T extends Item>(props: {
           <button
             onClick={() => {
               rest.delete_(item.id);
+              onEditOver();
             }}
           >
             <FontAwesomeIcon className={styles.icon} icon={faTrash} />
@@ -86,29 +88,36 @@ const EditItem = <T extends Item>(props: {
   );
 };
 
+// 編集ボタン、削除ボタン等の機能がついたリスト
 const EditItemList = <T extends Item>(props: {
   items: T[];
   rest: REST<T>;
   onUpdate: () => void;
 }) => {
-  const [editingIdx, setEditingIdx] = useState<number>(-1);
   const { items, rest, onUpdate } = props;
+
+  // 編集中の要素のインデックス
+  const [editingIdx, setEditingIdx] = useState<number>(-1);
+
+  // 編集ボタンが押されたときにeditingIdxを変更する
   const onEditStart = (idx: number) => {
     return () => {
       setEditingIdx(idx);
     };
   };
+
+  // 編集が終わったとき
   const onEditOver = () => {
     setEditingIdx(-1);
     onUpdate();
   };
-  if (items.length === 0) {
-    return <></>;
-  }
+
+  // 要素に渡すprops
   const handOverProps = {
     onEditOver,
     rest,
   };
+
   return (
     <ul className={styles.edit_item_list}>
       {items.map((v, idx) => {

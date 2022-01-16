@@ -1,4 +1,11 @@
-import { faHistory, faList, faRedo, faSave, faTrash, faUndo } from "@fortawesome/free-solid-svg-icons";
+import {
+  faHistory,
+  faList,
+  faRedo,
+  faSave,
+  faTrash,
+  faUndo,
+} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import TermCreateSelect from "components/TermCreateSelect";
 import { defaultDocument } from "consts/default-value";
@@ -17,7 +24,14 @@ let editHistory: string[] = [""];
 
 const Home: NextPage<PageProps> = (props) => {
   const router = useRouter();
-  const { companyList, tagList, documentList, updateTagList, updateCompanyList, updateDocumentList } = props;
+  const {
+    companyList,
+    tagList,
+    documentList,
+    updateTagList,
+    updateCompanyList,
+    updateDocumentList,
+  } = props;
   const { documentId } = router.query;
   const [documentText, setDocumentText] = useState<string>("");
   const [company, setCompany] = useState<Company | undefined>(undefined);
@@ -61,6 +75,7 @@ const Home: NextPage<PageProps> = (props) => {
     document.companyId = company.id;
     document.tagId = tag.id;
     RESTDocument.put(document.id, document);
+    updateDocumentList();
     alert("保存しました");
   };
 
@@ -195,7 +210,10 @@ const Home: NextPage<PageProps> = (props) => {
                 const nowUnix = new Date().getTime();
                 if (viewingHistoryIdx !== editHistory.length - 1) {
                   // UNDO後に編集した場合
-                  const removeLen = Math.min(editHistory.length - viewingHistoryIdx - 1, editHistory.length - 1);
+                  const removeLen = Math.min(
+                    editHistory.length - viewingHistoryIdx - 1,
+                    editHistory.length - 1
+                  );
                   for (let i = 0; i < removeLen; i++) {
                     editHistory.pop();
                   }

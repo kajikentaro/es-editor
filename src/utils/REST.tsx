@@ -10,7 +10,16 @@ class RESTMother<T extends Item> implements REST<T> {
   }
   // リスト取得
   getList() {
-    const res = getLocalStorage(this.KEY) as T[];
+    let res = getLocalStorage(this.KEY) as T[];
+    res = res.sort((a: T, b: T) => {
+      const aTime = a.updateDate || 0;
+      const bTime = a.updateDate || 0;
+      if (aTime < bTime) {
+        return 1;
+      } else {
+        return -1;
+      }
+    });
     return res;
   }
   // 取得
@@ -27,6 +36,7 @@ class RESTMother<T extends Item> implements REST<T> {
   // 更新. なかったら新規作成
   put(id: string, body: T) {
     let list = this.delete_(id);
+    body.updateDate = new Date().getTime();
     list.push(body);
     setLocalStorage(this.KEY, list);
   }

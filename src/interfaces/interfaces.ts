@@ -10,15 +10,18 @@ export interface Document extends Item {
 export interface Item {
   id: string;
   name: string;
+  updateDate?: number;
 }
 
 export interface Tag extends Item {
   id: string;
   name: string;
+  updateDate?: number;
 }
 export interface Company extends Item {
   id: string;
   name: string;
+  updateDate?: number;
 }
 
 export interface REST<T extends Item> {

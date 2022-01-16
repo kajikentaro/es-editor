@@ -65,7 +65,7 @@
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  border-bottom: c.$hr-color solid 2px;
+  //border-bottom: c.$hr-color solid 2px;
 
   .new_document {
     margin: 0.7rem;
@@ -108,15 +108,16 @@
 .edit_item {
   padding: 2rem;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   .first,
   .second {
     width: 50%;
-  }
-  h2 {
-    font-size: 1rem;
-    font-weight: 540;
-    margin-left: 4px;
-    margin-bottom: 2px;
+    padding: 1rem;
+    h2 {
+      font-size: 1rem;
+      font-weight: 540;
+      margin-left: 4px;
+      margin-bottom: 3px;
+    }
   }
 }

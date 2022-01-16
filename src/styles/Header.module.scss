@@ -3,6 +3,7 @@
 .header {
   background-color: c.$base-color-a;
 }
+
 .content {
   margin: 0 auto;
   max-width: c.$content_width;
@@ -11,9 +12,21 @@
   background-color: c.$base-color-a;
   display: flex;
   align-items: center;
-}
-.icon {
-  height: 30px;
-  width: 60px;
-  background-color: white;
+  justify-content: space-between;
+
+  .icon {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+  }
+  .operation_btn {
+    a {
+      text-decoration: none;
+      border-radius: 20px;
+      font-size: 1.1rem;
+      color: white;
+      height: 100%;
+      padding: 1rem;
+    }
+  }
 }

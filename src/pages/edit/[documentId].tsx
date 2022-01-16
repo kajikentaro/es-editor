@@ -1,15 +1,15 @@
 import { faHistory, faList, faRedo, faSave, faTrash, faUndo } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import TermSelect from "components/TermSelect";
 import { defaultDocument } from "consts/default-value";
 import { Company, Document, Tag } from "interfaces/interfaces";
 import type { NextPage } from "next";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
-import { ActionMeta, GroupBase } from "react-select";
+import { ActionMeta } from "react-select";
 import styles from "styles/Edit.module.scss";
 import { RESTCompany, RESTDocument, RESTTag } from "utils/REST";
-import { genRandomId } from "utils/utils";
 const Creatable = dynamic(import("react-select/creatable"), { ssr: false });
 
 let document = defaultDocument;
@@ -27,40 +27,6 @@ type JSXType<T> = {
   item: T | undefined;
   onSelectItem: (option: OptionType<T> | null, actionMeta: ActionMeta<OptionType<T>>) => void;
   itemList: T[];
-};
-
-// 企業名のセレクタ
-const CompanyJSX = <T extends Company | Tag>(props: JSXType<T>) => {
-  const { item, onSelectItem, itemList } = props;
-
-  const Select = <TOption, IsMulti extends boolean = false, Group extends GroupBase<TOption> = GroupBase<TOption>>(props: TOption | IsMulti | Group) => {
-    return <Creatable {...props} className={styles.creatable} />;
-  };
-  //console.log("セレクタ構築", item);
-  const SelectProps = {
-    onChange: onSelectItem,
-    noOptionsMessage: () => {
-      return "入力中";
-    },
-    placeholder: "ここに入力",
-    ...(item && { defaultValue: { label: item?.name } }),
-    formatCreateLabel: (inputValue: string) => {
-      if (item) {
-        return item.name + " を " + inputValue + " に名前変更";
-      } else {
-        return inputValue + " を新規作成";
-      }
-    },
-    options: itemList.map((v) => {
-      return {
-        value: v.name,
-        label: v.name,
-        item: v,
-      };
-    }),
-  };
-  //console.log(SelectProps);
-  return <Select {...SelectProps} />;
 };
 
 const Home: NextPage = () => {
@@ -98,54 +64,6 @@ const Home: NextPage = () => {
     setTagList(RESTTag.getList());
     setDocumentList(RESTDocument.getList());
   }, []);
-
-  // タグのセレクタ選択時
-  const onSelectTag = (option: OptionType<Tag> | null, actionMeta: ActionMeta<OptionType<Tag>>) => {
-    if (!option || !option.value) return;
-    if (actionMeta.action === "create-option") {
-      if (!tag) {
-        document.tagId = genRandomId();
-      }
-      const newTag = {
-        name: option.value,
-        id: document.tagId,
-      };
-      RESTTag.put(newTag.id, newTag);
-      setTagList(RESTTag.getList());
-      setTag(newTag);
-    }
-    if (actionMeta.action === "select-option") {
-      document.tagId = option.item.id;
-      setTag({
-        name: option.item.name,
-        id: option.item.id,
-      });
-    }
-  };
-
-  // 企業名のセレクタ選択時
-  const onSelectCompany = (option: OptionType<Company> | null, actionMeta: ActionMeta<OptionType<Company>>) => {
-    if (!option || !option.value) return;
-    if (actionMeta.action === "create-option") {
-      if (!company) {
-        document.companyId = genRandomId();
-      }
-      const newCompany = {
-        name: option.value,
-        id: document.companyId,
-      };
-      RESTCompany.put(newCompany.id, newCompany);
-      setCompanyList(RESTCompany.getList());
-      setCompany(newCompany);
-    }
-    if (actionMeta.action === "select-option") {
-      document.companyId = option.item.id;
-      setCompany({
-        name: option.item.name,
-        id: option.item.id,
-      });
-    }
-  };
 
   const onClickDelete = () => {
     if (!confirm("削除しますか")) return;
@@ -188,13 +106,25 @@ const Home: NextPage = () => {
           <div className={styles.section}>
             <h2>項目</h2>
             <div className={styles.row}>
-              <CompanyJSX item={tag} onSelectItem={onSelectTag} itemList={tagList} />
+              <TermSelect
+                item={tag}
+                itemList={tagList}
+                onDefineItem={(item) => {
+                  RESTTag.put(item.id, item);
+                }}
+              />
             </div>
           </div>
           <div className={styles.section}>
             <h2>企業名</h2>
             <div className={styles.row}>
-              <CompanyJSX item={company} onSelectItem={onSelectCompany} itemList={companyList} />
+              <TermSelect
+                item={company}
+                itemList={companyList}
+                onDefineItem={(item) => {
+                  RESTCompany.put(item.id, item);
+                }}
+              />
             </div>
           </div>
           <div className={styles.section + " " + styles.file_list}>

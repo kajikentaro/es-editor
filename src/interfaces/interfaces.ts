@@ -6,11 +6,16 @@ export interface Document {
   wordCount: number;
 }
 
-export interface Tag {
+export interface Item {
   id: string;
   name: string;
 }
-export interface Company {
+
+export interface Tag extends Item {
+  id: string;
+  name: string;
+}
+export interface Company extends Item {
   id: string;
   name: string;
 }

@@ -1,0 +1,94 @@
+@use "common" as c;
+
+$font-size: 1.2rem;
+$input-height: 1.6rem;
+
+.term_select {
+  width: calc(100% - 16px);
+  height: $input-height;
+  position: relative;
+  border: #ccc solid 1px;
+  border-radius: 5px;
+  background-color: white;
+  padding: 0.3rem;
+  box-sizing: content-box;
+  padding: 8px;
+  &.focus {
+    border: c.$base-color-c solid 2px;
+    padding: 7px;
+  }
+  input {
+    cursor: pointer;
+    width: 100%;
+    border: none;
+    outline: none;
+    font-size: $font-size;
+    height: $input-height;
+    &.define {
+      width: 0;
+      display: inline;
+      padding: 0;
+    }
+  }
+  .define_text {
+    cursor: pointer;
+    display: none;
+    width: 100%;
+    height: 100%;
+    &.define {
+      display: flex;
+    }
+    p {
+      display: inline;
+      overflow: hidden;
+      font-size: $font-size;
+      border-radius: 7px;
+      background-color: #ddd;
+      height: $input-height;
+      padding: 1px 10px;
+      white-space: nowrap;
+    }
+  }
+  .check_btn {
+    display: none;
+    position: absolute;
+    right: 5px;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+    outline: none;
+    border: none;
+    background-color: rgb(256, 256, 256, 70%);
+    cursor: pointer;
+    svg {
+      width: 1.1rem;
+    }
+  }
+  .candidate {
+    display: none;
+    position: absolute;
+    bottom: 0;
+    right: -2px;
+    left: -2px;
+    z-index: 10;
+    transform: translateY(100%) translateY(0.5rem);
+    width: 100%;
+    max-height: 10rem;
+    overflow-y: scroll;
+    list-style: none;
+    border: 1px solid #ccc;
+    background-color: white;
+    box-sizing: content-box;
+    &.focus {
+      display: inherit;
+    }
+    li {
+      padding: 1rem;
+      overflow: hidden;
+      cursor: pointer;
+      &:hover {
+        background-color: c.$background-color-a;
+      }
+    }
+  }
+}

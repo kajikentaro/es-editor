@@ -29,7 +29,6 @@ function MyApp({ Component, pageProps }: AppProps) {
   const updateDocumentList = () => {
     setDocumentList(RESTDocument.getList());
   };
-  console.log(tagList);
 
   const props = {
     companyList,

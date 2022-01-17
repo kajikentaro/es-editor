@@ -17,7 +17,6 @@
     margin-bottom: 2px;
   }
   .first {
-    width: 100%;
     margin: 0 auto 3rem auto;
     width: 50%;
     .input_wrapper {
@@ -32,7 +31,8 @@
           font-size: 1.2rem;
           border: none;
           outline: none;
-          flex: 12;
+          width: 0;
+          flex: 1;
         }
       }
       .search_btn {
@@ -57,6 +57,31 @@
       margin: 0 2.2rem;
     }
   }
+
+  @include c.mq(lg) {
+    .first {
+      width: 70%;
+    }
+  }
+  @include c.mq(md) {
+    padding: 1rem;
+    .first {
+      width: 100%;
+      margin: 0;
+      margin-bottom: 0.5rem;
+      .input_wrapper .reset_btn {
+        padding: 5px;
+      }
+    }
+    .second {
+      flex-direction: column;
+      .tag_wrapper,
+      .company_wrapper {
+        margin: 0.5rem 0;
+        width: 100%;
+      }
+    }
+  }
 }
 
 // 企業, 項目から選ぶ
@@ -71,8 +96,9 @@
     margin: 0.7rem;
     height: 250px;
     width: 250px;
-    line-height: 250px;
-    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     border: #999 solid 1px;
     background-color: c.$base-color-b;
     color: white;
@@ -100,6 +126,26 @@
     }
     .tec {
       text-align: center;
+    }
+  }
+
+  @include c.mq(lg) {
+    padding: 2rem;
+    .document,
+    .new_document {
+      margin: 0.5rem;
+      width: calc(100% / 3 - 2rem);
+      height: calc(100vw / 4);
+    }
+  }
+  @include c.mq(md) {
+    padding: 0;
+    .document,
+    .new_document {
+      margin: 0.5rem;
+      width: calc(100vw / 3 - 2rem);
+      height: calc(100vw / 3 - 1rem);
+      font-size: 0.8rem;
     }
   }
 }

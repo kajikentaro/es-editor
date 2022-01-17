@@ -144,7 +144,7 @@ const List: NextPage<PageProps> = (props) => {
           className={styles.new_document}
           onClick={() => {
             const randomId = genRandomId();
-            router.push("/edit/" + randomId);
+            router.push({ pathname: "/edit", query: { documentId: randomId } });
           }}
         >
           <div className={styles.font_awesome_btn}>

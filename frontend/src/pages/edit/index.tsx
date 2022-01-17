@@ -9,15 +9,19 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import TermCreateSelect from "components/TermCreateSelect";
 import { defaultDocument } from "consts/default-value";
-import { Company, DocumentHistory, PageProps, Tag } from "interfaces/interfaces";
+import {
+  Company,
+  Document,
+  DocumentHistory,
+  PageProps,
+  Tag,
+} from "interfaces/interfaces";
 import type { NextPage } from "next";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import styles from "styles/Edit.module.scss";
 import { RESTCompany, RESTDocument, RESTHistory, RESTTag } from "utils/REST";
 import { genRandomId } from "utils/utils";
-
-let document = defaultDocument;
 
 let preEditUnix = 0;
 let viewingHistoryIdx = 0;
@@ -44,22 +48,26 @@ const Home: NextPage<PageProps> = (props) => {
     "tagList"
   );
   const [canEdit, setCanEdit] = useState<boolean>(true);
+  const [document, setDocument] = useState<Document>({ ...defaultDocument });
 
   // 文書読み込み
   useEffect(() => {
     if (!documentId) return;
-    document = RESTDocument.get(documentId as string) || document;
-    if (document.id) {
+    const documentToLoad = RESTDocument.get(documentId as string) || document;
+    if (documentToLoad.id) {
       // 存在した場合
-      editHistory[viewingHistoryIdx] = document.text;
-      setCompany(RESTCompany.get(document.companyId));
-      setTag(RESTTag.get(document.tagId));
-      setDocumentText(document.text);
-      documentHistory = RESTHistory.getList().filter((v) => v.documentId === document.id);
+      editHistory[viewingHistoryIdx] = documentToLoad.text;
+      setCompany(RESTCompany.get(documentToLoad.companyId));
+      setTag(RESTTag.get(documentToLoad.tagId));
+      setDocumentText(documentToLoad.text);
+      documentHistory = RESTHistory.getList().filter(
+        (v) => v.documentId === documentToLoad.id
+      );
     } else {
       // 存在しない場合
-      document.id = documentId as string;
+      documentToLoad.id = documentId as string;
     }
+    setDocument(documentToLoad);
   }, [documentId]);
 
   const onClickDelete = () => {
@@ -144,7 +152,7 @@ const Home: NextPage<PageProps> = (props) => {
                     .map((v) => {
                       return (
                         <li
-                          key={v.tagId}
+                          key={v.id}
                           className={styles.tag}
                           onMouseOver={() => {
                             setDocumentText(v.text);

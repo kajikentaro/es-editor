@@ -4,6 +4,7 @@ import EditItemList from "components/EditItemList";
 import TermSelect from "components/TermSelect";
 import { Company, Document, PageProps, Tag } from "interfaces/interfaces";
 import type { NextPage } from "next";
+import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
 import styles from "styles/List.module.scss";
@@ -20,11 +21,13 @@ const DocumentTile: React.VFC<{
   const attachedTag = RESTTag.get(props.document.tagId, props.tagList);
 
   return (
-    <a className={styles.document} href={"/edit/" + props.document.id}>
-      <p className={styles.tec}>{attachedCompany?.name || "企業未選択"}</p>
-      <p className={styles.tec}>{attachedTag?.name || "項目未選択"}</p>
-      <p>{props.document.text}</p>
-    </a>
+    <Link href={{ pathname: "/edit", query: { documentId: props.document.id } }}>
+      <a className={styles.document}>
+        <p className={styles.tec}>{attachedCompany?.name || "企業未選択"}</p>
+        <p className={styles.tec}>{attachedTag?.name || "項目未選択"}</p>
+        <p>{props.document.text}</p>
+      </a>
+    </Link>
   );
 };
 

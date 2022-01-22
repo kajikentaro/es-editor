@@ -21,7 +21,7 @@ class RESTMother<T extends Item> implements REST<T> {
     let res = getLocalStorage(this.KEY) as T[];
     res = res.sort((a: T, b: T) => {
       const aTime = a.updateDate || 0;
-      const bTime = a.updateDate || 0;
+      const bTime = b.updateDate || 0;
       if (aTime < bTime) {
         return 1;
       } else {
@@ -58,7 +58,25 @@ class RESTMother<T extends Item> implements REST<T> {
   };
 }
 
+class RestHistoryClass extends RESTMother<DocumentHistory> {
+  getSpecificList(documentId: string): DocumentHistory[] {
+    let res = super.getList();
+    res = res.filter((v) => v.documentId === documentId);
+    res.sort;
+    res = res.sort((a, b) => {
+      const aTime = a.updateDate || 0;
+      const bTime = b.updateDate || 0;
+      if (aTime < bTime) {
+        return 1;
+      } else {
+        return -1;
+      }
+    });
+    return res;
+  }
+}
+
 export const RESTCompany = new RESTMother<Company>(COMPANY_KEY);
 export const RESTTag = new RESTMother<Tag>(TAG_KEY);
 export const RESTDocument = new RESTMother<Document>(DOCUMENT_KEY);
-export const RESTHistory = new RESTMother<DocumentHistory>(HISTORY_KEY);
+export const RESTHistory = new RestHistoryClass(HISTORY_KEY);

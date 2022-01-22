@@ -11,14 +11,13 @@ type Props<T> = {
   onDefineItem: (item: T) => void;
 };
 
-let isHoverCandidate = false;
-
 const TermCreate = <T extends Item>(props: Props<T>) => {
   const { item, onDefineItem, itemList } = props;
   const [filterdItemList, setFilterdItemList] = useState<T[]>([]);
   const [inputText, setInputText] = useState<string>("");
   const [inputState, setInputState] = useState<"focus" | "blur" | "define">("blur");
   const inputRef = useRef<HTMLInputElement>(null);
+  const [isHoverCandidate, setIsHoverCandidate] = useState<boolean>(false);
 
   useEffect(() => {
     if (item) {
@@ -40,11 +39,13 @@ const TermCreate = <T extends Item>(props: Props<T>) => {
   }, [inputText, itemList]);
 
   const handleDefineItem = () => {
-    if (inputText.length === 0) return;
+    if (inputText.length === 0) {
+      setInputState("blur");
+      return;
+    }
     const sameItem = filterdItemList.find((v) => {
       return v.name === inputText;
     });
-    console.log(sameItem);
     if (sameItem) {
       onDefineItem(sameItem);
     } else {
@@ -59,6 +60,9 @@ const TermCreate = <T extends Item>(props: Props<T>) => {
       className={styles.term_select + " " + styles[inputState]}
       onSubmit={(e) => {
         e.preventDefault();
+      }}
+      onFocus={() => {
+        setInputState("focus");
       }}
     >
       <div
@@ -75,9 +79,6 @@ const TermCreate = <T extends Item>(props: Props<T>) => {
       <input
         className={styles[inputState]}
         placeholder="ここに入力"
-        onFocus={() => {
-          setInputState("focus");
-        }}
         onBlur={() => {
           if (!isHoverCandidate) {
             handleDefineItem();
@@ -95,7 +96,9 @@ const TermCreate = <T extends Item>(props: Props<T>) => {
           handleDefineItem();
         }}
         className={styles.check_btn}
-        style={{ display: inputText.length > 0 && inputState === "focus" ? "inherit" : "none" }}
+        style={{
+          display: inputText.length > 0 && inputState === "focus" ? "inherit" : "none",
+        }}
       >
         <FontAwesomeIcon icon={faCheck} color="#228B22" />
       </button>
@@ -106,10 +109,10 @@ const TermCreate = <T extends Item>(props: Props<T>) => {
               <li
                 key={v.id}
                 onMouseOver={() => {
-                  isHoverCandidate = true;
+                  setIsHoverCandidate(true);
                 }}
                 onMouseLeave={() => {
-                  isHoverCandidate = false;
+                  setIsHoverCandidate(false);
                 }}
                 onClick={() => {
                   setInputState("define");

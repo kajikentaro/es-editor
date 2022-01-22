@@ -10,14 +10,13 @@ type Props<T> = {
   onDefineItem: (item: T | undefined) => void;
 };
 
-let isHoverCandidate = false;
-
 const TermSelect = <T extends Item>(props: Props<T>) => {
   const { item, onDefineItem, itemList } = props;
   const [filterdItemList, setFilterdItemList] = useState<T[]>([]);
   const [inputText, setInputText] = useState<string>("");
   const [inputState, setInputState] = useState<"focus" | "blur" | "define">("blur");
   const inputRef = useRef<HTMLInputElement>(null);
+  const [isHoverCandidate, setIsHoverCandidate] = useState<boolean>(false);
 
   useEffect(() => {
     if (item) {
@@ -95,10 +94,10 @@ const TermSelect = <T extends Item>(props: Props<T>) => {
               <li
                 key={v.id}
                 onMouseOver={() => {
-                  isHoverCandidate = true;
+                  setIsHoverCandidate(true);
                 }}
                 onMouseLeave={() => {
-                  isHoverCandidate = false;
+                  setIsHoverCandidate(false);
                 }}
                 onClick={() => {
                   setInputState("define");

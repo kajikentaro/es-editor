@@ -174,7 +174,7 @@ const Home: NextPage<PageProps> = (props) => {
                 <ul className={styles.list_wrapper}>
                   {documentList
                     .filter((v) => {
-                      return v.companyId === company?.id && v.id !== document.id;
+                      return v.tagId === tag?.id && v.id !== document.id;
                     })
                     .map((v) => {
                       return (
@@ -190,7 +190,8 @@ const Home: NextPage<PageProps> = (props) => {
                             setCanEdit(true);
                           }}
                         >
-                          {RESTTag.get(v.tagId, tagList)?.name || "項目未設定"}
+                          {RESTCompany.get(v.companyId, companyList)?.name ||
+                            "項目未設定"}
                         </li>
                       );
                     })}

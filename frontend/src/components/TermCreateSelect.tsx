@@ -39,7 +39,10 @@ const TermCreate = <T extends Item>(props: Props<T>) => {
   }, [inputText, itemList]);
 
   const handleDefineItem = () => {
-    if (inputText.length === 0) return;
+    if (inputText.length === 0) {
+      setInputState("blur");
+      return;
+    }
     const sameItem = filterdItemList.find((v) => {
       return v.name === inputText;
     });
@@ -58,6 +61,9 @@ const TermCreate = <T extends Item>(props: Props<T>) => {
       onSubmit={(e) => {
         e.preventDefault();
       }}
+      onFocus={() => {
+        setInputState("focus");
+      }}
     >
       <div
         className={styles.define_text + " " + styles[inputState]}
@@ -73,9 +79,6 @@ const TermCreate = <T extends Item>(props: Props<T>) => {
       <input
         className={styles[inputState]}
         placeholder="ここに入力"
-        onFocus={() => {
-          setInputState("focus");
-        }}
         onBlur={() => {
           if (!isHoverCandidate) {
             handleDefineItem();

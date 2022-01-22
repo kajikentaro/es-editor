@@ -44,7 +44,6 @@ const TermCreate = <T extends Item>(props: Props<T>) => {
     const sameItem = filterdItemList.find((v) => {
       return v.name === inputText;
     });
-    console.log(sameItem);
     if (sameItem) {
       onDefineItem(sameItem);
     } else {
@@ -95,7 +94,9 @@ const TermCreate = <T extends Item>(props: Props<T>) => {
           handleDefineItem();
         }}
         className={styles.check_btn}
-        style={{ display: inputText.length > 0 && inputState === "focus" ? "inherit" : "none" }}
+        style={{
+          display: inputText.length > 0 && inputState === "focus" ? "inherit" : "none",
+        }}
       >
         <FontAwesomeIcon icon={faCheck} color="#228B22" />
       </button>

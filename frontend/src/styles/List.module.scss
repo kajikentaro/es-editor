@@ -10,12 +10,6 @@
 .content_search {
   border-bottom: c.$hr-color solid 2px;
   padding: 5rem 0;
-  h2 {
-    font-size: 1rem;
-    font-weight: 540;
-    margin-left: 4px;
-    margin-bottom: 2px;
-  }
   .first {
     margin: 0 auto 3rem auto;
     width: 50%;
@@ -160,11 +154,12 @@
   .second {
     width: 50%;
     padding: 1rem;
-    h2 {
-      font-size: 1rem;
-      font-weight: 540;
-      margin-left: 4px;
-      margin-bottom: 3px;
-    }
   }
+}
+
+.section_title {
+  font-size: 1rem;
+  font-weight: 540;
+  margin-left: 4px;
+  margin-bottom: 3px;
 }

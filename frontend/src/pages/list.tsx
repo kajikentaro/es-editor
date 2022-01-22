@@ -83,7 +83,7 @@ const List: NextPage<PageProps> = (props) => {
     <div className={styles.content}>
       <div className={styles.content_search}>
         <div className={styles.first}>
-          <h2>文から検索</h2>
+          <h2 className={styles.section_title}>文から検索</h2>
           <form
             className={styles.input_wrapper}
             onSubmit={(e) => {
@@ -122,7 +122,7 @@ const List: NextPage<PageProps> = (props) => {
         </div>
         <div className={styles.second}>
           <div className={styles.company_wrapper}>
-            <h2>企業から選ぶ</h2>
+            <h2 className={styles.section_title}>企業から選ぶ</h2>
             <TermSelect
               item={undefined}
               itemList={companyList}
@@ -132,7 +132,7 @@ const List: NextPage<PageProps> = (props) => {
             />
           </div>
           <div className={styles.tag_wrapper}>
-            <h2>項目から選ぶ</h2>
+            <h2 className={styles.section_title}>項目から選ぶ</h2>
             <TermSelect
               item={undefined}
               itemList={tagList}
@@ -172,7 +172,7 @@ const List: NextPage<PageProps> = (props) => {
       <div className={styles.edit_item}>
         {companyList.length > 0 && (
           <div className={styles.first}>
-            <h2>企業名編集</h2>
+            <h2 className={styles.section_title}>企業名編集</h2>
             <EditItemList
               items={companyList}
               rest={RESTCompany}
@@ -184,7 +184,7 @@ const List: NextPage<PageProps> = (props) => {
         )}
         {tagList.length > 0 && (
           <div className={styles.second}>
-            <h2>項目名編集</h2>
+            <h2 className={styles.section_title}>項目名編集</h2>
             <EditItemList
               items={tagList}
               rest={RESTTag}
@@ -194,6 +194,9 @@ const List: NextPage<PageProps> = (props) => {
             />
           </div>
         )}
+      </div>
+      <div className={styles.backup}>
+        <h2 className={styles.section_title}>バックアップ・インポート</h2>
       </div>
     </div>
   );

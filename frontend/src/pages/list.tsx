@@ -25,7 +25,7 @@ const DocumentTile: React.VFC<{
       <a className={styles.document}>
         <p className={styles.tec}>{attachedCompany?.name || "企業未選択"}</p>
         <p className={styles.tec}>{attachedTag?.name || "項目未選択"}</p>
-        <p>{props.document.text}</p>
+        <p className={styles.document_text}>{props.document.text}</p>
       </a>
     </Link>
   );
@@ -53,6 +53,10 @@ const List: NextPage<PageProps> = (props) => {
   useEffect(() => {
     setfilterdDocList(documentList);
   }, [documentList]);
+
+  useEffect(() => {
+    search();
+  }, [selectTagId, selectCompanyId]);
 
   const search = () => {
     let tmpDocList = documentList;
@@ -101,7 +105,6 @@ const List: NextPage<PageProps> = (props) => {
                 type="reset"
                 onClick={(e) => {
                   setSearchInputText("");
-                  search();
                 }}
               >
                 <FontAwesomeIcon
@@ -125,7 +128,6 @@ const List: NextPage<PageProps> = (props) => {
               itemList={companyList}
               onDefineItem={(item) => {
                 setSelectCompanyId(item?.id || "");
-                search();
               }}
             />
           </div>
@@ -136,7 +138,6 @@ const List: NextPage<PageProps> = (props) => {
               itemList={tagList}
               onDefineItem={(item) => {
                 setSelectTagId(item?.id || "");
-                search();
               }}
             />
           </div>

@@ -14,38 +14,36 @@
 
 // メニューバー
 .first {
-  padding: 1rem 1rem 0 1rem;
+  padding-right: 1rem;
   width: 30%;
   display: flex;
   flex-direction: column;
   .section {
     margin-bottom: 1.5rem;
-    .row {
+    .section_title {
+      font-weight: normal;
+      margin-bottom: 0.3rem;
+      font-size: 1.1rem;
+    }
+    // この企業の他の文章, 変更履歴
+    &.related_document {
       display: flex;
-      .creatable {
-        width: 0;
-        flex: 1;
-      }
-    }
-  }
-
-  // この企業の他の文章, 変更履歴
-  .other_document {
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-    margin-bottom: 0;
-    ul.list_wrapper {
-      margin: 1rem 0.5rem;
+      flex-direction: column;
       flex: 1;
-      li {
-        background-color: white;
-        padding: 0.8rem 1rem;
-        list-style: none;
-        border: #ccc solid 1px;
+      overflow: hidden;
+      ul.list_wrapper {
+        overflow: auto;
+        flex: 1;
+        li {
+          background-color: white;
+          padding: 0.8rem 1rem;
+          list-style: none;
+          border: #ccc solid 1px;
+        }
       }
     }
-    .toggle_btn_wrapper {
+    &.toggle_btn_wrapper {
+      margin: 0;
       button {
         @include c.font-awesome-btn;
         width: 50%;

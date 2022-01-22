@@ -112,22 +112,8 @@ const Home: NextPage<PageProps> = (props) => {
       <div className={styles.content_editor}>
         <div className={styles.first}>
           <div className={styles.section}>
-            <h2>項目名</h2>
-            <div className={styles.row}>
-              <TermCreateSelect
-                item={tag}
-                itemList={tagList}
-                onDefineItem={(item) => {
-                  setTag(item);
-                  RESTTag.put(item.id, item);
-                  updateTagList();
-                }}
-              />
-            </div>
-          </div>
-          <div className={styles.section}>
-            <h2>企業名</h2>
-            <div className={styles.row}>
+            <h2 className={styles.section_title}>企業名</h2>
+            <div className={styles.section_content}>
               <TermCreateSelect
                 item={company}
                 itemList={companyList}
@@ -139,11 +125,25 @@ const Home: NextPage<PageProps> = (props) => {
               />
             </div>
           </div>
-          <div className={styles.section + " " + styles.other_document}>
-            {otherDocumentIs === "tagList" && (
-              // 目次を表示
-              <>
-                <h2>この企業の他の文章</h2>
+          <div className={styles.section}>
+            <h2 className={styles.section_title}>項目名</h2>
+            <div className={styles.section_content}>
+              <TermCreateSelect
+                item={tag}
+                itemList={tagList}
+                onDefineItem={(item) => {
+                  setTag(item);
+                  RESTTag.put(item.id, item);
+                  updateTagList();
+                }}
+              />
+            </div>
+          </div>
+          {otherDocumentIs === "tagList" && (
+            // 目次を表示
+            <>
+              <div className={styles.section + " " + styles.related_document}>
+                <h2 className={styles.section_title}>同じ企業の他の文章</h2>
                 <ul className={styles.list_wrapper}>
                   {documentList
                     .filter((v) => {
@@ -168,26 +168,15 @@ const Home: NextPage<PageProps> = (props) => {
                       );
                     })}
                 </ul>
-              </>
-            )}
-            {otherDocumentIs === "history" && (
-              // 変更履歴を表示
-              <>
-                <h2>この文書の変更履歴</h2>
+              </div>
+              <div className={styles.section + " " + styles.related_document}>
+                <h2 className={styles.section_title}>同じ項目の他の文章</h2>
                 <ul className={styles.list_wrapper}>
-                  {documentHistory
+                  {documentList
                     .filter((v) => {
                       return v.companyId === company?.id && v.id !== document.id;
                     })
                     .map((v) => {
-                      const updateDate = new Date(v.updateDate || 0);
-                      const weekday = ["日", "月", "火", "水", "木", "金", "土"];
-                      let updateText = "";
-                      updateText += updateDate.getMonth() + 1 + "月";
-                      updateText += updateDate.getDate() + "日(";
-                      updateText += weekday[updateDate.getDay()] + ") ";
-                      updateText += updateDate.getHours() + "時";
-                      updateText += updateDate.getMinutes() + "分";
                       return (
                         <li
                           key={v.id}
@@ -201,36 +190,74 @@ const Home: NextPage<PageProps> = (props) => {
                             setCanEdit(true);
                           }}
                         >
-                          {v.updateDate ? updateText : "変更履歴不明"}
+                          {RESTTag.get(v.tagId, tagList)?.name || "項目未設定"}
                         </li>
                       );
                     })}
                 </ul>
-              </>
-            )}
-            <div className={styles.toggle_btn_wrapper}>
-              <button
-                className={otherDocumentIs === "tagList" ? styles.active : styles.disable}
-                onClick={() => {
-                  setOtherDocumentIs("tagList");
-                }}
-              >
-                <FontAwesomeIcon className={styles.icon} icon={faList} />
-                目次
-              </button>
-              <button
-                className={otherDocumentIs === "history" ? styles.active : styles.disable}
-                onClick={() => {
-                  documentHistory = RESTHistory.getList().filter(
-                    (v) => v.documentId === document.id
-                  );
-                  setOtherDocumentIs("history");
-                }}
-              >
-                <FontAwesomeIcon className={styles.icon} icon={faHistory} />
-                変更履歴
-              </button>
+              </div>
+            </>
+          )}
+          {otherDocumentIs === "history" && (
+            // 変更履歴を表示
+            <div className={styles.section + " " + styles.related_document}>
+              <h2>この文書の変更履歴</h2>
+              <ul className={styles.list_wrapper}>
+                {documentHistory
+                  .filter((v) => {
+                    return v.companyId === company?.id && v.id !== document.id;
+                  })
+                  .map((v) => {
+                    const updateDate = new Date(v.updateDate || 0);
+                    const weekday = ["日", "月", "火", "水", "木", "金", "土"];
+                    let updateText = "";
+                    updateText += updateDate.getMonth() + 1 + "月";
+                    updateText += updateDate.getDate() + "日(";
+                    updateText += weekday[updateDate.getDay()] + ") ";
+                    updateText += updateDate.getHours() + "時";
+                    updateText += updateDate.getMinutes() + "分";
+                    return (
+                      <li
+                        key={v.id}
+                        className={styles.tag}
+                        onMouseOver={() => {
+                          setDocumentText(v.text);
+                          setCanEdit(false);
+                        }}
+                        onMouseLeave={() => {
+                          setDocumentText(editHistory[viewingHistoryIdx]);
+                          setCanEdit(true);
+                        }}
+                      >
+                        {v.updateDate ? updateText : "変更履歴不明"}
+                      </li>
+                    );
+                  })}
+              </ul>
             </div>
+          )}
+          <div className={styles.section + " " + styles.toggle_btn_wrapper}>
+            <button
+              className={otherDocumentIs === "tagList" ? styles.active : styles.disable}
+              onClick={() => {
+                setOtherDocumentIs("tagList");
+              }}
+            >
+              <FontAwesomeIcon className={styles.icon} icon={faList} />
+              目次
+            </button>
+            <button
+              className={otherDocumentIs === "history" ? styles.active : styles.disable}
+              onClick={() => {
+                documentHistory = RESTHistory.getList().filter(
+                  (v) => v.documentId === document.id
+                );
+                setOtherDocumentIs("history");
+              }}
+            >
+              <FontAwesomeIcon className={styles.icon} icon={faHistory} />
+              変更履歴
+            </button>
           </div>
         </div>
         <div className={styles.second}>

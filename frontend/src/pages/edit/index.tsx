@@ -144,7 +144,6 @@ const Home: NextPage<PageProps> = (props) => {
 
   const relatedDocumentProps = (liDocument: Document) => {
     return {
-      key: liDocument.id,
       onMouseOver: () => {
         setDocumentText(liDocument.text);
         setCanEdit(false);
@@ -206,7 +205,7 @@ const Home: NextPage<PageProps> = (props) => {
                     })
                     .map((v) => {
                       return (
-                        <li {...relatedDocumentProps(v)}>
+                        <li key={v.id} {...relatedDocumentProps(v)}>
                           {RESTTag.get(v.tagId, tagList)?.name || "項目未設定"}
                         </li>
                       );
@@ -222,7 +221,7 @@ const Home: NextPage<PageProps> = (props) => {
                     })
                     .map((v) => {
                       return (
-                        <li {...relatedDocumentProps(v)}>
+                        <li key={v.id} {...relatedDocumentProps(v)}>
                           {RESTCompany.get(v.companyId, companyList)?.name ||
                             "企業未設定"}
                         </li>
@@ -251,7 +250,7 @@ const Home: NextPage<PageProps> = (props) => {
                     updateText += updateDate.getHours() + "時";
                     updateText += updateDate.getMinutes() + "分";
                     return (
-                      <li {...relatedDocumentProps(v)}>
+                      <li key={v.id} {...relatedDocumentProps(v)}>
                         {v.updateDate ? updateText : "変更履歴不明"}
                       </li>
                     );

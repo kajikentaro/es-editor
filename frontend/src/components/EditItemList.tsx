@@ -9,7 +9,7 @@ const EditItem = <T extends Item>(props: {
   item: T;
   isEdit: boolean;
   rest: REST<T>;
-  onEditOver: () => void;
+  onEditOver: (isUpdate?: boolean) => void;
   onEditStart: () => void;
 }) => {
   const { item, isEdit, onEditStart, rest, onEditOver } = props;
@@ -50,6 +50,7 @@ const EditItem = <T extends Item>(props: {
         <div className={styles.right}>
           {/* 適用ボタン */}
           <button
+            key={"apply"}
             onClick={() => {
               handleUpdate();
             }}
@@ -58,9 +59,10 @@ const EditItem = <T extends Item>(props: {
           </button>
           {/* キャンセルボタン */}
           <button
+            key={"cancel"}
             onClick={() => {
               setInputText(item.name);
-              onEditOver();
+              onEditOver(false);
             }}
           >
             <FontAwesomeIcon className={styles.icon} icon={faBan} />
@@ -70,11 +72,12 @@ const EditItem = <T extends Item>(props: {
         // 表示モード時表示
         <div className={styles.right}>
           {/* 編集ボタン */}
-          <button onClick={onEditStart}>
+          <button key={"edit"} onClick={onEditStart}>
             <FontAwesomeIcon className={styles.icon} icon={faEdit} />
           </button>
           {/* 削除ボタン */}
           <button
+            key={"delete"}
             onClick={() => {
               rest.delete_(item.id);
               onEditOver();
@@ -107,9 +110,11 @@ const EditItemList = <T extends Item>(props: {
   };
 
   // 編集が終わったとき
-  const onEditOver = () => {
+  const onEditOver = (isUpdate = false) => {
     setEditingIdx(-1);
-    onUpdate();
+    if (isUpdate) {
+      onUpdate();
+    }
   };
 
   // 要素に渡すprops

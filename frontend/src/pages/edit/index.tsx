@@ -23,13 +23,6 @@ import styles from "styles/Edit.module.scss";
 import { RESTCompany, RESTDocument, RESTHistory, RESTTag } from "utils/REST";
 import { genRandomId } from "utils/utils";
 
-let preEditUnix = 0;
-let viewingHistoryIdx = 0;
-// 「戻る」「進む」ボタンで使う履歴
-let editHistory: string[] = [""];
-// 「変更履歴」で使う履歴
-let documentHistory: DocumentHistory[] = [];
-
 const Home: NextPage<PageProps> = (props) => {
   const router = useRouter();
   const {
@@ -51,13 +44,23 @@ const Home: NextPage<PageProps> = (props) => {
   const [document, setDocument] = useState<Document>({ ...defaultDocument });
   const [message, setMessage] = useState<string>("");
 
+  /* TODO:再レンダリングを必要としない変数 */
+  const [preEditUnix, setPreEditUnix] = useState<number>(0);
+  const [viewingHistoryIdx, setViewingHistoryIdx] = useState<number>(0);
+  // 戻る進むボタンで使う履歴
+  const [editHistory, setEditHistory] = useState<string[]>([""]);
+  // 編集履歴
+  const [documentHistory, setDocumentHistory] = useState<DocumentHistory[]>([]);
+
   // 文書読み込み
   useEffect(() => {
     if (!documentId) return;
     const documentToLoad = RESTDocument.get(documentId as string) || document;
     if (documentToLoad.id) {
       // 存在した場合
-      editHistory[viewingHistoryIdx] = documentToLoad.text;
+      const newEditHistory = [...editHistory];
+      newEditHistory[viewingHistoryIdx] = documentToLoad.text;
+      setEditHistory(newEditHistory);
       setCompany(RESTCompany.get(documentToLoad.companyId));
       setTag(RESTTag.get(documentToLoad.tagId));
       setDocumentText(documentToLoad.text);
@@ -107,13 +110,14 @@ const Home: NextPage<PageProps> = (props) => {
   const rollBackText = (newIdx: number) => {
     const canRollBack = 0 <= newIdx && newIdx <= editHistory.length - 1;
     if (canRollBack) {
-      viewingHistoryIdx = newIdx;
+      setViewingHistoryIdx(newIdx);
       setDocumentText(editHistory[viewingHistoryIdx]);
     }
   };
 
   const documentTextUpdate = (text: string) => {
     const nowUnix = new Date().getTime();
+    let forceSave = false;
     if (viewingHistoryIdx !== editHistory.length - 1) {
       // UNDO後に編集した場合
       const removeLen = Math.min(
@@ -123,16 +127,18 @@ const Home: NextPage<PageProps> = (props) => {
       for (let i = 0; i < removeLen; i++) {
         editHistory.pop();
       }
-      preEditUnix = 0;
+      forceSave = true;
     }
-    if (nowUnix - preEditUnix >= 2000) {
+    const newEditHistory = [...editHistory];
+    if (nowUnix - preEditUnix >= 2000 || forceSave) {
       // 前回の編集から2秒以上経過した場合は履歴に保存する
-      editHistory.push(text);
-      viewingHistoryIdx = editHistory.length - 1;
+      newEditHistory.push(text);
+      setViewingHistoryIdx(editHistory.length - 1);
     } else {
-      editHistory[viewingHistoryIdx] = text;
+      newEditHistory[viewingHistoryIdx] = text;
     }
-    preEditUnix = nowUnix;
+    setEditHistory(newEditHistory);
+    setPreEditUnix(nowUnix);
     setDocumentText(text);
   };
 
@@ -270,7 +276,7 @@ const Home: NextPage<PageProps> = (props) => {
                 relatedDocumentType === "history" ? styles.active : styles.disable
               }
               onClick={() => {
-                documentHistory = RESTHistory.getSpecificList(document.id);
+                setDocumentHistory(RESTHistory.getSpecificList(document.id));
                 setRelatedDocumentType("history");
               }}
             >

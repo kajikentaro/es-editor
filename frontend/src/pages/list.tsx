@@ -31,11 +31,6 @@ const DocumentTile: React.VFC<{
   );
 };
 
-// 選択中のアイテムと検索中の文字列
-let searchInputText = "";
-let selectTagId = "";
-let selectCompanyId = "";
-
 const List: NextPage<PageProps> = (props) => {
   const {
     companyList,
@@ -48,6 +43,12 @@ const List: NextPage<PageProps> = (props) => {
   const router = useRouter();
   const searchInputRef = useRef<HTMLInputElement>(null);
   const [filterdDocList, setfilterdDocList] = useState<Document[]>([]);
+
+  /* 再レンダリングを必要としない変数 */
+  // 選択中のアイテムと検索中の文字列
+  const [searchInputText, setSearchInputText] = useState<string>("");
+  const [selectTagId, setSelectTagId] = useState<string>("");
+  const [selectCompanyId, setSelectCompanyId] = useState<string>("");
 
   useEffect(() => {
     setfilterdDocList(documentList);
@@ -91,7 +92,7 @@ const List: NextPage<PageProps> = (props) => {
                 type="text"
                 ref={searchInputRef}
                 onChange={(e) => {
-                  searchInputText = e.target.value;
+                  setSearchInputText(e.target.value);
                 }}
               />
 
@@ -99,7 +100,7 @@ const List: NextPage<PageProps> = (props) => {
                 className={styles.reset_btn}
                 type="reset"
                 onClick={(e) => {
-                  searchInputText = "";
+                  setSearchInputText("");
                   search();
                 }}
               >
@@ -123,7 +124,7 @@ const List: NextPage<PageProps> = (props) => {
               item={undefined}
               itemList={companyList}
               onDefineItem={(item) => {
-                selectCompanyId = item?.id || "";
+                setSelectCompanyId(item?.id || "");
                 search();
               }}
             />
@@ -134,7 +135,7 @@ const List: NextPage<PageProps> = (props) => {
               item={undefined}
               itemList={tagList}
               onDefineItem={(item) => {
-                selectTagId = item?.id || "";
+                setSelectTagId(item?.id || "");
                 search();
               }}
             />

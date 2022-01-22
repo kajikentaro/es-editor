@@ -127,6 +127,7 @@
     .tec {
       text-align: center;
     }
+    font-family: c.$document-font-family;
   }
 
   @include c.mq(lg) {

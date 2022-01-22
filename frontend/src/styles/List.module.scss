@@ -3,13 +3,19 @@
 .content {
   max-width: c.$content-width;
   margin: 0 auto;
+  padding: 2rem;
   display: flex;
   flex-direction: column;
+  background-color: c.$white-color-b;
+  @include c.mq(xl) {
+    padding: 1rem;
+  }
 }
 
 .content_search {
-  border-bottom: c.$hr-color solid 2px;
-  padding: 5rem 0;
+  border-bottom: c.$hr-color solid 1px;
+  padding: 2.5rem 0;
+  // 文から検索
   .first {
     margin: 0 auto 3rem auto;
     width: 50%;
@@ -21,6 +27,7 @@
         display: flex;
         flex: 1;
         padding: 2px 8px;
+        background-color: white;
         input {
           font-size: 1.2rem;
           border: none;
@@ -42,26 +49,29 @@
       }
     }
   }
+  // 〇〇から選ぶ
   .second {
     display: flex;
     flex-direction: row;
+    justify-content: space-between;
     .tag_wrapper,
     .company_wrapper {
-      width: 50%;
-      margin: 0 2.2rem;
+      width: calc(50% - 2rem);
     }
   }
 
+  @include c.mq(xl) {
+    padding: 1rem 0;
+  }
   @include c.mq(lg) {
     .first {
       width: 70%;
     }
   }
   @include c.mq(md) {
-    padding: 1rem;
+    padding: 0 0 1rem 0;
     .first {
       width: 100%;
-      margin: 0;
       margin-bottom: 0.5rem;
       .input_wrapper .reset_btn {
         padding: 5px;
@@ -78,82 +88,68 @@
   }
 }
 
-// 企業, 項目から選ぶ
+// タイル状のドキュメントリスト
 .document_list {
-  padding: 2rem;
+  padding: 2.5rem 0;
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
   //border-bottom: c.$hr-color solid 2px;
-
-  .new_document {
-    margin: 0.7rem;
-    height: 250px;
-    width: 250px;
+  .document_li {
+    width: calc(100% / 4);
+    height: 300px;
+    padding: 0.5rem;
     display: flex;
-    align-items: center;
-    justify-content: center;
-    border: #999 solid 1px;
-    background-color: c.$base-color-b;
-    color: white;
-    cursor: pointer;
-    &:hover {
-      opacity: c.$opacity-hover;
-    }
-    .font_awesome_btn {
-      @include c.font-awesome-btn;
-    }
   }
   .document {
+    width: 100%;
     overflow: hidden;
-    margin: 0.7rem;
-    height: 250px;
-    width: 250px;
     background-color: c.$background-color-a;
     border: c.$black-color-a solid 1px;
     padding: 1rem;
     text-decoration: none;
     color: black;
-    cursor: pointer;
-    &:hover {
-      opacity: c.$opacity-hover;
-    }
     .tec {
       text-align: center;
     }
     font-family: c.$document-font-family;
   }
-
-  @include c.mq(lg) {
-    padding: 2rem;
-    .document,
-    .new_document {
-      margin: 0.5rem;
-      width: calc(100% / 3 - 2rem);
-      height: calc(100vw / 4);
+  .new_document .document {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: c.$base-color-b;
+    color: white;
+    .font_awesome_btn {
+      @include c.font-awesome-btn;
     }
   }
-  @include c.mq(md) {
-    padding: 0;
-    .document,
-    .new_document {
-      margin: 0.5rem;
-      width: calc(100vw / 3 - 2rem);
-      height: calc(100vw / 3 - 1rem);
-      font-size: 0.8rem;
+  .document_li {
+    @include c.mq(lg) {
+      width: calc(100% / 3);
+    }
+    @include c.mq(md) {
+      width: calc(100% / 2);
+    }
+    @include c.mq(sm) {
+      width: calc(100% / 1);
+      &.new_document {
+        height: 150px;
+        max-height: 10vh;
+      }
     }
   }
 }
 
 // タグ編集
 .edit_item {
-  padding: 2rem;
   display: flex;
   flex-direction: row;
+  display: flex;
+  justify-content: space-between;
   .first,
   .second {
-    width: 50%;
-    padding: 1rem;
+    width: calc(50% - 1rem);
   }
 }
 

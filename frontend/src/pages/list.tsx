@@ -169,26 +169,26 @@ const List: NextPage<PageProps> = (props) => {
       </div>
 
       <div className={styles.edit_item}>
-        {tagList.length > 0 && (
-          <div className={styles.first}>
-            <h2>企業名前編集</h2>
-            <EditItemList
-              items={tagList}
-              rest={RESTTag}
-              onUpdate={() => {
-                updateTagList();
-              }}
-            />
-          </div>
-        )}
         {companyList.length > 0 && (
-          <div className={styles.second}>
-            <h2>項目名編集</h2>
+          <div className={styles.first}>
+            <h2>企業名編集</h2>
             <EditItemList
               items={companyList}
               rest={RESTCompany}
               onUpdate={() => {
                 updateCompanyList();
+              }}
+            />
+          </div>
+        )}
+        {tagList.length > 0 && (
+          <div className={styles.second}>
+            <h2>項目名編集</h2>
+            <EditItemList
+              items={tagList}
+              rest={RESTTag}
+              onUpdate={() => {
+                updateTagList();
               }}
             />
           </div>

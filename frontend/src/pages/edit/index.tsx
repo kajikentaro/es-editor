@@ -74,25 +74,24 @@ const Home: NextPage<PageProps> = (props) => {
   const onClickDelete = () => {
     if (!confirm("削除しますか")) return;
     RESTDocument.delete_(document.id);
+    updateDocumentList();
     router.push("/list");
   };
 
   const onClickSave = (saveMessage = "保存しました") => {
-    // バックアップ(変更履歴)を作成
-    const oldDocument: DocumentHistory = {
-      ...document,
-      documentId: document.id,
-    };
-    oldDocument.id = genRandomId();
-    RESTHistory.put(oldDocument.id, oldDocument);
-
     // 保存
     document.text = editHistory[viewingHistoryIdx];
     document.wordCount = editHistory[viewingHistoryIdx].length;
     document.companyId = company?.id || "";
     document.tagId = tag?.id || "";
     RESTDocument.put(document.id, document);
-    console.log(document.text);
+
+    // バックアップを保存
+    RESTHistory.put(document.id, {
+      ...document,
+      documentId: document.id,
+      id: genRandomId(),
+    });
 
     // 親の持つドキュメント情報をアップデート
     updateDocumentList();
@@ -111,7 +110,7 @@ const Home: NextPage<PageProps> = (props) => {
     const canRollBack = 0 <= newIdx && newIdx <= editHistory.length - 1;
     if (canRollBack) {
       setViewingHistoryIdx(newIdx);
-      setDocumentText(editHistory[viewingHistoryIdx]);
+      setDocumentText(editHistory[newIdx]);
     }
   };
 
@@ -133,7 +132,7 @@ const Home: NextPage<PageProps> = (props) => {
     if (nowUnix - preEditUnix >= 2000 || forceSave) {
       // 前回の編集から2秒以上経過した場合は履歴に保存する
       newEditHistory.push(text);
-      setViewingHistoryIdx(editHistory.length - 1);
+      setViewingHistoryIdx(newEditHistory.length - 1);
     } else {
       newEditHistory[viewingHistoryIdx] = text;
     }

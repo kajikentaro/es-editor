@@ -108,7 +108,7 @@
   .edit {
     flex: 1;
     textarea {
-      font-family: "游明朝", "Yu Mincho", YuMincho, "Hiragino Mincho Pro", serif;
+      font-family: c.$document-font-family;
       resize: none;
       width: 100%;
       height: 100%;

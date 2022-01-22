@@ -3,7 +3,6 @@
 .title_bg {
   background-color: c.$base-color-a;
   .title_wrapper {
-    //height: calc(100vh - c.$header-height);
     height: 600px;
     width: 100%;
     display: flex;
@@ -11,6 +10,7 @@
     max-width: c.$content-width;
     margin: 0 auto;
     border-top: 1px solid white;
+    align-items: center;
 
     .first,
     .mockup_img {
@@ -34,6 +34,33 @@
         font-weight: bolder;
       }
     }
+
+    @include c.mq(md) {
+      flex-direction: column;
+      height: auto;
+      .first,
+      .mockup_img {
+        padding: 2rem 1rem;
+        width: 100%;
+      }
+      .title_img {
+        margin-top: 3rem;
+      }
+      .mockup_img {
+        width: 70%;
+      }
+    }
+    @include c.mq(sm) {
+      .first,
+      .mockup_img {
+        padding: 1rem;
+      }
+      .first .start_btn {
+        font-size: 1rem;
+        padding: 0.7rem 1rem;
+        margin-top: 2rem;
+      }
+    }
   }
 }
 
@@ -49,11 +76,13 @@
 
 .feature {
   padding: 0 5rem;
+
   .title {
     font-size: 4rem;
     color: white;
     padding-bottom: 5rem;
   }
+
   ul {
     li {
       color: white;
@@ -71,6 +100,28 @@
       .desc {
         padding-top: 1rem;
         font-size: 1.3rem;
+      }
+    }
+  }
+
+  @include c.mq(md) {
+    padding: 1rem;
+    .title {
+      margin-top: 3rem;
+      font-size: 3rem;
+      padding-bottom: 2.2rem;
+    }
+    ul li {
+      .feature_title {
+        font-size: 1.8rem;
+        .character_large {
+          font-size: 2.2rem;
+          font-weight: bolder;
+        }
+      }
+      .desc {
+        font-size: 1rem;
+        line-height: 1.3rem;
       }
     }
   }

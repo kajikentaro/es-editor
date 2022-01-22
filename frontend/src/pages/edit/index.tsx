@@ -44,11 +44,12 @@ const Home: NextPage<PageProps> = (props) => {
   const [documentText, setDocumentText] = useState<string>("");
   const [company, setCompany] = useState<Company | undefined>(undefined);
   const [tag, setTag] = useState<Tag | undefined>(undefined);
-  const [otherDocumentIs, setOtherDocumentIs] = useState<"history" | "tagList">(
+  const [relatedDocumentType, setRelatedDocumentType] = useState<"history" | "tagList">(
     "tagList"
   );
   const [canEdit, setCanEdit] = useState<boolean>(true);
   const [document, setDocument] = useState<Document>({ ...defaultDocument });
+  const [message, setMessage] = useState<string>("");
 
   // 文書読み込み
   useEffect(() => {
@@ -60,9 +61,6 @@ const Home: NextPage<PageProps> = (props) => {
       setCompany(RESTCompany.get(documentToLoad.companyId));
       setTag(RESTTag.get(documentToLoad.tagId));
       setDocumentText(documentToLoad.text);
-      documentHistory = RESTHistory.getList().filter(
-        (v) => v.documentId === documentToLoad.id
-      );
     } else {
       // 存在しない場合
       documentToLoad.id = documentId as string;
@@ -76,7 +74,7 @@ const Home: NextPage<PageProps> = (props) => {
     router.push("/list");
   };
 
-  const onClickSave = () => {
+  const onClickSave = (saveMessage = "保存しました") => {
     // バックアップ(変更履歴)を作成
     const oldDocument: DocumentHistory = {
       ...document,
@@ -91,11 +89,18 @@ const Home: NextPage<PageProps> = (props) => {
     document.companyId = company?.id || "";
     document.tagId = tag?.id || "";
     RESTDocument.put(document.id, document);
+    console.log(document.text);
 
     // 親の持つドキュメント情報をアップデート
     updateDocumentList();
-    // TODO: アラートではなくメッセージを出す
-    alert("保存しました");
+    showMessage(saveMessage);
+  };
+
+  const showMessage = (text: string) => {
+    setMessage(text);
+    setTimeout(() => {
+      setMessage("");
+    }, 1500);
   };
 
   // 過去のバージョンに戻す
@@ -105,6 +110,50 @@ const Home: NextPage<PageProps> = (props) => {
       viewingHistoryIdx = newIdx;
       setDocumentText(editHistory[viewingHistoryIdx]);
     }
+  };
+
+  const documentTextUpdate = (text: string) => {
+    const nowUnix = new Date().getTime();
+    if (viewingHistoryIdx !== editHistory.length - 1) {
+      // UNDO後に編集した場合
+      const removeLen = Math.min(
+        editHistory.length - viewingHistoryIdx - 1,
+        editHistory.length - 1
+      );
+      for (let i = 0; i < removeLen; i++) {
+        editHistory.pop();
+      }
+      preEditUnix = 0;
+    }
+    if (nowUnix - preEditUnix >= 2000) {
+      // 前回の編集から2秒以上経過した場合は履歴に保存する
+      editHistory.push(text);
+      viewingHistoryIdx = editHistory.length - 1;
+    } else {
+      editHistory[viewingHistoryIdx] = text;
+    }
+    preEditUnix = nowUnix;
+    setDocumentText(text);
+  };
+
+  const relatedDocumentProps = (liDocument: Document) => {
+    return {
+      key: liDocument.id,
+      onMouseOver: () => {
+        setDocumentText(liDocument.text);
+        setCanEdit(false);
+      },
+      onMouseLeave: () => {
+        setDocumentText(editHistory[viewingHistoryIdx]);
+        setCanEdit(true);
+      },
+      onClick: () => {
+        const message = "読み込みますか？現在編集している文章は変更履歴に保存されます";
+        if (!confirm(message)) return;
+        onClickSave("読み込み完了");
+        documentTextUpdate(liDocument.text);
+      },
+    };
   };
 
   return (
@@ -139,7 +188,7 @@ const Home: NextPage<PageProps> = (props) => {
               />
             </div>
           </div>
-          {otherDocumentIs === "tagList" && (
+          {relatedDocumentType === "tagList" && (
             // 目次を表示
             <>
               <div className={styles.section + " " + styles.related_document}>
@@ -151,18 +200,7 @@ const Home: NextPage<PageProps> = (props) => {
                     })
                     .map((v) => {
                       return (
-                        <li
-                          key={v.id}
-                          className={styles.tag}
-                          onMouseOver={() => {
-                            setDocumentText(v.text);
-                            setCanEdit(false);
-                          }}
-                          onMouseLeave={() => {
-                            setDocumentText(editHistory[viewingHistoryIdx]);
-                            setCanEdit(true);
-                          }}
-                        >
+                        <li {...relatedDocumentProps(v)}>
                           {RESTTag.get(v.tagId, tagList)?.name || "項目未設定"}
                         </li>
                       );
@@ -178,20 +216,9 @@ const Home: NextPage<PageProps> = (props) => {
                     })
                     .map((v) => {
                       return (
-                        <li
-                          key={v.id}
-                          className={styles.tag}
-                          onMouseOver={() => {
-                            setDocumentText(v.text);
-                            setCanEdit(false);
-                          }}
-                          onMouseLeave={() => {
-                            setDocumentText(editHistory[viewingHistoryIdx]);
-                            setCanEdit(true);
-                          }}
-                        >
+                        <li {...relatedDocumentProps(v)}>
                           {RESTCompany.get(v.companyId, companyList)?.name ||
-                            "項目未設定"}
+                            "企業未設定"}
                         </li>
                       );
                     })}
@@ -199,14 +226,14 @@ const Home: NextPage<PageProps> = (props) => {
               </div>
             </>
           )}
-          {otherDocumentIs === "history" && (
+          {relatedDocumentType === "history" && (
             // 変更履歴を表示
             <div className={styles.section + " " + styles.related_document}>
-              <h2>この文書の変更履歴</h2>
+              <h2 className={styles.section_title}>この文章の変更履歴</h2>
               <ul className={styles.list_wrapper}>
                 {documentHistory
                   .filter((v) => {
-                    return v.companyId === company?.id && v.id !== document.id;
+                    return v.documentId === document.id;
                   })
                   .map((v) => {
                     const updateDate = new Date(v.updateDate || 0);
@@ -218,18 +245,7 @@ const Home: NextPage<PageProps> = (props) => {
                     updateText += updateDate.getHours() + "時";
                     updateText += updateDate.getMinutes() + "分";
                     return (
-                      <li
-                        key={v.id}
-                        className={styles.tag}
-                        onMouseOver={() => {
-                          setDocumentText(v.text);
-                          setCanEdit(false);
-                        }}
-                        onMouseLeave={() => {
-                          setDocumentText(editHistory[viewingHistoryIdx]);
-                          setCanEdit(true);
-                        }}
-                      >
+                      <li {...relatedDocumentProps(v)}>
                         {v.updateDate ? updateText : "変更履歴不明"}
                       </li>
                     );
@@ -239,21 +255,23 @@ const Home: NextPage<PageProps> = (props) => {
           )}
           <div className={styles.section + " " + styles.toggle_btn_wrapper}>
             <button
-              className={otherDocumentIs === "tagList" ? styles.active : styles.disable}
+              className={
+                relatedDocumentType === "tagList" ? styles.active : styles.disable
+              }
               onClick={() => {
-                setOtherDocumentIs("tagList");
+                setRelatedDocumentType("tagList");
               }}
             >
               <FontAwesomeIcon className={styles.icon} icon={faList} />
               目次
             </button>
             <button
-              className={otherDocumentIs === "history" ? styles.active : styles.disable}
+              className={
+                relatedDocumentType === "history" ? styles.active : styles.disable
+              }
               onClick={() => {
-                documentHistory = RESTHistory.getList().filter(
-                  (v) => v.documentId === document.id
-                );
-                setOtherDocumentIs("history");
+                documentHistory = RESTHistory.getSpecificList(document.id);
+                setRelatedDocumentType("history");
               }}
             >
               <FontAwesomeIcon className={styles.icon} icon={faHistory} />
@@ -283,13 +301,19 @@ const Home: NextPage<PageProps> = (props) => {
                 進む
               </button>
             </div>
-            <p>{documentText.length}文字</p>
+            {message && <p>{message}</p>}
+            {!message && <p>{documentText.length}文字</p>}
             <div className={styles.right}>
               <button className={styles.operation_btn} onClick={onClickDelete}>
                 <FontAwesomeIcon className={styles.icon} icon={faTrash} />
                 削除
               </button>
-              <button className={styles.operation_btn} onClick={onClickSave}>
+              <button
+                className={styles.operation_btn}
+                onClick={() => {
+                  onClickSave();
+                }}
+              >
                 <FontAwesomeIcon className={styles.icon} icon={faSave} />
                 保存
               </button>
@@ -300,27 +324,7 @@ const Home: NextPage<PageProps> = (props) => {
               {...(!canEdit && { readOnly: true, style: { backgroundColor: "#ccc" } })}
               value={documentText}
               onChange={(e) => {
-                const nowUnix = new Date().getTime();
-                if (viewingHistoryIdx !== editHistory.length - 1) {
-                  // UNDO後に編集した場合
-                  const removeLen = Math.min(
-                    editHistory.length - viewingHistoryIdx - 1,
-                    editHistory.length - 1
-                  );
-                  for (let i = 0; i < removeLen; i++) {
-                    editHistory.pop();
-                  }
-                  preEditUnix = 0;
-                }
-                if (nowUnix - preEditUnix >= 2000) {
-                  // 前回の編集から2秒以上経過した場合は履歴に保存する
-                  editHistory.push(e.target.value);
-                  viewingHistoryIdx = editHistory.length - 1;
-                } else {
-                  editHistory[viewingHistoryIdx] = e.target.value;
-                }
-                preEditUnix = nowUnix;
-                setDocumentText(e.target.value);
+                documentTextUpdate(e.target.value);
               }}
             />
           </div>

@@ -38,7 +38,20 @@
           background-color: white;
           padding: 0.8rem 1rem;
           list-style: none;
-          border: #ccc solid 1px;
+          border-bottom: #ddd solid 1px;
+          position: relative;
+          cursor: pointer;
+          &::before {
+            height: 50%;
+            top: 2px;
+            bottom: 0;
+            left: 10px;
+            margin: auto;
+            width: 3px;
+            content: "";
+            background-color: c.$base-color-c;
+            position: absolute;
+          }
         }
       }
     }

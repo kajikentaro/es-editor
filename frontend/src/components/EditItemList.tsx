@@ -23,6 +23,12 @@ const EditItem = <T extends Item>(props: {
   }, [isEdit]);
 
   const handleUpdate = () => {
+    if (inputText.length === 0) {
+      alert("入力されていません");
+      setInputText(item.name);
+      onEditOver();
+      return;
+    }
     const newItem = { name: inputText, id: item.id };
     rest.put(item.id, newItem as T);
     onEditOver();
@@ -110,7 +116,7 @@ const EditItemList = <T extends Item>(props: {
   };
 
   // 編集が終わったとき
-  const onEditOver = (isUpdate = false) => {
+  const onEditOver = (isUpdate = true) => {
     setEditingIdx(-1);
     if (isUpdate) {
       onUpdate();

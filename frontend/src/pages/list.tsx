@@ -97,6 +97,7 @@ const List: NextPage<PageProps> = (props) => {
               <input
                 type="text"
                 ref={searchInputRef}
+                placeholder="ここに入力"
                 onChange={(e) => {
                   setSearchInputText(e.target.value);
                 }}

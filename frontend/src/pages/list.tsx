@@ -152,7 +152,7 @@ const List: NextPage<PageProps> = (props) => {
         >
           <div className={styles.font_awesome_btn}>
             <FontAwesomeIcon className={styles.icon} icon={faFile} />
-            新規作成
+            <p>新規作成</p>
           </div>
         </button>
         {filterdDocList.map((v, idx) => {

@@ -21,13 +21,15 @@ const DocumentTile: React.VFC<{
   const attachedTag = RESTTag.get(props.document.tagId, props.tagList);
 
   return (
-    <Link href={{ pathname: "/edit", query: { documentId: props.document.id } }}>
-      <a className={styles.document}>
-        <p className={styles.tec}>{attachedCompany?.name || "企業未選択"}</p>
-        <p className={styles.tec}>{attachedTag?.name || "項目未選択"}</p>
-        <p className={styles.document_text}>{props.document.text}</p>
-      </a>
-    </Link>
+    <li className={styles.document_li}>
+      <Link href={{ pathname: "/edit", query: { documentId: props.document.id } }}>
+        <a className={styles.document}>
+          <p className={styles.tec}>{attachedCompany?.name || "企業未選択"}</p>
+          <p className={styles.tec}>{attachedTag?.name || "項目未選択"}</p>
+          <p className={styles.document_text}>{props.document.text}</p>
+        </a>
+      </Link>
+    </li>
   );
 };
 
@@ -144,19 +146,21 @@ const List: NextPage<PageProps> = (props) => {
         </div>
       </div>
 
-      <div className={styles.document_list}>
-        <button
-          className={styles.new_document}
-          onClick={() => {
-            const randomId = genRandomId();
-            router.push({ pathname: "/edit", query: { documentId: randomId } });
-          }}
-        >
-          <div className={styles.font_awesome_btn}>
-            <FontAwesomeIcon className={styles.icon} icon={faFile} />
-            <p>新規作成</p>
-          </div>
-        </button>
+      <ul className={styles.document_list}>
+        <li className={styles.document_li + " " + styles.new_document}>
+          <button
+            className={styles.document}
+            onClick={() => {
+              const randomId = genRandomId();
+              router.push({ pathname: "/edit", query: { documentId: randomId } });
+            }}
+          >
+            <div className={styles.font_awesome_btn}>
+              <FontAwesomeIcon className={styles.icon} icon={faFile} />
+              <p>新規作成</p>
+            </div>
+          </button>
+        </li>
         {filterdDocList.map((v, idx) => {
           return (
             <DocumentTile
@@ -167,7 +171,7 @@ const List: NextPage<PageProps> = (props) => {
             />
           );
         })}
-      </div>
+      </ul>
 
       <div className={styles.edit_item}>
         {companyList.length > 0 && (

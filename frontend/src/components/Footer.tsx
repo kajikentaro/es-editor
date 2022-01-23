@@ -50,7 +50,7 @@ const Header: NextPage = () => {
 
           <div className={styles.section}>
             <p className={styles.section_title}>Source</p>
-            <Link href="https://github.com/kajikentaro/timetablemanager">
+            <Link href="https://github.com/kajikentaro/es-editor">
               <a className={styles.link}>
                 <FontAwesomeIcon icon={faGithub} />
                 GitHub

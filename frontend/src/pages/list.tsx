@@ -216,32 +216,34 @@ const List: NextPage<PageProps> = (props) => {
         })}
       </ul>
 
-      <div className={styles.section + " " + styles.edit_item}>
-        {companyList.length > 0 && (
-          <div className={styles.first}>
-            <h2 className={styles.section_title}>企業名編集</h2>
-            <EditItemList
-              items={companyList}
-              rest={RESTCompany}
-              onUpdate={() => {
-                updateCompanyList();
-              }}
-            />
-          </div>
-        )}
-        {tagList.length > 0 && (
-          <div className={styles.second}>
-            <h2 className={styles.section_title}>項目名編集</h2>
-            <EditItemList
-              items={tagList}
-              rest={RESTTag}
-              onUpdate={() => {
-                updateTagList();
-              }}
-            />
-          </div>
-        )}
-      </div>
+      {tagList.length + companyList.length > 0 && (
+        <div className={styles.section + " " + styles.edit_item}>
+          {companyList.length > 0 && (
+            <div className={styles.first}>
+              <h2 className={styles.section_title}>企業名編集</h2>
+              <EditItemList
+                items={companyList}
+                rest={RESTCompany}
+                onUpdate={() => {
+                  updateCompanyList();
+                }}
+              />
+            </div>
+          )}
+          {tagList.length > 0 && (
+            <div className={styles.second}>
+              <h2 className={styles.section_title}>項目名編集</h2>
+              <EditItemList
+                items={tagList}
+                rest={RESTTag}
+                onUpdate={() => {
+                  updateTagList();
+                }}
+              />
+            </div>
+          )}
+        </div>
+      )}
 
       <div className={styles.section + " " + styles.backup}>
         <h2 className={styles.section_title}>バックアップ・インポート</h2>

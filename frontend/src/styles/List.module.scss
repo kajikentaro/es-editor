@@ -10,11 +10,25 @@
   @include c.mq(xl) {
     padding: 1rem;
   }
+  .section {
+    border-bottom: c.$hr-color solid 1px;
+    padding: 2.5rem 0;
+    .section_title {
+      font-size: 1rem;
+      font-weight: 540;
+      margin-left: 4px;
+      margin-bottom: 3px;
+    }
+    @include c.mq(xl) {
+      padding: 1rem 0;
+    }
+    @include c.mq(md) {
+      padding: 0 0 1rem 0;
+    }
+  }
 }
 
 .content_search {
-  border-bottom: c.$hr-color solid 1px;
-  padding: 2.5rem 0;
   // 文から検索
   .first {
     margin: 0 auto 3rem auto;
@@ -60,9 +74,6 @@
     }
   }
 
-  @include c.mq(xl) {
-    padding: 1rem 0;
-  }
   @include c.mq(lg) {
     .first {
       width: 70%;
@@ -90,11 +101,10 @@
 
 // タイル状のドキュメントリスト
 .document_list {
-  padding: 2.5rem 0;
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  //border-bottom: c.$hr-color solid 2px;
+  border-bottom: none !important;
   .document_li {
     width: calc(100% / 4);
     height: 300px;
@@ -145,7 +155,6 @@
 .edit_item {
   display: flex;
   flex-direction: row;
-  display: flex;
   justify-content: space-between;
   .first,
   .second {
@@ -153,9 +162,22 @@
   }
 }
 
-.section_title {
-  font-size: 1rem;
-  font-weight: 540;
-  margin-left: 4px;
-  margin-bottom: 3px;
+.backup {
+  border-bottom: none !important;
+  .operation_btn {
+    text-align: center;
+    button,
+    label {
+      margin: 0 1rem;
+      font-size: 1rem;
+      height: 2.8rem;
+      @include c.font-awesome-btn;
+      border: none;
+      background-color: c.$base-color-b;
+      color: white;
+    }
+    input {
+      display: none;
+    }
+  }
 }

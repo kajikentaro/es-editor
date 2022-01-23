@@ -1,4 +1,10 @@
-import { faFile, faSearch, faTimes } from "@fortawesome/free-solid-svg-icons";
+import {
+  faDownload,
+  faFile,
+  faFileImport,
+  faSearch,
+  faTimes,
+} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import EditItemList from "components/EditItemList";
 import TermSelect from "components/TermSelect";
@@ -6,10 +12,11 @@ import { Company, Document, PageProps, Tag } from "interfaces/interfaces";
 import type { NextPage } from "next";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useEffect, useRef, useState } from "react";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
 import styles from "styles/List.module.scss";
 import { RESTCompany, RESTTag } from "utils/REST";
 import { genRandomId } from "utils/utils";
+import { backup, restore } from "utils/verify";
 
 // 文書のタイル
 const DocumentTile: React.VFC<{
@@ -62,7 +69,6 @@ const List: NextPage<PageProps> = (props) => {
 
   const search = () => {
     let tmpDocList = documentList;
-    console.log(searchInputText);
     if (searchInputText) {
       tmpDocList = tmpDocList.filter((v) => {
         return v.text.indexOf(searchInputText) !== -1;
@@ -81,9 +87,45 @@ const List: NextPage<PageProps> = (props) => {
     setfilterdDocList(tmpDocList);
   };
 
+  const onClickBackup = () => {
+    const a = document.createElement("a");
+    const blob = new Blob([backup()], { type: "octet/stream" });
+    const url = window.URL.createObjectURL(blob);
+    a.href = url;
+    a.download = "es-editor-backup.json";
+    a.click();
+    window.URL.revokeObjectURL(url);
+  };
+
+  const onClickImport = (e: ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files || e.target.files.length === 0) {
+      alert("ファイルが選択されていません");
+      return;
+    }
+    const reader = new FileReader();
+    reader.readAsText(e.target.files[0]);
+    reader.onload = () => {
+      try {
+        if (typeof reader.result === "string" && reader.result) {
+          const restoreStatus = restore(reader.result);
+          if (restoreStatus === "cancel") return;
+          if (restoreStatus === "failure") alert("ファイルの中身が異なります");
+          if (restoreStatus === "success") {
+            alert("復元しました");
+            router.reload();
+          }
+        } else {
+          alert("ファイルの形式が異なります");
+        }
+      } catch {
+        alert("エラーが発生しました");
+      }
+    };
+  };
+
   return (
     <div className={styles.content}>
-      <div className={styles.content_search}>
+      <div className={styles.section + " " + styles.content_search}>
         <div className={styles.first}>
           <h2 className={styles.section_title}>文から検索</h2>
           <form
@@ -147,7 +189,7 @@ const List: NextPage<PageProps> = (props) => {
         </div>
       </div>
 
-      <ul className={styles.document_list}>
+      <ul className={styles.section + " " + styles.document_list}>
         <li className={styles.document_li + " " + styles.new_document}>
           <button
             className={styles.document}
@@ -174,7 +216,7 @@ const List: NextPage<PageProps> = (props) => {
         })}
       </ul>
 
-      <div className={styles.edit_item}>
+      <div className={styles.section + " " + styles.edit_item}>
         {companyList.length > 0 && (
           <div className={styles.first}>
             <h2 className={styles.section_title}>企業名編集</h2>
@@ -200,8 +242,20 @@ const List: NextPage<PageProps> = (props) => {
           </div>
         )}
       </div>
-      <div className={styles.backup}>
+
+      <div className={styles.section + " " + styles.backup}>
         <h2 className={styles.section_title}>バックアップ・インポート</h2>
+        <div className={styles.operation_btn}>
+          <button onClick={onClickBackup}>
+            <FontAwesomeIcon className={styles.icon} icon={faDownload} />
+            バックアップ
+          </button>
+          <label>
+            <FontAwesomeIcon className={styles.icon} icon={faFileImport} />
+            インポート
+            <input type="file" accept=".json" onChange={onClickImport} />
+          </label>
+        </div>
       </div>
     </div>
   );

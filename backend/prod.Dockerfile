@@ -11,6 +11,6 @@ WORKDIR /root/es-editor/backend
 RUN pip install --upgrade pip
 RUN pip install -r ./requirements.txt
 COPY ./backend/.env ./
-CMD ["/bin/sh"]
+CMD ["python", "app.py"]
 
 EXPOSE 5000

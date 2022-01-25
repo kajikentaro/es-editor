@@ -12,16 +12,39 @@ https://es-editor.kajindowsxp.com
 - ローカル保存 | (coming soon)クラウド保存<br/>端末内かクラウド、またはその両方に書いたデータを保存。更に word 形式でダウンロードすることも可能,
 - (coming soon)コメントアウト機能<br/>一瞬思いついた語彙を逃さず保存。コメントとして記入することで、ダウンロードやまとめてコピー時にはその部分を無視して取得できます。
 
-## How to Dev
+## Docker Compose
 
-1. このリポジトリをクローンします
-1. 空フォルダに入れ、`docker-compose up dev`コマンドを実行します
-1. コンテナ`es_editor_dev`にアタッチ
-1. `/root/es-editor/frontend`フォルダ内で`yarn dev`コマンドを実行する
-1. http://localhost:3000 にアクセス
+### prod_front
+
+本番環境 Web サーバー(Next.js).  
+`localhost:3000`(自動的に起動)
+
+### prod_back
+
+本番環境 Backend サーバー(Flask)  
+`localhost:5000`(自動的に起動)
+
+### dev_front
+
+フロント用開発環境  
+`/root/es-editor/frontend`で`yarn dev`コマンド
+
+### dev_back
+
+バックエンド用開発環境  
+`/root/es-editor/backend`で`python app.py`コマンド
+
+### 例
+
+- `docker-compose up prod_back dev_front`  
+  フロントエンドのみ開発する場合
+- `docker-compose up prod_front dev_back`  
+  バックエンドのみ開発する場合
+- `docker-compose --profile dev`  
+  両方を開発環境とすることもできます
 
 ## How to Prod
 
 1. このリポジトリをクローンします
-1. `docker-compose up prod`を実行
-1. ポート 4125 にサーバーが立ちます
+1. `docker-compose --profile prod up`を実行
+1. `localhost:3000` に Web サーバー、`localhost:5000` にバックエンドサーバーが立ちます

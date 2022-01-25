@@ -8,6 +8,8 @@ services:
       context: ./frontend
       dockerfile: prod.Dockerfile
     tty: true
+    profiles:
+      - prod
     ports:
       - 3000:3000
 
@@ -18,6 +20,8 @@ services:
       context: ./backend
       dockerfile: prod.Dockerfile
     tty: true
+    profiles:
+      - prod
     ports:
       - 5000:5000
 
@@ -27,6 +31,8 @@ services:
       context: .
       dockerfile: ./frontend/dev.Dockerfile
     tty: true
+    profiles:
+      - dev
     ports:
       - 3000:3000
 
@@ -36,5 +42,7 @@ services:
       context: .
       dockerfile: ./backend/dev.Dockerfile
     tty: true
+    profiles:
+      - dev
     ports:
       - 5000:5000

@@ -2,16 +2,12 @@
 import json
 import os
 
-# サードパーティライブラリ
-from flask import Flask, redirect, request, url_for
-from flask_login import (
-    LoginManager,
-    login_required,
-    logout_user,
-)
-from oauthlib.oauth2 import WebApplicationClient
 import requests
 from dotenv import load_dotenv
+# サードパーティライブラリ
+from flask import Flask, redirect, request, url_for
+from flask_login import LoginManager, login_required, logout_user
+from oauthlib.oauth2 import WebApplicationClient
 
 load_dotenv(verbose=True)
 
@@ -127,4 +123,4 @@ def get_google_provider_cfg():
 
 
 if __name__ == "__main__":
-    app.run(ssl_context="adhoc")
+    app.run(ssl_context="adhoc", host="0.0.0.0")

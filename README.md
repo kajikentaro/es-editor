@@ -14,7 +14,7 @@ https://es-editor.kajindowsxp.com
 
 ## How to Dev
 
-1. docker-compose.yml と dev.Dockerfile を用意します
+1. このリポジトリをクローンします
 1. 空フォルダに入れ、`docker-compose up dev`コマンドを実行します
 1. コンテナ`es_editor_dev`にアタッチ
 1. `/root/es-editor/frontend`フォルダ内で`yarn dev`コマンドを実行する

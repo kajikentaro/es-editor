@@ -9,28 +9,32 @@ services:
       dockerfile: prod.Dockerfile
     tty: true
     ports:
-      - 4125:3000
+      - 3000:3000
+
+  # ローカルにgit cloneしておく必要有り
+  prod_back:
+    container_name: es_editor_prod_back
+    build:
+      context: ./backend
+      dockerfile: prod.Dockerfile
+    tty: true
+    ports:
+      - 5000:5000
 
   dev_front:
-    container_name: es_editor_dev
+    container_name: es_editor_dev_front
     build:
       context: .
-      dockerfile: dev.Dockerfile
+      dockerfile: ./frontend/dev.Dockerfile
     tty: true
-    volumes:
-      - type: volume
-        source: develop_volume
-        target: /root/
     ports:
       - 3000:3000
+
   dev_back:
-    container_name: flask_dev
+    container_name: es_editor_dev_back
     build:
       context: .
       dockerfile: ./backend/dev.Dockerfile
     tty: true
     ports:
       - 5000:5000
-
-volumes:
-  develop_volume:

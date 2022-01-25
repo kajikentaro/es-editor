@@ -5,10 +5,11 @@ RUN apk add git vim
 # 最新のgithubを取得したい場合はコメントを外す
 ADD "https://www.random.org/cgi-bin/randbyte?nbytes=10&format=h" /dev/null
 RUN git clone https://github.com/kajikentaro/es-editor
+RUN apk add build-base libffi-dev
 
 WORKDIR /root/es-editor/backend
-RUN yarn install
-
+RUN pip install --upgrade pip
+RUN pip install 
 CMD ["/bin/sh"]
 
 EXPOSE 5000

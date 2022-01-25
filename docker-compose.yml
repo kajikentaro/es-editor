@@ -5,13 +5,13 @@ services:
   prod_front:
     container_name: es_editor_prod_front
     build:
-      context: ./frontend 
+      context: ./frontend
       dockerfile: prod.Dockerfile
     tty: true
     ports:
       - 4125:3000
 
-  dev:
+  dev_front:
     container_name: es_editor_dev
     build:
       context: .
@@ -23,6 +23,14 @@ services:
         target: /root/
     ports:
       - 3000:3000
+  dev_back:
+    container_name: flask_dev
+    build:
+      context: .
+      dockerfile: ./backend/dev.Dockerfile
+    tty: true
+    ports:
+      - 5000:5000
 
 volumes:
   develop_volume:

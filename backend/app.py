@@ -1,7 +1,6 @@
 # Python標準ライブラリ
 import json
 import os
-import sqlite3
 
 # サードパーティライブラリ
 from flask import Flask, redirect, request, url_for
@@ -12,13 +11,16 @@ from flask_login import (
 )
 from oauthlib.oauth2 import WebApplicationClient
 import requests
+from dotenv import load_dotenv
 
+load_dotenv(verbose=True)
+
+dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
+load_dotenv(dotenv_path)
 
 # 設定情報
 GOOGLE_CLIENT_ID = os.environ.get("GOOGLE_CLIENT_ID", None)
 GOOGLE_CLIENT_SECRET = os.environ.get("GOOGLE_CLIENT_SECRET", None)
-GOOGLE_CLIENT_ID = ""
-GOOGLE_CLIENT_SECRET = ""
 GOOGLE_DISCOVERY_URL = (
     "https://accounts.google.com/.well-known/openid-configuration"
 )

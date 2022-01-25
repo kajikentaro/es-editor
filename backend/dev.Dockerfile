@@ -9,7 +9,7 @@ RUN apk add build-base libffi-dev
 
 WORKDIR /root/es-editor/backend
 RUN pip install --upgrade pip
-RUN pip install 
+RUN pip install -r ./requirements.txt
 CMD ["/bin/sh"]
 
 EXPOSE 5000

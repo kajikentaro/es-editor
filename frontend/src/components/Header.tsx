@@ -27,6 +27,7 @@ const Header: NextPage = () => {
           </Link>
         )}
         <div className={styles.operation_btn}>
+          <Link href="/login">ログイン</Link>
           <Link href="/">サイトトップ</Link>
           <Link href="/list">一覧</Link>
         </div>

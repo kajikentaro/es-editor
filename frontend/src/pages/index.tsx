@@ -1,6 +1,6 @@
 import mockup from "img/mockup.png";
 import title from "img/title.svg";
-import type { NextPage } from "next";
+import { NextPage } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import styles from "styles/Home.module.scss";

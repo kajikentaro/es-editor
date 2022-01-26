@@ -12,6 +12,13 @@ https://es-editor.kajindowsxp.com
 - ローカル保存 | (coming soon)クラウド保存<br/>端末内かクラウド、またはその両方に書いたデータを保存。更に word 形式でダウンロードすることも可能,
 - (coming soon)コメントアウト機能<br/>一瞬思いついた語彙を逃さず保存。コメントとして記入することで、ダウンロードやまとめてコピー時にはその部分を無視して取得できます。
 
+## How to Dev
+
+1. このリポジトリをクローンします
+1. `/backend/.env.template`を`/backend/.env`にコピーします。
+1. Google の client id と client secret を取得し、`/backend/.env`に記載します
+1. 下記を参考に開発用環境を作成してください
+
 ## Docker Compose
 
 ### prod_front
@@ -46,5 +53,7 @@ https://es-editor.kajindowsxp.com
 ## How to Prod
 
 1. このリポジトリをクローンします
+1. `/backend/.env.template`を`/backend/.env`にコピーします。
+1. Google の client id と client secret を取得し、`/backend/.env`に記載します
 1. `docker-compose --profile prod up`を実行
 1. `localhost:3000` に Web サーバー、`localhost:5000` にバックエンドサーバーが立ちます

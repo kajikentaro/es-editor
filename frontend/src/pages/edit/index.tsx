@@ -4,7 +4,7 @@ import {
   faRedo,
   faSave,
   faTrash,
-  faUndo,
+  faUndo
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import TermCreateSelect from "components/TermCreateSelect";
@@ -14,9 +14,10 @@ import {
   Document,
   DocumentHistory,
   PageProps,
-  Tag,
+  Tag
 } from "interfaces/interfaces";
 import type { NextPage } from "next";
+import Head from "next/head";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import styles from "styles/Edit.module.scss";
@@ -43,6 +44,7 @@ const Home: NextPage<PageProps> = (props) => {
   const [canEdit, setCanEdit] = useState<boolean>(true);
   const [document, setDocument] = useState<Document>({ ...defaultDocument });
   const [message, setMessage] = useState<string>("");
+  const [selectionLength, setSelectionLength] = useState<number>(0);
 
   /* TODO:再レンダリングを必要としない変数 */
   const [preEditUnix, setPreEditUnix] = useState<number>(0);
@@ -162,6 +164,11 @@ const Home: NextPage<PageProps> = (props) => {
 
   return (
     <div className={styles.content}>
+      <Head>
+        <title>
+          {company ? company.name : "企業未設定"} - {tag ? tag.name : "項目未設定"}
+        </title>
+      </Head>
       <div className={styles.content_editor}>
         <div className={styles.first}>
           <div className={styles.section}>
@@ -306,7 +313,13 @@ const Home: NextPage<PageProps> = (props) => {
               </button>
             </div>
             {message && <p>{message}</p>}
-            {!message && <p>{documentText.length}文字</p>}
+            {!message && (
+              <p>
+                {selectionLength === 0 ? "" : selectionLength + "/"}
+                {documentText.length}
+                文字
+              </p>
+            )}
             <div className={styles.right}>
               <button className={styles.operation_btn} onClick={onClickDelete}>
                 <FontAwesomeIcon className={styles.icon} icon={faTrash} />
@@ -329,6 +342,14 @@ const Home: NextPage<PageProps> = (props) => {
               value={documentText}
               onChange={(e) => {
                 documentTextUpdate(e.target.value);
+              }}
+              onSelect={() => {
+                const selection = window.getSelection();
+                if (selection && selection.type === "Range") {
+                  setSelectionLength(selection.toString().length);
+                } else {
+                  setSelectionLength(0);
+                }
               }}
             />
           </div>

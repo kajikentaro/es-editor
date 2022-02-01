@@ -35,18 +35,16 @@ login_manager.init_app(app)
 db = SQLAlchemy(app)
 
 
-class User(db.Model):
-    id = db.Column(db.String(120), primary_key=True)
+class User(UserMixin, db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    unique_id = db.Column(db.String(120), unique=True)
     username = db.Column(db.String(120))
     email = db.Column(db.String(120))
 
-    def __init__(self, id, username, email):
-        self.id = id
+    def __init__(self, unique_id, username, email):
+        self.unique_id = unique_id
         self.username = username
         self.email = email
-
-    def __repr__(self):
-        return '<User %r>' % self.username
 
 
 with app.app_context():
@@ -55,7 +53,7 @@ with app.app_context():
 
 @login_manager.user_loader
 def load_user(id):
-    return User.get(id)
+    return User.query.get(id)
 
 
 @login_manager.unauthorized_handler
@@ -124,7 +122,7 @@ def callback():
     else:
         return "User email not available or not verified by Google.", 400
 
-    user = User.query.filter_by(id=unique_id).one_or_none()
+    user = User.query.filter_by(unique_id=unique_id).one_or_none()
     if user:
         login_user(user)
         return Response("ログインしました")
@@ -132,6 +130,7 @@ def callback():
     user = User(unique_id, users_name, users_email)
     db.session.add(user)
     db.session.commit()
+    login_user(user)
     return Response("アカウントを作成しました")
 
 

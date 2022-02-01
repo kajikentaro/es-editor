@@ -1,34 +1,61 @@
-# Python標準ライブラリ
 import json
 import os
+from enum import unique
 
 import requests
 from dotenv import load_dotenv
-# サードパーティライブラリ
-from flask import Flask, redirect, request, url_for
-from flask_login import LoginManager, login_required, logout_user
+from flask import Flask, Response, redirect, request, url_for
+from flask_login import (LoginManager, UserMixin, current_user, login_required,
+                         login_user, logout_user)
+from flask_sqlalchemy import SQLAlchemy
 from oauthlib.oauth2 import WebApplicationClient
 
-load_dotenv(verbose=True)
-
 dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
-load_dotenv(dotenv_path)
+load_dotenv(dotenv_path, verbose=True)
 
-# 設定情報
 GOOGLE_CLIENT_ID = os.environ.get("GOOGLE_CLIENT_ID", None)
 GOOGLE_CLIENT_SECRET = os.environ.get("GOOGLE_CLIENT_SECRET", None)
 GOOGLE_DISCOVERY_URL = (
     "https://accounts.google.com/.well-known/openid-configuration")
 
-# Flaskセットアップ
-app = Flask(__name__)
-# セッション情報を暗号化するためのキーを設定
-app.secret_key = os.environ.get("SECRET_KEY") or os.urandom(24)
 
-# ユーザセッション管理の設定
-# https://flask-login.readthedocs.io/en/latest
+app = Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = "mysql+pymysql://{user}:{password}@{host}/{db_name}".format(**{
+    'user': os.environ.get('RDS_USER', None),
+    'password': os.environ.get('RDS_PASS', None),
+    'host': os.environ.get('RDS_HOST', None),
+    'db_name': os.environ.get('RDS_DB_NAME', None)
+})
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['SECRET_KEY'] = os.environ.get("SECRET_KEY") or os.urandom(24)
+
 login_manager = LoginManager()
 login_manager.init_app(app)
+
+db = SQLAlchemy(app)
+
+
+class User(db.Model):
+    id = db.Column(db.String(120), primary_key=True)
+    username = db.Column(db.String(120))
+    email = db.Column(db.String(120))
+
+    def __init__(self, id, username, email):
+        self.id = id
+        self.username = username
+        self.email = email
+
+    def __repr__(self):
+        return '<User %r>' % self.username
+
+
+with app.app_context():
+    db.create_all()
+
+
+@login_manager.user_loader
+def load_user(id):
+    return User.get(id)
 
 
 @login_manager.unauthorized_handler
@@ -36,7 +63,6 @@ def unauthorized():
     return "You must be logged in to access this content.", 403
 
 
-# OAuth2クライアント設定
 client = WebApplicationClient(GOOGLE_CLIENT_ID)
 
 
@@ -45,32 +71,32 @@ def index():
     return "/"
 
 
+@app.route("/check")
+def check():
+    if current_user.is_authenticated:
+        return Response("ログイン中")
+    return Response("ログアウト中")
+
+
 @app.route("/login")
 def login():
-    # 認証用のエンドポイントを取得する
     google_provider_cfg = get_google_provider_cfg()
     authorization_endpoint = google_provider_cfg["authorization_endpoint"]
-
-    # ユーザプロファイルを取得するログイン要求
     request_uri = client.prepare_request_uri(
         authorization_endpoint,
         redirect_uri=request.base_url + "/callback",
         scope=["openid", "email", "profile"],
     )
-    print("aaa")
     return redirect(request_uri)
 
 
 @app.route("/login/callback")
 def callback():
-    # Googleから返却された認証コードを取得する
     code = request.args.get("code")
 
-    # トークンを取得するためのURLを取得する
     google_provider_cfg = get_google_provider_cfg()
     token_endpoint = google_provider_cfg["token_endpoint"]
 
-    # トークンを取得するための情報を生成し、送信する
     token_url, headers, body = client.prepare_token_request(
         token_endpoint,
         authorization_response=request.url,
@@ -84,16 +110,12 @@ def callback():
         auth=(GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET),
     )
 
-    # トークンをparse
     client.parse_request_body_response(json.dumps(token_response.json()))
 
-    # トークンができたので、GoogleからURLを見つけてヒットした、
-    # Googleプロフィール画像やメールなどのユーザーのプロフィール情報を取得
     userinfo_endpoint = google_provider_cfg["userinfo_endpoint"]
     uri, headers, body = client.add_token(userinfo_endpoint)
     userinfo_response = requests.get(uri, headers=headers, data=body)
 
-    # メールが検証されていれば、名前、email、プロフィール画像を取得します
     if userinfo_response.json().get("email_verified"):
         unique_id = userinfo_response.json()["sub"]
         users_email = userinfo_response.json()["email"]
@@ -102,11 +124,15 @@ def callback():
     else:
         return "User email not available or not verified by Google.", 400
 
-    # ログインしてユーザーセッションを開始
-    # login_user(user)
+    user = User.query.filter_by(id=unique_id).one_or_none()
+    if user:
+        login_user(user)
+        return Response("ログインしました")
 
-    # フロントエンドのリダイレクト先指定
-    return redirect("http://127.0.0.1:3000/list")
+    user = User(unique_id, users_name, users_email)
+    db.session.add(user)
+    db.session.commit()
+    return Response("アカウントを作成しました")
 
 
 # @login_requiredデコレータは認証したいページに付ける

@@ -46,3 +46,15 @@ services:
       - dev
     ports:
       - 5000:5000
+  
+  db:
+    container_name: es_editor_db
+    build:
+      context: ./db
+    tty: true
+    environment:
+      - MYSQL_ROOT_PASSWORD=example
+    volumes:
+      - type: bind
+        source: ./db
+        target: /docker-entrypoint-initdb.d

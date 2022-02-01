@@ -5,8 +5,7 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 
 dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
-load_dotenv(dotenv_path)
-load_dotenv(verbose=True)
+load_dotenv(dotenv_path, verbose=True)
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = "mysql+pymysql://{user}:{password}@{host}/{db_name}".format(**{
@@ -15,13 +14,13 @@ app.config['SQLALCHEMY_DATABASE_URI'] = "mysql+pymysql://{user}:{password}@{host
     'host': os.environ.get('RDS_HOST', None),
     'db_name': os.environ.get('RDS_DB_NAME', None)
 })
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = os.environ.get("SECRET_KEY") or os.urandom(24)
 
 
 db = SQLAlchemy(app)
 with app.app_context():
     db.create_all()
-
 
 
 class User(db.Model):
@@ -38,3 +37,7 @@ class User(db.Model):
 
 
 db.create_all()
+
+user = User("test", "test@test.com")
+db.session.add(user)
+db.session.commit()

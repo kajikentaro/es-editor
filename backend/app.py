@@ -18,8 +18,7 @@ load_dotenv(dotenv_path)
 GOOGLE_CLIENT_ID = os.environ.get("GOOGLE_CLIENT_ID", None)
 GOOGLE_CLIENT_SECRET = os.environ.get("GOOGLE_CLIENT_SECRET", None)
 GOOGLE_DISCOVERY_URL = (
-    "https://accounts.google.com/.well-known/openid-configuration"
-)
+    "https://accounts.google.com/.well-known/openid-configuration")
 
 # Flaskセットアップ
 app = Flask(__name__)

@@ -4,3 +4,6 @@ oauthlib
 pyOpenSSL
 Flask-Login
 python-dotenv
+
+flask_sqlalchemy
+pymysql

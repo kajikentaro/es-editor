@@ -1,6 +1,6 @@
 ## 就活 ES エディター
 
-就活生のためのエントリーシートエディター
+就活生のためのエントリーシートエディター  
 https://es-editor.kajindowsxp.com
 
 ## Feature
@@ -34,18 +34,28 @@ https://es-editor.kajindowsxp.com
 ### dev_front
 
 フロント用開発環境  
-`/root/es-editor/frontend`で`yarn dev`コマンド
+初回起動時`yarn install`必須  
+`yarn dev`コマンドで起動
 
 ### dev_back
 
 バックエンド用開発環境  
-`/root/es-editor/backend`で`python app.py`コマンド
+初回起動時`pip install -r requirements.txt`必須  
+`python oauth.py`コマンドで起動
+
+### db
+
+本番と開発共用
+
+### clone_git
+
+dev_front, dev_back でマウントされている docker volume に git のソースを書き込む用。初回起動時に実行してください
 
 ### 例
 
-- `docker-compose up prod_back dev_front`  
+- `docker-compose up prod_back dev_front db`  
   フロントエンドのみ開発する場合
-- `docker-compose up prod_front dev_back`  
+- `docker-compose up prod_front dev_back db`  
   バックエンドのみ開発する場合
 - `docker-compose --profile dev`  
   両方を開発環境とすることもできます

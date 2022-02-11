@@ -24,6 +24,9 @@ services:
       - prod
     ports:
       - 5000:5000
+    depends_on:
+      db:
+        condition: service_healthy
 
   # 開発フロントエンド
   dev_front:
@@ -64,7 +67,7 @@ services:
       context: ./db
     tty: true
     environment:
-      - MYSQL_ROOT_PASSWORD=example
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
     volumes:
       - type: bind
         source: ./db
@@ -72,6 +75,12 @@ services:
     profiles:
       - dev
       - prod
+    healthcheck:
+      test: "mysql --password=${MYSQL_ROOT_PASSWORD} --execute 'show databases;'"
+      interval: 3s
+      timeout: 30s
+      retries: 10
+      start_period: 0s
 
   clone_git:
     container_name: es_editor_clone_git
@@ -85,3 +94,4 @@ services:
 
 volumes:
   clone_git:
+  

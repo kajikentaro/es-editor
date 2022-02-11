@@ -1,9 +1,10 @@
-
 from flask_login import (LoginManager, UserMixin, current_user, login_required,
                          login_user, logout_user)
 
+from . import db
 
-class User(UserMixin):
+
+class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     unique_id = db.Column(db.String(120), unique=True)
     username = db.Column(db.String(120))

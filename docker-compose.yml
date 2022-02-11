@@ -1,7 +1,7 @@
 version: "3.2"
 
 services:
-  # ローカルにgit cloneしておく必要有り
+  # 本番フロントエンド
   prod_front:
     container_name: es_editor_prod_front
     build:
@@ -13,7 +13,7 @@ services:
     ports:
       - 3000:3000
 
-  # ローカルにgit cloneしておく必要有り
+  # 本番バックエンド(仮)
   prod_back:
     container_name: es_editor_prod_back
     build:
@@ -25,6 +25,7 @@ services:
     ports:
       - 5000:5000
 
+  # 開発フロントエンド
   dev_front:
     container_name: es_editor_dev_front
     build:
@@ -35,7 +36,12 @@ services:
       - dev
     ports:
       - 3000:3000
+    volumes:
+      - type: volume
+        source: clone_git
+        target: /root/es-editor
 
+  # 開発バックエンド
   dev_back:
     container_name: es_editor_dev_back
     build:
@@ -46,3 +52,36 @@ services:
       - dev
     ports:
       - 5000:5000
+    volumes:
+      - type: volume
+        source: clone_git
+        target: /root/es-editor
+  
+  # データベース
+  db:
+    container_name: es_editor_db
+    build:
+      context: ./db
+    tty: true
+    environment:
+      - MYSQL_ROOT_PASSWORD=example
+    volumes:
+      - type: bind
+        source: ./db
+        target: /docker-entrypoint-initdb.d
+    profiles:
+      - dev
+      - prod
+
+  clone_git:
+    container_name: es_editor_clone_git
+    build:
+      context: .
+      dockerfile: clone-git.Dockerfile
+    volumes:
+      - type: volume
+        source: clone_git
+        target: /root/es-editor
+
+volumes:
+  clone_git:

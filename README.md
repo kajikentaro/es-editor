@@ -15,8 +15,8 @@ https://es-editor.kajindowsxp.com
 ## How to Dev
 
 1. このリポジトリをクローンします
-1. `/backend/.env.template`を`/backend/.env`にコピーします。
-1. Google の client id と client secret を取得し、`/backend/.env`に記載します
+1. `/backend/flaskr/.env.template`を`/backend/flaskr/.env`にコピーします。
+1. Google の client id と client secret を取得し、`/backend/flaskr/.env`に記載します
 1. 下記を参考に開発用環境を作成してください
 
 ## Docker Compose
@@ -41,7 +41,7 @@ https://es-editor.kajindowsxp.com
 
 バックエンド用開発環境  
 初回起動時`pip install -r requirements.txt`必須  
-`python oauth.py`コマンドで起動
+`python setup.py`コマンドで起動
 
 ### db
 
@@ -63,7 +63,7 @@ dev_front, dev_back でマウントされている docker volume に git のソ�
 ## How to Prod
 
 1. このリポジトリをクローンします
-1. `/backend/.env.template`を`/backend/.env`にコピーします。
-1. Google の client id と client secret を取得し、`/backend/.env`に記載します
+1. `/backend/flaskr/.env.template`を`/backend/flaskr/.env`にコピーします。
+1. Google の client id と client secret を取得し、`/backend/flaskr/.env`に記載します
 1. `docker-compose --profile prod up`を実行
 1. `localhost:3000` に Web サーバー、`localhost:5000` にバックエンドサーバーが立ちます

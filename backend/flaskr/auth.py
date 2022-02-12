@@ -43,7 +43,8 @@ def index():
 @bp.route("/check")
 def check():
     if current_user.is_authenticated:
-        return Response("ログイン中")
+        print(current_user)
+        return Response("ログイン中" + current_user.userid)
     return Response("ログアウト中")
 
 
@@ -86,19 +87,19 @@ def callback():
     userinfo_response = requests.get(uri, headers=headers, data=body)
 
     if userinfo_response.json().get("email_verified"):
-        unique_id = userinfo_response.json()["sub"]
+        userid = userinfo_response.json()["sub"]
         users_email = userinfo_response.json()["email"]
         picture = userinfo_response.json()["picture"]
         users_name = userinfo_response.json()["given_name"]
     else:
         return "User email not available or not verified by Google.", 400
 
-    user = User.query.filter_by(unique_id=unique_id).one_or_none()
+    user = User.query.filter_by(userid=userid).one_or_none()
     if user:
         login_user(user)
         return Response("ログインしました")
 
-    user = User(unique_id, users_name, users_email)
+    user = User(userid, users_name, users_email)
     db.session.add(user)
     db.session.commit()
     login_user(user)

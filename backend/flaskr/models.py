@@ -3,59 +3,60 @@ from sqlalchemy import BigInteger, Column, Integer, String
 
 from . import db
 
-localId = String(20)
-globalId = String(30)
-contentTitle = String(150)
+
+def local_id(): return String(20)
+def global_id(): return String(30)
+def content_title(): return String(150)
 
 
 class User(UserMixin, db.Model):
     id = Column(Integer, primary_key=True)
-    userid = Column(globalId, unique=True)
-    username = Column(contentTitle)
+    user_id = Column(global_id(), unique=True)
+    user_name = Column(content_title())
     email = Column(String(150))
 
-    def __init__(self, userid, username, email):
-        self.userid = userid
-        self.username = username
+    def __init__(self, user_id, user_name, email):
+        self.user_id = user_id
+        self.user_name = user_name
         self.email = email
 
 
 class Tag(db.Model):
-    uniqueid = Column(Integer, autoincrement=True, primary_key=True)
-    userid = Column(globalId)
-    id = Column(localId)
-    name = Column(contentTitle)
-    updateDate = Column(BigInteger)
+    unique_id = Column(Integer, autoincrement=True, primary_key=True)
+    user_id = Column(global_id())
+    id = Column(local_id())
+    name = Column(content_title())
+    update_date = Column(BigInteger)
 
 
 class Company(db.Model):
-    uniqueid = Column(Integer, autoincrement=True, primary_key=True)
-    userid = Column(globalId)
-    id = Column(localId)
-    name = Column(contentTitle)
-    updateDate = Column(BigInteger)
+    unique_id = Column(Integer, autoincrement=True, primary_key=True)
+    user_id = Column(global_id())
+    id = Column(local_id())
+    name = Column(content_title())
+    update_date = Column(BigInteger)
 
 
 class Document(db.Model):
-    uniqueid = Column(Integer, autoincrement=True, primary_key=True)
-    userid = Column(globalId)
-    id = Column(localId)
+    unique_id = Column(Integer, autoincrement=True, primary_key=True)
+    user_id = Column(global_id())
+    id = Column(local_id())
     name = Column(String(150))
-    companyId = Column(localId)
-    tagId = Column(localId)
+    company_id = Column(local_id())
+    tag_id = Column(local_id())
     text = Column(String(10000))
-    wordCount = Column(Integer)
-    updateDate = Column(BigInteger)
+    word_count = Column(Integer)
+    update_date = Column(BigInteger)
 
 
 class DocumentHistory(db.Model):
-    uniqueid = Column(Integer, autoincrement=True, primary_key=True)
-    userid = Column(globalId)
-    id = Column(globalId)
-    documentId = Column(localId)
+    unique_id = Column(Integer, autoincrement=True, primary_key=True)
+    user_id = Column(global_id())
+    id = Column(global_id())
+    documentId = Column(local_id())
     name = Column(String(150))
-    companyId = Column(localId)
-    tagId = Column(localId)
+    company_id = Column(local_id())
+    tag_id = Column(local_id())
     text = Column(String(10000))
-    wordCount = Column(Integer)
-    updateDate = Column(BigInteger)
+    word_count = Column(Integer)
+    update_date = Column(BigInteger)

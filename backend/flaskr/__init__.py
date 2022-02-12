@@ -30,6 +30,9 @@ def create_app(test_config=None):
     from .auth import bp as auth_bp
     app.register_blueprint(auth_bp)
 
+    from .rest_api.document import bp as document_bp
+    app.register_blueprint(document_bp)
+
     with app.app_context():
         db.create_all()
 

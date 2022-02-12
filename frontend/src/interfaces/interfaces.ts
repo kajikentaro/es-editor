@@ -5,6 +5,7 @@ export interface Document extends Item {
   tagId: string;
   text: string;
   wordCount: number;
+  updateDate?: number;
 }
 
 export interface DocumentHistory extends Item {
@@ -15,6 +16,7 @@ export interface DocumentHistory extends Item {
   tagId: string;
   text: string;
   wordCount: number;
+  updateDate?: number;
 }
 
 export interface Item {

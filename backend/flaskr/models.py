@@ -1,7 +1,7 @@
 from flask_login import UserMixin
 from sqlalchemy import BigInteger, Column, Integer, String
 
-from . import db
+from . import db, ma
 
 
 def local_id(): return String(20)
@@ -60,3 +60,8 @@ class DocumentHistory(db.Model):
     text = Column(String(10000))
     word_count = Column(Integer)
     update_date = Column(BigInteger)
+
+
+class DocumentSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = Document

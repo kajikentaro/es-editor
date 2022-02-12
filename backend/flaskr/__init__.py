@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 from flask import Flask
 from flask_login import (LoginManager, UserMixin, current_user, login_required,
                          login_user, logout_user)
+from flask_marshmallow import Marshmallow
 from flask_sqlalchemy import SQLAlchemy
 
 dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
@@ -11,6 +12,7 @@ load_dotenv(dotenv_path, verbose=True)
 
 db = SQLAlchemy()
 login_manager = LoginManager()
+ma = Marshmallow()
 
 
 def create_app(test_config=None):
@@ -23,9 +25,11 @@ def create_app(test_config=None):
     })
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['SECRET_KEY'] = os.environ.get("SECRET_KEY") or os.urandom(24)
+    app.config['JSON_AS_ASCII'] = False
 
     db.init_app(app)
     login_manager.init_app(app)
+    ma.init_app(app)
 
     from .auth import bp as auth_bp
     app.register_blueprint(auth_bp)

@@ -41,7 +41,7 @@ services:
       - 3000:3000
     volumes:
       - type: volume
-        source: clone_git
+        source: git_clone
         target: /root/es-editor
 
   # 開発バックエンド
@@ -57,7 +57,7 @@ services:
       - 5000:5000
     volumes:
       - type: volume
-        source: clone_git
+        source: git_clone
         target: /root/es-editor
   
   # データベース
@@ -82,16 +82,18 @@ services:
       retries: 10
       start_period: 0s
 
-  clone_git:
-    container_name: es_editor_clone_git
+  git_clone:
+    container_name: es_editor_git_clone
     build:
       context: .
-      dockerfile: clone-git.Dockerfile
+      dockerfile: gitclone.Dockerfile
     volumes:
       - type: volume
-        source: clone_git
+        source: git_clone
         target: /root/es-editor
+    profiles:
+      - none
 
 volumes:
-  clone_git:
+  git_clone:
   

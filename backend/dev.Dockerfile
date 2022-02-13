@@ -6,6 +6,6 @@ RUN apk add build-base libffi-dev
 RUN apk add mysql-client
 RUN pip install --upgrade pip
 
-WORKDIR /root/es-editor/backend
+WORKDIR /root/es-editor/
 CMD ["/bin/sh"]
 EXPOSE 5000

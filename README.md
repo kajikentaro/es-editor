@@ -34,7 +34,7 @@ https://es-editor.kajindowsxp.com
 ### dev_front
 
 フロント用開発環境  
-初回起動時`yarn install`必須  
+初回起動時`yarn install`必須 (ECONNREFUSE になる場合は`--network-concurrency 1`オプションを付与)  
 `yarn dev`コマンドで起動
 
 ### dev_back

@@ -62,6 +62,13 @@ class DocumentHistory(db.Model):
     update_date = Column(BigInteger)
 
 
+class DeletedDocument(db.Model):
+    unique_id = Column(Integer, autoincrement=True, primary_key=True)
+    user_id = Column(global_id())
+    id = Column(local_id())
+    update_date = Column(BigInteger)
+
+
 class DocumentSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = Document

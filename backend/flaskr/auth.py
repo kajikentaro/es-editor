@@ -37,7 +37,7 @@ client = WebApplicationClient(GOOGLE_CLIENT_ID)
 
 @bp.route("/")
 def index():
-    return "/"
+    return Response("こんにちは")
 
 
 @bp.route("/check")

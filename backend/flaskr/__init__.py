@@ -15,13 +15,13 @@ login_manager = LoginManager()
 ma = Marshmallow()
 
 
-def create_app(test_config=None):
+def create_app(is_test=False):
     app = Flask(__name__)
     app.config['SQLALCHEMY_DATABASE_URI'] = "mysql+pymysql://{user}:{password}@{host}/{db_name}".format(**{
         'user': os.environ.get('RDS_USER', None),
         'password': os.environ.get('RDS_PASS', None),
         'host': os.environ.get('RDS_HOST', None),
-        'db_name': os.environ.get('RDS_DB_NAME', None)
+        'db_name': os.environ.get('RDS_DB_NAME' if is_test else "RDS_DB_NAME", None)
     })
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['SECRET_KEY'] = os.environ.get("SECRET_KEY") or os.urandom(24)

@@ -1,22 +1,18 @@
 import pytest
 from flask import json
-from flaskr.models import Document, DocumentSchema
+from flaskr.models import DocumentSchema, Tag
 
 
 def test_db(session):
-    document = Document()
-    document.id = 'hoge'
-    document.name = 'hoge'
-    document.company_id = 'hoge'
-    document.tag_id = 'hoge'
-    document.text = 'hoge'
-    document.word_count = 1
-    document.update_date = 123
-    document.user_id = 'hoge'
+    tag = Tag()
+    tag.user_id = 'hoge'
+    tag.id = 'hoge'
+    tag.name = 'hoge'
+    tag.update_date = 12345
 
-    session.add(document)
+    session.add(tag)
     session.commit()
 
-    stored_document = Document.query.filter_by(
-        user_id=document.user_id, id=document.id).one_or_none()
+    stored_document = Tag.query.filter_by(
+        user_id=tag.user_id, id=tag.id).one_or_none()
     assert stored_document != None

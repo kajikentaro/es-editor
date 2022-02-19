@@ -27,7 +27,6 @@ def create_app(is_test=False):
     app.config['SECRET_KEY'] = os.environ.get("SECRET_KEY") or os.urandom(24)
     app.config['JSON_AS_ASCII'] = False
 
-    db.init_app(app)
     login_manager.init_app(app)
     ma.init_app(app)
 
@@ -37,7 +36,9 @@ def create_app(is_test=False):
     from .rest_api.document import bp as document_bp
     app.register_blueprint(document_bp)
 
-    with app.app_context():
-        db.create_all()
+    if is_test == False:
+        db.init_app(app)
+        with app.app_context():
+            db.create_all()
 
     return app

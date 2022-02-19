@@ -7,7 +7,6 @@ from zlib import DEF_MEM_LEVEL
 
 from flask import Blueprint, Response, jsonify, request
 from flask_login import current_user, login_required
-from itsdangerous import json
 
 from .. import db
 from ..models import DeletedDocument, Document, DocumentSchema

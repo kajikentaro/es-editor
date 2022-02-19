@@ -31,7 +31,7 @@ def db(app, request):
     def teardown():
         _db.drop_all()
 
-    _db.app = app
+    _db.init_app(app)
     _db.create_all()
 
     request.addfinalizer(teardown)

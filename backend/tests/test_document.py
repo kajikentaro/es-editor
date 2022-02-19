@@ -13,6 +13,5 @@ def test_db(session):
     session.add(tag)
     session.commit()
 
-    stored_document = Tag.query.filter_by(
-        user_id=tag.user_id, id=tag.id).one_or_none()
-    assert stored_document != None
+    print(tag.unique_id)
+    assert tag.unique_id > 0

@@ -21,7 +21,7 @@ def create_app(is_test=False):
         'user': os.environ.get('RDS_USER', None),
         'password': os.environ.get('RDS_PASS', None),
         'host': os.environ.get('RDS_HOST', None),
-        'db_name': os.environ.get('RDS_DB_NAME' if is_test else "RDS_DB_NAME", None)
+        'db_name': os.environ.get('RDS_DB_NAME_TEST' if is_test else "RDS_DB_NAME", None)
     })
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['SECRET_KEY'] = os.environ.get("SECRET_KEY") or os.urandom(24)
@@ -29,6 +29,7 @@ def create_app(is_test=False):
 
     login_manager.init_app(app)
     ma.init_app(app)
+    db.init_app(app)
 
     from .auth import bp as auth_bp
     app.register_blueprint(auth_bp)
@@ -36,9 +37,7 @@ def create_app(is_test=False):
     from .rest_api.document import bp as document_bp
     app.register_blueprint(document_bp)
 
-    if is_test == False:
-        db.init_app(app)
-        with app.app_context():
-            db.create_all()
+    with app.app_context():
+        db.create_all()
 
     return app

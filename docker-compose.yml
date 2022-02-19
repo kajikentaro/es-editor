@@ -51,6 +51,8 @@ services:
       context: .
       dockerfile: ./backend/dev.Dockerfile
     tty: true
+    environment:
+      - FLASK_APP=flaskr
     profiles:
       - dev
     ports:
@@ -59,7 +61,7 @@ services:
       - type: volume
         source: git_clone
         target: /root/es-editor
-  
+
   # データベース
   db:
     container_name: es_editor_db
@@ -96,4 +98,3 @@ services:
 
 volumes:
   git_clone:
-  

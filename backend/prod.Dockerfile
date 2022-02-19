@@ -8,7 +8,7 @@ RUN pip install --upgrade pip
 
 COPY . /root/app
 WORKDIR /root/app
-RUN pip install -r ./requirements.txt
-CMD ["python", "app.py"]
+RUN pip install -e ./backend
+CMD ["flask", "run"]
 
 EXPOSE 5000

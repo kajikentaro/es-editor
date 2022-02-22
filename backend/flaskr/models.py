@@ -14,6 +14,7 @@ class User(UserMixin, db.Model):
     user_id = Column(global_id(), unique=True)
     user_name = Column(content_title())
     email = Column(String(150))
+    # TODO: 乱数カラムの追加
 
     def __init__(self, user_id, user_name, email):
         self.user_id = user_id

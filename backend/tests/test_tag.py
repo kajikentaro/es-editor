@@ -2,6 +2,11 @@ import pytest
 from flask import json
 from flaskr.models import DocumentSchema, Tag
 
+# save
+# update
+# delete
+# reload
+
 
 def test_db(session):
     tag = Tag()
@@ -22,14 +27,15 @@ def test_home(client):
     assert response.status_code == 200
 
 
-def test_template(client, client2):
+def test_template(client):
     response = client.get(
         '/',
         data=json.dumps({'a': 1, 'b': 2}),
         content_type='application/json',
     )
-    # assert (response.get_data(as_text=True)) == None
-    # data = json.loads(response.get_data(as_text=True))
-    assert response.status_code == 200
 
-    # assert data['sum'] == 3
+    #assert (response.get_data(as_text=True)) == None
+    #data = json.loads(response.get_data(as_text=True))
+
+    assert response.status_code == 200
+    #assert data['sum'] == 3

@@ -69,8 +69,16 @@ def session(db, request):
 # https://github.com/pytest-dev/pytest-flask/issues/70
 # http://alexmic.net/flask-sqlalchemy-pytest/
 
+
 @pytest.fixture
 def client(app):
+    test_client = app.test_client()
+    yield test_client
+    test_client.delete()
+
+
+@pytest.fixture
+def client2(app):
     test_client = app.test_client()
     yield test_client
     test_client.delete()

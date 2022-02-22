@@ -74,3 +74,9 @@ def client(app):
     test_client = app.test_client()
     yield test_client
     test_client.delete()
+
+@pytest.fixture
+def client2(app):
+    test_client = app.test_client()
+    yield test_client
+    test_client.delete()

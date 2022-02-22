@@ -78,6 +78,8 @@ def delete():
         return jsonify({"message": "サーバーのDB書き込みに失敗しました"}), 400
     return jsonify({})
 
-#reload
+# reload
+
+
 def reload():
     pass

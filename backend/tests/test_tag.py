@@ -2,10 +2,12 @@ import pytest
 from flask import json
 from flaskr.models import DocumentSchema, Tag
 
-#save
-#update
-#delete
-#reload
+# save
+# update
+# delete
+# reload
+
+
 def test_db(session):
     tag = Tag()
     tag.user_id = 'hoge'
@@ -19,9 +21,11 @@ def test_db(session):
     print(tag.unique_id)
     assert tag.unique_id > 0
 
+
 def test_home(client):
     response = client.get('/')
     assert response.status_code == 200
+
 
 def test_template(client):
     response = client.get(

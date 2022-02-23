@@ -4,7 +4,7 @@ import {
   faRedo,
   faSave,
   faTrash,
-  faUndo
+  faUndo,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import TermCreateSelect from "components/TermCreateSelect";
@@ -14,7 +14,7 @@ import {
   Document,
   DocumentHistory,
   PageProps,
-  Tag
+  Tag,
 } from "interfaces/interfaces";
 import type { NextPage } from "next";
 import Head from "next/head";
@@ -57,11 +57,13 @@ const Home: NextPage<PageProps> = (props) => {
   // 文書読み込み
   useEffect(() => {
     if (!documentId) return;
-    const documentToLoad = RESTDocument.get(documentId as string) || document;
+    const documentToLoad = RESTDocument.get(documentId as string) || {
+      ...defaultDocument,
+    };
     if (documentToLoad.id) {
       // 存在した場合
-      const newEditHistory = [...editHistory];
-      newEditHistory[viewingHistoryIdx] = documentToLoad.text;
+      const newEditHistory = [""];
+      newEditHistory[0] = documentToLoad.text;
       setEditHistory(newEditHistory);
       setCompany(RESTCompany.get(documentToLoad.companyId));
       setTag(RESTTag.get(documentToLoad.tagId));

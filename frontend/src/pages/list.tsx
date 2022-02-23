@@ -55,22 +55,24 @@ const List: NextPage<PageProps> = (props) => {
   const searchInputRef = useRef<HTMLInputElement>(null);
   const [filterdDocList, setfilterdDocList] = useState<Document[]>([]);
 
-  const searchHistory = getSessionStorage(SEARCH_HISTORY_KEY).searchText;
+  const searchHistory = getSessionStorage(SEARCH_HISTORY_KEY);
   // 検索バーに入力した文字列
-  const [inputText, setInputText] = useState<string>(searchHistory.searchText || "");
+  const [inputText, setInputText] = useState<string>(searchHistory?.searchText || "");
   // 検索中の文字列
-  const [searchText, setSearchText] = useState<string>(searchHistory.searchText || "");
-  const [selectTagId, setSelectTagId] = useState<string>(searchHistory.selectTagId || "");
+  const [searchText, setSearchText] = useState<string>(searchHistory?.searchText || "");
+  const [selectTagId, setSelectTagId] = useState<string>(
+    searchHistory?.selectTagId || ""
+  );
   const [selectCompanyId, setSelectCompanyId] = useState<string>(
-    searchHistory.selectCompanyId || ""
+    searchHistory?.selectCompanyId || ""
   );
 
   useMemo(() => {
     // document検索処理
     let tmpDocList = [...documentList];
-    if (inputText) {
+    if (searchText) {
       tmpDocList = tmpDocList.filter((v) => {
-        return v.text.indexOf(inputText) !== -1;
+        return v.text.indexOf(searchText) !== -1;
       });
     }
     if (selectCompanyId) {

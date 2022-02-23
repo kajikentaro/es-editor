@@ -8,13 +8,15 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import EditItemList from "components/EditItemList";
 import TermSelect from "components/TermSelect";
+import { SEARCH_HISTORY_KEY } from "consts/key";
 import { Company, Document, PageProps, Tag } from "interfaces/interfaces";
 import type { NextPage } from "next";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { ChangeEvent, useEffect, useRef, useState } from "react";
+import { ChangeEvent, useMemo, useRef, useState } from "react";
 import styles from "styles/List.module.scss";
 import { RESTCompany, RESTTag } from "utils/REST";
+import { getSessionStorage, setSessionStorage } from "utils/storage";
 import { genRandomId } from "utils/utils";
 import { backup, restore } from "utils/verify";
 
@@ -53,25 +55,22 @@ const List: NextPage<PageProps> = (props) => {
   const searchInputRef = useRef<HTMLInputElement>(null);
   const [filterdDocList, setfilterdDocList] = useState<Document[]>([]);
 
-  /* 再レンダリングを必要としない変数 */
-  // 選択中のアイテムと検索中の文字列
-  const [searchInputText, setSearchInputText] = useState<string>("");
-  const [selectTagId, setSelectTagId] = useState<string>("");
-  const [selectCompanyId, setSelectCompanyId] = useState<string>("");
+  const searchHistory = getSessionStorage(SEARCH_HISTORY_KEY).searchText;
+  // 検索バーに入力した文字列
+  const [inputText, setInputText] = useState<string>(searchHistory.searchText || "");
+  // 検索中の文字列
+  const [searchText, setSearchText] = useState<string>(searchHistory.searchText || "");
+  const [selectTagId, setSelectTagId] = useState<string>(searchHistory.selectTagId || "");
+  const [selectCompanyId, setSelectCompanyId] = useState<string>(
+    searchHistory.selectCompanyId || ""
+  );
 
-  useEffect(() => {
-    setfilterdDocList(documentList);
-  }, [documentList]);
-
-  useEffect(() => {
-    search();
-  }, [selectTagId, selectCompanyId]);
-
-  const search = () => {
-    let tmpDocList = documentList;
-    if (searchInputText) {
+  useMemo(() => {
+    // document検索処理
+    let tmpDocList = [...documentList];
+    if (inputText) {
       tmpDocList = tmpDocList.filter((v) => {
-        return v.text.indexOf(searchInputText) !== -1;
+        return v.text.indexOf(inputText) !== -1;
       });
     }
     if (selectCompanyId) {
@@ -85,7 +84,11 @@ const List: NextPage<PageProps> = (props) => {
       });
     }
     setfilterdDocList(tmpDocList);
-  };
+
+    // 検索条件保存処理
+    const searchHistory = { searchText, selectCompanyId, selectTagId };
+    setSessionStorage(SEARCH_HISTORY_KEY, searchHistory);
+  }, [searchText, selectTagId, selectCompanyId, documentList]);
 
   const onClickBackup = () => {
     const a = document.createElement("a");
@@ -131,17 +134,19 @@ const List: NextPage<PageProps> = (props) => {
           <form
             className={styles.input_wrapper}
             onSubmit={(e) => {
+              setSearchText(inputText);
               e.preventDefault();
-              search();
             }}
           >
             <div className={styles.base_input}>
               <input
                 type="text"
                 ref={searchInputRef}
+                value={inputText}
                 placeholder="ここに入力"
                 onChange={(e) => {
-                  setSearchInputText(e.target.value);
+                  setInputText(e.target.value);
+                  e.preventDefault();
                 }}
               />
 
@@ -149,7 +154,8 @@ const List: NextPage<PageProps> = (props) => {
                 className={styles.reset_btn}
                 type="reset"
                 onClick={(e) => {
-                  setSearchInputText("");
+                  setSearchText("");
+                  setInputText("");
                 }}
               >
                 <FontAwesomeIcon
@@ -169,7 +175,9 @@ const List: NextPage<PageProps> = (props) => {
           <div className={styles.company_wrapper}>
             <h2 className={styles.section_title}>企業から選ぶ</h2>
             <TermSelect
-              item={undefined}
+              item={companyList.find((v) => {
+                return v.id === selectCompanyId;
+              })}
               itemList={companyList}
               onDefineItem={(item) => {
                 setSelectCompanyId(item?.id || "");
@@ -179,7 +187,9 @@ const List: NextPage<PageProps> = (props) => {
           <div className={styles.tag_wrapper}>
             <h2 className={styles.section_title}>項目から選ぶ</h2>
             <TermSelect
-              item={undefined}
+              item={tagList.find((v) => {
+                return v.id === selectTagId;
+              })}
               itemList={tagList}
               onDefineItem={(item) => {
                 setSelectTagId(item?.id || "");

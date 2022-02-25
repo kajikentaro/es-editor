@@ -11,32 +11,33 @@ from flask_login import current_user, login_required
 from .. import db
 from ..models import DeletedDocument, Document, DocumentSchema
 
-bp = Blueprint('document', __name__, url_prefix='/document')
+bp = Blueprint("document", __name__, url_prefix="/document")
 
 
-@bp.route("/", methods=['GET'])
+@bp.route("/", methods=["GET"])
 @login_required
 def get_list():
     document_schema = DocumentSchema(many=True)
-    data = document_schema.dump(Document.query.filter_by(
-        user_id=current_user.user_id).all())
+    data = document_schema.dump(
+        Document.query.filter_by(user_id=current_user.user_id).all()
+    )
     return jsonify(data)
 
 
 # 新規登録orアップデート
-@bp.route("/", methods=['POST'])
+@bp.route("/", methods=["POST"])
 @login_required
 def post():
     payload = request.json
     _unix_sec = (datetime.utcnow() + timedelta(hours=9)).timestamp()
 
     document = Document()
-    document.id = payload.get('id')
-    document.name = payload.get('name')
-    document.company_id = payload.get('companyId')
-    document.tag_id = payload.get('tagId')
-    document.text = payload.get('text')
-    document.word_count = payload.get('wordCount')
+    document.id = payload.get("id")
+    document.name = payload.get("name")
+    document.company_id = payload.get("companyId")
+    document.tag_id = payload.get("tagId")
+    document.text = payload.get("text")
+    document.word_count = payload.get("wordCount")
     document.update_date = int(_unix_sec * 1000)
     document.user_id = current_user.user_id
 
@@ -52,14 +53,15 @@ def post():
     return jsonify({})
 
 
-@bp.route("/<int:id>", methods=['DELETE'])
+@bp.route("/<int:id>", methods=["DELETE"])
 @login_required
 def delete():
     payload = request.json
-    document_id = payload.get('id')
+    document_id = payload.get("id")
 
     target = Document.query.filter_by(
-        user_id=current_user.user_id, id=document_id).one_or_none()
+        user_id=current_user.user_id, id=document_id
+    ).one_or_none()
     if not target:
         return jsonify({"message": "存在しないドキュメントです"}), 400
     db.session.delete(target)

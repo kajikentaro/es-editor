@@ -1,25 +1,24 @@
 import json
 import os
-from enum import unique
 
 import requests
 from dotenv import load_dotenv
-from flask import Blueprint, Flask, Response, redirect, request, url_for
-from flask_login import (LoginManager, UserMixin, current_user, login_required,
-                         login_user, logout_user)
-from flask_sqlalchemy import SQLAlchemy
+from flask import Blueprint, Response, redirect, request, url_for
+from flask_login import current_user, login_required, login_user, logout_user
 from oauthlib.oauth2 import WebApplicationClient
 
 from . import db, login_manager
 from .models import User
 
-bp = Blueprint('auth', __name__)
-dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
+bp = Blueprint("auth", __name__)
+dotenv_path = os.path.join(os.path.dirname(__file__), ".env")
 load_dotenv(dotenv_path, verbose=True)
 
 GOOGLE_CLIENT_ID = os.environ.get("GOOGLE_CLIENT_ID", None)
 GOOGLE_CLIENT_SECRET = os.environ.get("GOOGLE_CLIENT_SECRET", None)
 GOOGLE_DISCOVERY_URL = os.environ.get("GOOGLE_DISCOVERY_URL", None)
+
+client = WebApplicationClient(GOOGLE_CLIENT_ID)
 
 
 @login_manager.user_loader
@@ -32,20 +31,9 @@ def unauthorized():
     return "You must be logged in to access this content.", 403
 
 
-client = WebApplicationClient(GOOGLE_CLIENT_ID)
-
-
 @bp.route("/")
 def index():
     return Response("こんにちは")
-
-
-@bp.route("/check")
-def check():
-    if current_user.is_authenticated:
-        print(current_user)
-        return Response("ログイン中" + current_user.user_id)
-    return Response("ログアウト中")
 
 
 @bp.route("/login")
@@ -89,7 +77,6 @@ def callback():
     if userinfo_response.json().get("email_verified"):
         user_id = userinfo_response.json()["sub"]
         users_email = userinfo_response.json()["email"]
-        picture = userinfo_response.json()["picture"]
         users_name = userinfo_response.json()["given_name"]
     else:
         return "User email not available or not verified by Google.", 400
@@ -106,12 +93,11 @@ def callback():
     return Response("アカウントを作成しました")
 
 
-# @login_requiredデコレータは認証したいページに付ける
 @bp.route("/logout")
 @login_required
 def logout():
     logout_user()
-    return redirect(url_for("index"))
+    return redirect(url_for("auth.index"))
 
 
 def get_google_provider_cfg():

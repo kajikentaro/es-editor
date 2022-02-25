@@ -40,8 +40,8 @@ https://es-editor.kajindowsxp.com
 ### dev_back
 
 バックエンド用開発環境  
-初回起動時`pip install -r requirements.txt`必須  
-`python setup.py`コマンドで起動
+初回起動時`pip install -e .`必須  
+`python app.py`コマンドで起動
 
 ### db
 

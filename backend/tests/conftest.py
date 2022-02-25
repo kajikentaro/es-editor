@@ -38,15 +38,6 @@ def db(app, request):
     return _db
 
 
-@pytest.fixture(scope='session')
-def db(app):
-    _db = SQLAlchemy(app)
-    with app.app_context():
-        _db.drop_all()
-        _db.create_all()
-    return _db
-
-
 @pytest.fixture(scope='function')
 def session(db, request):
     """Creates a new database session for a test."""

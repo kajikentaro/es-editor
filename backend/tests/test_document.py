@@ -13,7 +13,6 @@ def test_db(session):
     session.add(tag)
     session.commit()
 
-    print(tag.unique_id)
     assert tag.unique_id > 0
 
 

@@ -1,5 +1,4 @@
 from flask import json
-from flask_login import current_user, login_user
 from flaskr.models import Tag
 
 
@@ -44,17 +43,3 @@ def test_save_delete(client, session):
     # TagデータがDBから削除されたことを確認
     saved_data = Tag.query.first()
     assert saved_data == None
-
-
-def test_template(client):
-    response = client.get(
-        "/",
-        data=json.dumps({"a": 1, "b": 2}),
-        content_type="application/json",
-    )
-
-    # assert (response.get_data(as_text=True)) == None
-    # data = json.loads(response.get_data(as_text=True))
-
-    assert response.status_code == 200
-    # assert data['sum'] == 3

@@ -32,10 +32,6 @@ def post():
     tag.update_date = int(_unix_sec * 1000)
     tag.user_id = current_user.user_id
 
-    if Tag.query.filter_by(user_id=tag.user_id, id=tag.id).one_or_none():
-        # TODO: アップデートして履歴に保存する処理
-        return jsonify({})
-
     db.session.add(tag)
     try:
         db.session.commit()

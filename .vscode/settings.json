@@ -3,6 +3,9 @@
   "python.linting.pylintEnabled": false,
   "python.linting.flake8Enabled": true,
   "python.linting.lintOnSave": true,
+  "python.linting.flake8Args": [
+    "--rcfile=backend/setup.cfg"
+  ],
   "python.formatting.provider": "black",
   "editor.formatOnSave": true
 }

@@ -22,6 +22,30 @@ def test_write_db(session):
     assert data.name == "hoge"
 
 
+def test_save_delete(client, session):
+    TAG_ID = "XY.24tpi3E"
+    # テスト用ユーザーでログイン
+    client.get("/test/login")
+
+    # Tagデータを送信
+    payload = {"name": "志望動機", "id": TAG_ID, "updateDate": 1644413074333}
+    data = json.dumps(payload)
+    response = client.post("/tag/", data=data, content_type="application/json")
+    assert response.status_code == 200
+
+    # TagデータがDBに保存されたことを確認
+    saved_data = Tag.query.first()
+    assert saved_data.id == TAG_ID
+
+    # Tagデータ削除を送信
+    response = client.delete("/tag/" + TAG_ID)
+    assert response.status_code == 200
+
+    # TagデータがDBから削除されたことを確認
+    saved_data = Tag.query.first()
+    assert saved_data == None
+
+
 def test_template(client):
     response = client.get(
         "/",

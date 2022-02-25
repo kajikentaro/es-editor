@@ -1,14 +1,19 @@
 from flask import json
+from flask_login import current_user, login_user
 from flaskr.models import Tag
 
 
-def test_write_db(session):
+def generate_Tag():
     tag = Tag()
     tag.user_id = "hoge"
     tag.id = "hoge"
     tag.name = "hoge"
     tag.update_date = 12345
+    return tag
 
+
+def test_write_db(session):
+    tag = generate_Tag()
     session.add(tag)
     session.commit()
     assert tag.unique_id > 0

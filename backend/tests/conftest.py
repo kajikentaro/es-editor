@@ -2,18 +2,17 @@ import os
 
 import pytest
 from dotenv import load_dotenv
-from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
 from flaskr import create_app
 from flaskr import db as _db
 
-dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
+dotenv_path = os.path.join(os.path.dirname(__file__), ".env")
 load_dotenv(dotenv_path, verbose=True)
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture(scope="session")
 def app(request):
     app = create_app(is_test=True)
+    app.testing = True
 
     # Establish an application context before running the tests.
     ctx = app.app_context()
@@ -26,7 +25,7 @@ def app(request):
     return app
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture(scope="session")
 def db(app, request):
     def teardown():
         _db.drop_all()
@@ -38,7 +37,7 @@ def db(app, request):
     return _db
 
 
-@pytest.fixture(scope='function')
+@pytest.fixture(scope="function")
 def session(db, request):
     """Creates a new database session for a test."""
     connection = db.engine.connect()
@@ -56,6 +55,7 @@ def session(db, request):
 
     request.addfinalizer(teardown)
     return session
+
 
 # https://github.com/pytest-dev/pytest-flask/issues/70
 # http://alexmic.net/flask-sqlalchemy-pytest/

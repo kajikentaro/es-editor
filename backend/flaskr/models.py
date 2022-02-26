@@ -4,17 +4,26 @@ from sqlalchemy import BigInteger, Column, Integer, String
 from . import db, ma
 
 
-def local_id(): return String(20)
-def global_id(): return String(30)
-def content_title(): return String(150)
+def local_id():
+    return String(20)
 
+
+def global_id():
+    return String(30)
+
+
+def content_title():
+    return String(150)
+
+def uuid():
+    return String(40)
 
 class User(UserMixin, db.Model):
     id = Column(Integer, primary_key=True)
     user_id = Column(global_id(), unique=True)
     user_name = Column(content_title())
     email = Column(String(150))
-    # TODO: 乱数カラムの追加
+    latest_uuid = Column(uuid())
 
     def __init__(self, user_id, user_name, email):
         self.user_id = user_id

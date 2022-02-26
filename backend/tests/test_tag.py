@@ -43,3 +43,21 @@ def test_save_delete(client, session):
     # TagデータがDBから削除されたことを確認
     saved_data = Tag.query.first()
     assert saved_data == None
+
+
+def test_different_client(client, client2, session):
+    client.get("/test/login")
+
+    # Tagデータを送信(client1)
+    payload = {"name": "志望動機", "id": "hoge", "updateDate": 1644413074333}
+    data = json.dumps(payload)
+    response = client.post("/tag/", data=data, content_type="application/json")
+    assert response.status_code == 200
+    latest_uuid = response.get_json()["latest_uuid"]
+
+    client2.get("/test/login")
+    # Tagデータを送信(client2)
+    payload = {"name": "志望動機", "id": "hoge", "updateDate": 1644413074333}
+    data = json.dumps(payload)
+    response = client2.post("/tag/", data=data, content_type="application/json")
+    assert latest_uuid != response.get_json()["latest_uuid"]

@@ -2,6 +2,7 @@ from datetime import datetime, timedelta
 
 from flask import Blueprint, jsonify, request
 from flask_login import current_user, login_required
+from flaskr.utils.client_uuid import save_uuid
 
 from .. import db
 from ..models import Document, DocumentSchema, Tag
@@ -33,11 +34,12 @@ def post():
     tag.user_id = current_user.user_id
 
     db.session.add(tag)
+    latest_uuid = save_uuid(current_user, db)
     try:
         db.session.commit()
     except:
         return jsonify({"message": "サーバーのDB書き込みに失敗しました"}), 400
-    return jsonify({})
+    return jsonify({"latest_uuid" : latest_uuid})
 
 
 @bp.route("/<string:id>", methods=["DELETE"])

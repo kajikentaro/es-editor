@@ -17,4 +17,3 @@ def test_login(client, session):
     assert response.status_code == 400
     response = client.get("/test/is_logout")
     assert response.status_code == 200
-    response = client.get

@@ -44,8 +44,9 @@ def post():
 @login_required
 def delete(id):
     target = Tag.query.filter_by(user_id=current_user.user_id, id=id).one_or_none()
-    if not target:
+    if target == None:
         return jsonify({"message": "存在しないドキュメントです"}), 400
     db.session.delete(target)
+    db.session.commit()
 
     return jsonify({})

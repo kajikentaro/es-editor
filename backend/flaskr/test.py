@@ -23,7 +23,6 @@ def login():
 @bp.route("/is_login")
 def is_login():
     if current_user.is_authenticated:
-        print(current_user)
         return Response("ログイン中" + current_user.user_id)
     return Response("ログアウト中"), 400
 
@@ -31,6 +30,5 @@ def is_login():
 @bp.route("/is_logout")
 def is_logout():
     if current_user.is_authenticated:
-        print(current_user)
         return Response("ログイン中" + current_user.user_id), 400
     return Response("ログアウト中")

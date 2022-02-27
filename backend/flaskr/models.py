@@ -46,15 +46,15 @@ class Tag(db.Model):
     # TODO: 共通化する
     # update_dateが新しい場合のみ更新する
     def init_from_dict(self, dict, user_id):
-        if (
-            dict.update_date and self.update_date
-        ) and self.update_date < dict.update_date:
+        if (dict.get("updateDate") and self.update_date) and (
+            self.update_date < dict.get("updateDate")
+        ):
             return False
         _unix_sec = (datetime.utcnow() + timedelta(hours=9)).timestamp()
         self.update_date = int(_unix_sec * 1000)
         self.user_id = user_id
-        self.id = dict.id
-        self.name = dict.name
+        self.id = dict.get("id")
+        self.name = dict.get("name")
         return True
 
 
@@ -68,15 +68,15 @@ class Company(db.Model):
     # TODO: 共通化する
     # update_dateが新しい場合のみ更新する
     def init_from_dict(self, dict, user_id):
-        if (
-            dict.update_date and self.update_date
-        ) and self.update_date < dict.update_date:
+        if (dict.get("updateDate") and self.update_date) and (
+            self.update_date < dict.get("updateDate")
+        ):
             return False
         _unix_sec = (datetime.utcnow() + timedelta(hours=9)).timestamp()
         self.update_date = int(_unix_sec * 1000)
         self.user_id = user_id
-        self.id = dict.id
-        self.name = dict.name
+        self.id = dict.get("id")
+        self.name = dict.get("name")
         return True
 
 
@@ -94,20 +94,20 @@ class Document(db.Model):
     # TODO: 共通化する
     # update_dateが新しい場合のみ更新する
     def init_from_dict(self, dict, user_id):
-        if (
-            dict.update_date and self.update_date
-        ) and self.update_date < dict.update_date:
+        if (dict.get("updateDate") and self.update_date) and (
+            self.update_date < dict.get("updateDate")
+        ):
             return False
         _unix_sec = (datetime.utcnow() + timedelta(hours=9)).timestamp()
         self.update_date = int(_unix_sec * 1000)
         self.user_id = user_id
-        self.id = dict.id
-        self.name = dict.name
-        self.company_id = dict.company_id
-        self.tag_id = dict.tag_id
-        self.text = dict.text
-        self.word_count = dict.word_count
-        self.update_date = dict.update_date
+        self.id = dict.get("id")
+        self.name = dict.get("name")
+        self.company_id = dict.get("company_id")
+        self.tag_id = dict.get("tag_id")
+        self.text = dict.get("text")
+        self.word_count = dict.get("word_count")
+        self.update_date = dict.get("updateDate")
         return True
 
 
@@ -126,21 +126,20 @@ class DocumentHistory(db.Model):
     # TODO: 共通化する
     # update_dateが新しい場合のみ更新する
     def init_from_dict(self, dict, user_id):
-        if (
-            dict.update_date and self.update_date
-        ) and self.update_date < dict.update_date:
+        if (dict.get("updateDate") and self.update_date) and (
+            self.update_date < dict.get("updateDate")
+        ):
             return False
         _unix_sec = (datetime.utcnow() + timedelta(hours=9)).timestamp()
         self.update_date = int(_unix_sec * 1000)
         self.user_id = user_id
-        self.id = dict.id
-        self.name = dict.name
-        self.company_id = dict.company_id
-        self.tag_id = dict.tag_id
-        self.document_id = dict.document_id
-        self.text = dict.text
-        self.word_count = dict.word_count
-        self.update_date = dict.update_date
+        self.id = dict.get("id")
+        self.name = dict.get("name")
+        self.company_id = dict.get("company_id")
+        self.tag_id = dict.get("tag_id")
+        self.document_id = dict.get("document_id")
+        self.text = dict.get("text")
+        self.word_count = dict.get("word_count")
         return True
 
 

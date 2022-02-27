@@ -14,7 +14,7 @@ def is_latest_client():
     payload = request.json
 
     client_uuid = payload.get("latestUuid")
-    return jsonify({"must_merge": current_user.uuid == client_uuid})
+    return jsonify({"must_merge": current_user.latest_uuid != client_uuid})
 
 
 @bp.route("/sync", methods=["POST"])
@@ -31,8 +31,8 @@ def sync_data():
 
     def filter_deleted_item(item_list):
         for idx, item in enumerate(item_list):
-            if users_deleted_history.filter_by(id=item.id):
-                item_list[idx].pop()
+            if users_deleted_history.filter_by(id=item["id"]).one_or_none():
+                item_list.pop(idx)
 
     filter_deleted_item(document_list)
     filter_deleted_item(document_history_list)
@@ -41,7 +41,7 @@ def sync_data():
 
     def update_item(item_dict_list, model: model):
         for item_dict in item_dict_list:
-            target = model.query.filter_by(id=item_dict.id).one_or_none()
+            target = model.query.filter_by(id=item_dict["id"]).one_or_none()
             if not target:
                 target = model()
             is_success = target.init_from_dict(item_dict, current_user.user_id)
@@ -53,3 +53,5 @@ def sync_data():
     update_item(tag_list, Tag)
     update_item(company_list, Company)
     db.session.commit()
+
+    return jsonify({})

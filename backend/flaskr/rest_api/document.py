@@ -9,7 +9,7 @@ from flask import Blueprint, Response, jsonify, request
 from flask_login import current_user, login_required
 
 from .. import db
-from ..models import DeletedDocument, Document, DocumentHistory, DocumentSchema
+from ..models import DeletedHistory, Document, DocumentHistory, DocumentSchema
 
 bp = Blueprint("document", __name__, url_prefix="/document")
 
@@ -78,7 +78,7 @@ def delete(id):
 
     _unix_sec = (datetime.utcnow() + timedelta(hours=9)).timestamp()
 
-    deleted_document = DeletedDocument()
+    deleted_document = DeletedHistory()
     deleted_document.user_id = current_user.user_id
     deleted_document.id = id
     deleted_document.update_date = int(_unix_sec * 1000)

@@ -52,6 +52,10 @@ def create_app(is_test=False):
 
     app.register_blueprint(test_bp)
 
+    from .rest_api.merge import bp as merge_bp
+
+    app.register_blueprint(merge_bp)
+
     with app.app_context():
         db.create_all()
 

@@ -47,11 +47,10 @@ class Tag(db.Model):
     # update_dateが新しい場合のみ更新する
     def init_from_dict(self, dict, user_id):
         if (dict.get("updateDate") and self.update_date) and (
-            self.update_date < dict.get("updateDate")
+            dict.get("updateDate") <= self.update_date
         ):
             return False
-        _unix_sec = (datetime.utcnow() + timedelta(hours=9)).timestamp()
-        self.update_date = int(_unix_sec * 1000)
+        self.update_date = dict.get("updateDate")
         self.user_id = user_id
         self.id = dict.get("id")
         self.name = dict.get("name")
@@ -69,11 +68,10 @@ class Company(db.Model):
     # update_dateが新しい場合のみ更新する
     def init_from_dict(self, dict, user_id):
         if (dict.get("updateDate") and self.update_date) and (
-            self.update_date < dict.get("updateDate")
+            dict.get("updateDate") <= self.update_date
         ):
             return False
-        _unix_sec = (datetime.utcnow() + timedelta(hours=9)).timestamp()
-        self.update_date = int(_unix_sec * 1000)
+        self.update_date = dict.get("updateDate")
         self.user_id = user_id
         self.id = dict.get("id")
         self.name = dict.get("name")
@@ -95,18 +93,17 @@ class Document(db.Model):
     # update_dateが新しい場合のみ更新する
     def init_from_dict(self, dict, user_id):
         if (dict.get("updateDate") and self.update_date) and (
-            self.update_date < dict.get("updateDate")
+            dict.get("updateDate") <= self.update_date
         ):
             return False
-        _unix_sec = (datetime.utcnow() + timedelta(hours=9)).timestamp()
-        self.update_date = int(_unix_sec * 1000)
+        self.update_date = dict.get("updateDate")
         self.user_id = user_id
         self.id = dict.get("id")
         self.name = dict.get("name")
-        self.company_id = dict.get("company_id")
-        self.tag_id = dict.get("tag_id")
+        self.company_id = dict.get("companyId")
+        self.tag_id = dict.get("tagId")
         self.text = dict.get("text")
-        self.word_count = dict.get("word_count")
+        self.word_count = dict.get("wordCount")
         self.update_date = dict.get("updateDate")
         return True
 
@@ -127,19 +124,18 @@ class DocumentHistory(db.Model):
     # update_dateが新しい場合のみ更新する
     def init_from_dict(self, dict, user_id):
         if (dict.get("updateDate") and self.update_date) and (
-            self.update_date < dict.get("updateDate")
+            dict.get("updateDate") <= self.update_date
         ):
             return False
-        _unix_sec = (datetime.utcnow() + timedelta(hours=9)).timestamp()
-        self.update_date = int(_unix_sec * 1000)
+        self.update_date = dict.get("updateDate")
         self.user_id = user_id
         self.id = dict.get("id")
         self.name = dict.get("name")
-        self.company_id = dict.get("company_id")
-        self.tag_id = dict.get("tag_id")
-        self.document_id = dict.get("document_id")
+        self.company_id = dict.get("companyId")
+        self.tag_id = dict.get("tagId")
+        self.document_id = dict.get("documentId")
         self.text = dict.get("text")
-        self.word_count = dict.get("word_count")
+        self.word_count = dict.get("wordCount")
         return True
 
 

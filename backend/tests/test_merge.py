@@ -3,16 +3,7 @@ from flaskr.models import Company, Document, DocumentHistory, Tag
 from flaskr.utils.random_id import gen_random_local_id
 
 
-def generate_Tag():
-    tag = Tag()
-    tag.user_id = "hoge"
-    tag.id = "hoge"
-    tag.name = "hoge"
-    tag.update_date = 12345
-    return tag
-
-
-def generate_data(update_date, item_name, item_id):
+def gen_sample_data(update_date, item_name, item_id):
     company_list = [
         {
             "user_id": "hoge",
@@ -66,31 +57,31 @@ def test_latest_uuid(client, session):
     # TODO: データを投入しUUIDの変化を確認する
 
 
-def test_merge(client, client2, session):
+def test_merge(client, session):
     client.get("/test/login")
 
     item_id = gen_random_local_id()
     # 初期データ投入
     response = client.post(
         "/merge/sync",
-        data=generate_data(1111, "hoge", item_id),
+        data=gen_sample_data(1111, "hoge", item_id),
         content_type="application/json",
     )
     assert response.status_code == 200
-    assert Document.query.filter_by(id=item_id).one_or_none().name == "hoge"
-    assert Tag.query.filter_by(id=item_id).one_or_none().name == "hoge"
-    assert Company.query.filter_by(id=item_id).one_or_none().name == "hoge"
+    assert Document.query.filter_by(id=item_id, name="hoge").one_or_none()
+    assert Tag.query.filter_by(id=item_id, name="hoge").one_or_none()
+    assert Company.query.filter_by(id=item_id, name="hoge").one_or_none()
 
     # 新しいデータを投入
     response = client.post(
         "/merge/sync",
-        data=generate_data(2222, "hoge2", item_id),
+        data=gen_sample_data(2222, "hoge2", item_id),
         content_type="application/json",
     )
     assert response.status_code == 200
-    assert Tag.query.filter_by(id=item_id).one_or_none().name == "hoge2"
-    assert Company.query.filter_by(id=item_id).one_or_none().name == "hoge2"
-    assert Document.query.filter_by(id=item_id).one_or_none().name == "hoge2"
+    assert Tag.query.filter_by(id=item_id, name="hoge2").one_or_none()
+    assert Company.query.filter_by(id=item_id, name="hoge2").one_or_none()
+    assert Document.query.filter_by(id=item_id, name="hoge2").one_or_none()
     assert DocumentHistory.query.filter_by(
         document_id=item_id, name="hoge"
     ).one_or_none()
@@ -98,13 +89,13 @@ def test_merge(client, client2, session):
     # 古いデータを投入
     response = client.post(
         "/merge/sync",
-        data=generate_data(10, "hoge3", item_id),
+        data=gen_sample_data(10, "hoge3", item_id),
         content_type="application/json",
     )
     assert response.status_code == 200
-    assert Tag.query.filter_by(id=item_id).one_or_none().name == "hoge2"
-    assert Company.query.filter_by(id=item_id).one_or_none().name == "hoge2"
-    assert Document.query.filter_by(id=item_id).one_or_none().name == "hoge2"
+    assert Tag.query.filter_by(id=item_id, name="hoge2").one_or_none()
+    assert Company.query.filter_by(id=item_id, name="hoge2").one_or_none()
+    assert Document.query.filter_by(id=item_id, name="hoge2").one_or_none()
     assert DocumentHistory.query.filter_by(
         document_id=item_id, name="hoge3"
     ).one_or_none()

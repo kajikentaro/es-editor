@@ -1,3 +1,6 @@
+from abc import ABCMeta, abstractmethod
+from datetime import datetime, timedelta
+
 from flask_login import UserMixin
 from sqlalchemy import BigInteger, Column, Integer, String
 
@@ -15,8 +18,10 @@ def global_id():
 def content_title():
     return String(150)
 
+
 def uuid():
     return String(40)
+
 
 class User(UserMixin, db.Model):
     id = Column(Integer, primary_key=True)
@@ -46,6 +51,20 @@ class Company(db.Model):
     name = Column(content_title())
     update_date = Column(BigInteger)
 
+    # TODO: 共通化する
+    # update_dateが新しい場合のみ更新する
+    def init_from_dict(self, dict, user_id):
+        if (
+            dict.update_date and self.update_date
+        ) and self.update_date < dict.update_date:
+            return False
+        _unix_sec = (datetime.utcnow() + timedelta(hours=9)).timestamp()
+        self.update_date = int(_unix_sec * 1000)
+        self.user_id = user_id
+        self.id = dict.id
+        self.name = dict.name
+        return True
+
 
 class Document(db.Model):
     unique_id = Column(Integer, autoincrement=True, primary_key=True)
@@ -72,7 +91,7 @@ class DocumentHistory(db.Model):
     update_date = Column(BigInteger)
 
 
-class DeletedDocument(db.Model):
+class DeletedHistory(db.Model):
     unique_id = Column(Integer, autoincrement=True, primary_key=True)
     user_id = Column(global_id())
     id = Column(local_id())

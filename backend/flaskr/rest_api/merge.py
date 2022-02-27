@@ -48,10 +48,33 @@ def sync_data():
             if is_success:
                 db.session.add(target)
 
-    update_item(document_list, Document)
     update_item(document_history_list, DocumentHistory)
     update_item(tag_list, Tag)
     update_item(company_list, Company)
-    db.session.commit()
 
+    for item_dict in document_list:
+        target = Document.query.filter_by(id=item_dict["id"]).one_or_none()
+        if not item_dict.get("updateDate"):
+            item_dict["updateDate"] = 1
+
+        if not target:
+            target = Document()
+            target.init_from_dict(item_dict, current_user.user_id)
+            db.session.add(target)
+            break
+
+        db.session.delete(target)
+        old_item = Document()
+        old_item.init_from_dict(item_dict, current_user.user_id)
+        if target.update_date < old_item.update_date:
+            old_item, target = target, old_item
+
+        db.session.add(target)
+
+        history_item = DocumentHistory()
+        history_item.init_from_document(old_item)
+        db.session.add(history_item)
+        print(history_item)
+
+    db.session.commit()
     return jsonify({})

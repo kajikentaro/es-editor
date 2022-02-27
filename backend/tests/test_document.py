@@ -55,3 +55,40 @@ def test_save_delete(client, session):
     # データがDBから削除されたことを確認
     saved_data = Document.query.first()
     assert saved_data == None
+
+
+def test_save_two_times(client, session):
+    DOCUMENT_ID = "XY.24tpi3E"
+    # テスト用ユーザーでログイン
+    client.get("/test/login")
+
+    # データを送信
+    payload = {
+        "id": DOCUMENT_ID,
+        "name": "",
+        "companyId": "hoge",
+        "tagId": "hoge",
+        "text": "hoge",
+        "wordCount": 123,
+        "updateDate": 1000000000000,
+    }
+    data = json.dumps(payload)
+    response = client.post("/document/", data=data, content_type="application/json")
+    assert response.status_code == 200
+
+    # データを送信
+    payload = {
+        "id": DOCUMENT_ID,
+        "name": "",
+        "companyId": "hoge2",
+        "tagId": "hoge2",
+        "text": "hoge2",
+        "wordCount": 1234,
+        "updateDate": 1000010000000,
+    }
+    data = json.dumps(payload)
+    response = client.post("/document/", data=data, content_type="application/json")
+    assert response.status_code == 200
+
+    saved_data = Document.query.first()
+    assert saved_data.text == "hoge2"

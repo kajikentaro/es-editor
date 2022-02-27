@@ -74,7 +74,6 @@ def sync_data():
         history_item = DocumentHistory()
         history_item.init_from_document(old_item)
         db.session.add(history_item)
-        print(history_item)
 
     db.session.commit()
     return jsonify({})

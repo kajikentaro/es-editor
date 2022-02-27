@@ -2,20 +2,17 @@ name: frontend_build_check
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
   paths:
     - "frontend/**"
 
 jobs:
-
   build:
-
     runs-on: ubuntu-latest
-
     steps:
-    - uses: actions/checkout@v2
-    - name: Build the Docker image
-      working-directory: ./frontend
-      run: docker build . --file prod.Dockerfile --tag my-image-name:$(date +%s)
+      - uses: actions/checkout@v2
+      - name: Build the Docker image
+        working-directory: ./frontend
+        run: docker build . --file prod.Dockerfile --tag my-image-name:$(date +%s)

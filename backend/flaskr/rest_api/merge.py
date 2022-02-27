@@ -44,7 +44,7 @@ def sync_data():
             target = model.query.filter_by(id=item_dict.id).one_or_none()
             if not target:
                 target = model()
-            is_success = target.init_from_dict(item_dict)
+            is_success = target.init_from_dict(item_dict, current_user.user_id)
             if is_success:
                 db.session.add(target)
 

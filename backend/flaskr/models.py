@@ -43,6 +43,20 @@ class Tag(db.Model):
     name = Column(content_title())
     update_date = Column(BigInteger)
 
+    # TODO: 共通化する
+    # update_dateが新しい場合のみ更新する
+    def init_from_dict(self, dict, user_id):
+        if (
+            dict.update_date and self.update_date
+        ) and self.update_date < dict.update_date:
+            return False
+        _unix_sec = (datetime.utcnow() + timedelta(hours=9)).timestamp()
+        self.update_date = int(_unix_sec * 1000)
+        self.user_id = user_id
+        self.id = dict.id
+        self.name = dict.name
+        return True
+
 
 class Company(db.Model):
     unique_id = Column(Integer, autoincrement=True, primary_key=True)
@@ -77,6 +91,25 @@ class Document(db.Model):
     word_count = Column(Integer)
     update_date = Column(BigInteger)
 
+    # TODO: 共通化する
+    # update_dateが新しい場合のみ更新する
+    def init_from_dict(self, dict, user_id):
+        if (
+            dict.update_date and self.update_date
+        ) and self.update_date < dict.update_date:
+            return False
+        _unix_sec = (datetime.utcnow() + timedelta(hours=9)).timestamp()
+        self.update_date = int(_unix_sec * 1000)
+        self.user_id = user_id
+        self.id = dict.id
+        self.name = dict.name
+        self.company_id = dict.company_id
+        self.tag_id = dict.tag_id
+        self.text = dict.text
+        self.word_count = dict.word_count
+        self.update_date = dict.update_date
+        return True
+
 
 class DocumentHistory(db.Model):
     unique_id = Column(Integer, autoincrement=True, primary_key=True)
@@ -89,6 +122,26 @@ class DocumentHistory(db.Model):
     text = Column(String(10000))
     word_count = Column(Integer)
     update_date = Column(BigInteger)
+
+    # TODO: 共通化する
+    # update_dateが新しい場合のみ更新する
+    def init_from_dict(self, dict, user_id):
+        if (
+            dict.update_date and self.update_date
+        ) and self.update_date < dict.update_date:
+            return False
+        _unix_sec = (datetime.utcnow() + timedelta(hours=9)).timestamp()
+        self.update_date = int(_unix_sec * 1000)
+        self.user_id = user_id
+        self.id = dict.id
+        self.name = dict.name
+        self.company_id = dict.company_id
+        self.tag_id = dict.tag_id
+        self.document_id = dict.document_id
+        self.text = dict.text
+        self.word_count = dict.word_count
+        self.update_date = dict.update_date
+        return True
 
 
 class DeletedHistory(db.Model):

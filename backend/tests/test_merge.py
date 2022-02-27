@@ -1,5 +1,5 @@
 from flask import json
-from flaskr.models import Document, Tag
+from flaskr.models import Company, Document, Tag
 
 
 def generate_Tag():
@@ -11,13 +11,13 @@ def generate_Tag():
     return tag
 
 
-def generate_data(update_date):
+def generate_data(update_date, new_name):
     date_str = str(update_date)
     company_list = [
         {
             "user_id": "hoge",
             "id": "hoge",
-            "name": "hoge" + date_str,
+            "name": new_name,
             "updateDate": update_date,
         }
     ]
@@ -25,7 +25,7 @@ def generate_data(update_date):
         {
             "user_id": "hoge",
             "id": "hoge",
-            "name": "hoge" + date_str,
+            "name": new_name,
             "updateDate": update_date,
         }
     ]
@@ -33,10 +33,10 @@ def generate_data(update_date):
         {
             "user_id": "hoge",
             "id": "hoge",
-            "name": "hoge",
+            "name": new_name,
             "companyId": "hoge",
             "tagId": "hoge",
-            "text": "hoge" + date_str,
+            "text": "hoge",
             "wordCount": 123,
             "updateDate": update_date,
         }
@@ -63,8 +63,19 @@ def test_merge(client, client2, session):
     assert response.status_code == 200
 
     response = client.post(
-        "/merge/sync", data=generate_data(1111), content_type="application/json"
+        "/merge/sync", data=generate_data(1111, "hoge"), content_type="application/json"
     )
     assert response.status_code == 200
+    assert Document.query.first().name == "hoge"
+    assert Tag.query.first().name == "hoge"
+    assert Company.query.first().name == "hoge"
 
-    print(Document.query.first().text)
+    response = client.post(
+        "/merge/sync",
+        data=generate_data(2222, "hoge2"),
+        content_type="application/json",
+    )
+    assert response.status_code == 200
+    assert Tag.query.first().name == "hoge2"
+    assert Company.query.first().name == "hoge2"
+    assert Document.query.first().name == "hoge2"

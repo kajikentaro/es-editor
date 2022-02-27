@@ -4,6 +4,8 @@ from datetime import datetime, timedelta
 from flask_login import UserMixin
 from sqlalchemy import BigInteger, Column, Integer, String
 
+from flaskr.utils.random_id import gen_random_local_id
+
 from . import db, ma
 
 
@@ -87,7 +89,7 @@ class Document(db.Model):
     tag_id = Column(local_id())
     text = Column(String(10000))
     word_count = Column(Integer)
-    update_date = Column(BigInteger)
+    update_date = Column(BigInteger, nullable=False)
 
     # TODO: 共通化する
     # update_dateが新しい場合のみ更新する
@@ -112,7 +114,7 @@ class DocumentHistory(db.Model):
     unique_id = Column(Integer, autoincrement=True, primary_key=True)
     user_id = Column(global_id())
     id = Column(global_id())
-    documentId = Column(local_id())
+    document_id = Column(local_id())
     name = Column(String(150))
     company_id = Column(local_id())
     tag_id = Column(local_id())
@@ -137,6 +139,17 @@ class DocumentHistory(db.Model):
         self.text = dict.get("text")
         self.word_count = dict.get("wordCount")
         return True
+
+    def init_from_document(self, document):
+        self.user_id = document.user_id
+        self.id = gen_random_local_id()
+        self.document_id = document.id
+        self.name = document.name
+        self.company_id = document.company_id
+        self.tag_id = document.tag_id
+        self.text = document.text
+        self.word_count = document.word_count
+        self.update_date = document.update_date
 
 
 class DeletedHistory(db.Model):

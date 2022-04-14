@@ -27,19 +27,20 @@ def post():
     payload = request.json
     _unix_sec = (datetime.utcnow() + timedelta(hours=9)).timestamp()
 
-    tag = Tag()
-    tag.id = payload.get("id")
-    tag.name = payload.get("name")
-    tag.update_date = int(_unix_sec * 1000)
-    tag.user_id = current_user.user_id
+    payload_tag = {}
+    payload_tag["id"] = payload.get("id")
+    payload_tag["name"] = payload.get("name")
+    payload_tag["updateDate"] = payload.get("updateDate")
+    payload_tag["userId"] = current_user.user_id
 
-    db.session.add(tag)
+    update_tag(payload_tag)
+
     latest_uuid = save_uuid(current_user, db)
     try:
         db.session.commit()
     except:
         return jsonify({"message": "サーバーのDB書き込みに失敗しました"}), 400
-    return jsonify({"latest_uuid" : latest_uuid})
+    return jsonify({"latest_uuid": latest_uuid})
 
 
 @bp.route("/<string:id>", methods=["DELETE"])
@@ -52,3 +53,12 @@ def delete(id):
     db.session.commit()
 
     return jsonify({})
+
+
+def update_tag(input_tag: dict):
+    tag = Tag()
+    tag.id = input_tag["id"]
+    tag.name = input_tag["name"]
+    tag.update_date = input_tag["updateDate"]
+    tag.user_id = input_tag["userId"]
+    db.session.add(tag)

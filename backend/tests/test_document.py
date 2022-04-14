@@ -1,11 +1,13 @@
 from flask import json
-from flaskr.models import Document
+from flaskr.models import Document, DocumentHistory
+from flaskr.utils.random_id import gen_random_local_id
 
 
 def generate_Document():
     document = Document()
     document.user_id = "hoge"
     document.id = "hoge"
+    document.historyId = "hoge"
     document.name = "hoge"
     document.company_id = "hoge"
     document.tag_id = "hoge"
@@ -33,6 +35,7 @@ def test_save_delete(client, session):
     # データを送信
     payload = {
         "id": DOCUMENT_ID,
+        "hidsotyId": gen_random_local_id(),
         "name": "",
         "companyId": "hoge",
         "tagId": "hoge",
@@ -56,6 +59,10 @@ def test_save_delete(client, session):
     saved_data = Document.query.first()
     assert saved_data == None
 
+    # 履歴に残っているか確認
+    history_data = DocumentHistory.query.first()
+    assert history_data.text == "hoge"
+
 
 def test_save_two_times(client, session):
     DOCUMENT_ID = "XY.24tpi3E"
@@ -65,6 +72,7 @@ def test_save_two_times(client, session):
     # データを送信
     payload = {
         "id": DOCUMENT_ID,
+        "hidsotyId": gen_random_local_id(),
         "name": "",
         "companyId": "hoge",
         "tagId": "hoge",
@@ -79,6 +87,7 @@ def test_save_two_times(client, session):
     # データを送信
     payload = {
         "id": DOCUMENT_ID,
+        "hidsotyId": gen_random_local_id(),
         "name": "",
         "companyId": "hoge2",
         "tagId": "hoge2",
@@ -92,3 +101,8 @@ def test_save_two_times(client, session):
 
     saved_data = Document.query.first()
     assert saved_data.text == "hoge2"
+
+    history_data = DocumentHistory.query.filter_by(text="hoge")
+    assert history_data != None
+    history_data = DocumentHistory.query.filter_by(text="hoge2")
+    assert history_data != None

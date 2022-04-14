@@ -29,37 +29,19 @@ def get_list():
 @login_required
 def post():
     payload = request.json
-    _unix_sec = (datetime.utcnow() + timedelta(hours=9)).timestamp()
 
-    document = Document.query.filter_by(
-        user_id=current_user.user_id, id=payload.get("id")
-    ).one_or_none()
+    payload_document = {}
+    payload_document["id"] = payload.get("id")
+    payload_document["name"] = payload.get("name")
+    payload_document["historyId"] = payload.get("historyId")
+    payload_document["companyId"] = payload.get("companyId")
+    payload_document["tagId"] = payload.get("tagId")
+    payload_document["text"] = payload.get("text")
+    payload_document["wordCount"] = payload.get("wordCount")
+    payload_document["updateDate"] = payload.get("updateDate")
+    payload_document["userId"] = current_user.user_id
 
-    # documentがすでに存在している場合
-    if document:
-        documentHistory = DocumentHistory()
-        documentHistory.id = payload.get("historyId")
-        documentHistory.documentId = payload.get("id")
-        documentHistory.name = payload.get("name")
-        documentHistory.company_id = payload.get("companyId")
-        documentHistory.tag_id = payload.get("tagId")
-        documentHistory.text = payload.get("text")
-        documentHistory.word_count = payload.get("wordCount")
-        documentHistory.update_date = int(_unix_sec * 1000)
-        documentHistory.user_id = current_user.user_id
-        db.session.add(documentHistory)
-    else:
-        document = Document()
-        document.id = payload.get("id")
-        document.user_id = current_user.user_id
-
-    document.name = payload.get("name")
-    document.company_id = payload.get("companyId")
-    document.tag_id = payload.get("tagId")
-    document.text = payload.get("text")
-    document.word_count = payload.get("wordCount")
-    document.update_date = int(_unix_sec * 1000)
-    db.session.add(document)
+    update_document(payload_document)
 
     try:
         db.session.commit()
@@ -89,3 +71,36 @@ def delete(id):
     except:
         return jsonify({"message": "サーバーのDB書き込みに失敗しました"}), 400
     return jsonify({})
+
+
+def update_document(input_document: dict):
+    saved_document = Document.query.filter_by(
+        user_id=current_user.user_id, id=input_document["id"]
+    ).one_or_none()
+
+    # saved_documentが存在しない場合
+    if saved_document == None:
+        saved_document = Document()
+        saved_document.id = input_document["id"]
+
+    saved_document.name = input_document["name"]
+    saved_document.history_id = input_document["historyId"]
+    saved_document.company_id = input_document["companyId"]
+    saved_document.tag_id = input_document["tagId"]
+    saved_document.text = input_document["text"]
+    saved_document.word_count = input_document["wordCount"]
+    saved_document.update_date = input_document["updateDate"]
+    saved_document.user_id = current_user.user_id
+    db.session.add(saved_document)
+
+    document_history = DocumentHistory()
+    document_history.id = input_document["historyId"]
+    document_history.document_id = input_document["id"]
+    document_history.name = input_document["name"]
+    document_history.company_id = input_document["companyId"]
+    document_history.tag_id = input_document["tagId"]
+    document_history.text = input_document["text"]
+    document_history.word_count = input_document["wordCount"]
+    document_history.update_date = input_document["updateDate"]
+    document_history.user_id = input_document["userId"]
+    db.session.add(document_history)

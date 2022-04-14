@@ -84,6 +84,7 @@ class Document(db.Model):
     unique_id = Column(Integer, autoincrement=True, primary_key=True)
     user_id = Column(global_id())
     id = Column(local_id())
+    history_id = Column(local_id())
     name = Column(String(150))
     company_id = Column(local_id())
     tag_id = Column(local_id())
@@ -113,7 +114,7 @@ class Document(db.Model):
 class DocumentHistory(db.Model):
     unique_id = Column(Integer, autoincrement=True, primary_key=True)
     user_id = Column(global_id())
-    id = Column(global_id())
+    id = Column(local_id())
     document_id = Column(local_id())
     name = Column(String(150))
     company_id = Column(local_id())

@@ -1,6 +1,7 @@
 import os
 
 from flask import Flask
+from flask_cors import CORS
 from flask_login import LoginManager
 from flask_marshmallow import Marshmallow
 from flask_sqlalchemy import SQLAlchemy
@@ -59,4 +60,5 @@ def create_app(is_test=False):
     with app.app_context():
         db.create_all()
 
+    CORS(app, supports_credentials=True, origins=["http://localhost:3000"])
     return app

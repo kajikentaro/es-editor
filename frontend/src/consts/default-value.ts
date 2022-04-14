@@ -1,10 +1,14 @@
 import { Document } from "interfaces/interfaces";
+import { genRandomId } from "utils/utils";
 
-export const defaultDocument: Document = {
-  id: "",
-  name: "",
-  companyId: "",
-  tagId: "",
-  text: "",
-  wordCount: 0,
+export const getDefaultDocument = (documentId: string): Document => {
+  return {
+    id: documentId,
+    historyId: genRandomId(),
+    name: "",
+    companyId: "",
+    tagId: "",
+    text: "",
+    wordCount: 0,
+  };
 };

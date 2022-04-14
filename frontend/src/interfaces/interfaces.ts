@@ -1,5 +1,6 @@
 export interface Document extends Item {
   id: string;
+  historyId: string;
   name: string; //使わない
   companyId: string;
   tagId: string;

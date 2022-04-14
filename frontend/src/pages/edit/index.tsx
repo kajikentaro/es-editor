@@ -64,6 +64,7 @@ const Home: NextPage<PageProps> = (props) => {
       // 存在した場合
       const newEditHistory = [...editHistory];
       newEditHistory[viewingHistoryIdx] = documentToLoad.text;
+      documentToLoad.historyId = genRandomId();
       setEditHistory(newEditHistory);
       setCompany(RESTCompany.get(documentToLoad.companyId));
       setTag(RESTTag.get(documentToLoad.tagId));
@@ -88,11 +89,17 @@ const Home: NextPage<PageProps> = (props) => {
     RESTDocument.put(document.id, document);
 
     // バックアップを保存
-    RESTHistory.put(document.id, {
-      ...document,
-      documentId: document.id,
+    const new_history: DocumentHistory = {
       id: document.historyId,
-    });
+      documentId: document.id,
+      name: document.name,
+      companyId: document.companyId,
+      tagId: document.tagId,
+      text: document.text,
+      wordCount: document.wordCount,
+      updateDate: document.updateDate,
+    };
+    RESTHistory.put(document.historyId, new_history);
 
     // documentのhistoryIdを更新
     setDocument({ ...document, historyId: genRandomId() });

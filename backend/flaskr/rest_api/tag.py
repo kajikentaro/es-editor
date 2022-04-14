@@ -56,7 +56,17 @@ def delete(id):
 
 
 def update_tag(input_tag: dict):
-    tag = Tag()
+    tag = Tag.query.filter_by(
+        user_id=current_user.user_id, id=input_tag["id"]
+    ).one_or_none()
+
+    if tag == None:
+        tag = Tag()
+        tag.update_date = input_tag["updateDate"]
+
+    if input_tag["updateDate"] < tag.update_date:
+        return
+
     tag.id = input_tag["id"]
     tag.name = input_tag["name"]
     tag.update_date = input_tag["updateDate"]

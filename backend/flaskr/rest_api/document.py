@@ -7,6 +7,7 @@ from zlib import DEF_MEM_LEVEL
 
 from flask import Blueprint, Response, jsonify, request
 from flask_login import current_user, login_required
+from flaskr.utils.random_id import gen_random_local_id
 
 from .. import db
 from ..models import DeletedHistory, Document, DocumentHistory, DocumentSchema
@@ -76,7 +77,7 @@ def delete(id):
 def update_document(input_document: dict, is_save_history=True):
     if is_save_history:
         document_history = DocumentHistory()
-        document_history.id = input_document["historyId"]
+        document_history.id = input_document.get("historyId", gen_random_local_id())
         document_history.document_id = input_document["id"]
         document_history.name = input_document["name"]
         document_history.company_id = input_document["companyId"]
@@ -94,15 +95,15 @@ def update_document(input_document: dict, is_save_history=True):
     # saved_documentが存在しない場合
     if saved_document == None:
         saved_document = Document()
-        saved_document.id = input_document["id"]
         saved_document.update_date = input_document["updateDate"]
 
     # input_documentのほうが古い場合は何もしない
     if input_document["updateDate"] < saved_document.update_date:
         return
 
+    saved_document.id = input_document["id"]
     saved_document.name = input_document["name"]
-    saved_document.history_id = input_document["historyId"]
+    saved_document.history_id = input_document.get("historyId", gen_random_local_id())
     saved_document.company_id = input_document["companyId"]
     saved_document.tag_id = input_document["tagId"]
     saved_document.text = input_document["text"]

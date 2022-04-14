@@ -56,7 +56,17 @@ def delete(id):
 
 
 def update_company(input_company: dict):
-    company = Company()
+    company = Company.query.filter_by(
+        user_id=current_user.user_id, id=input_company["id"]
+    ).one_or_none()
+
+    if company == None:
+        company = Company()
+        company.update_date = input_company["updateDate"]
+
+    if input_company["updateDate"] < company.update_date:
+        return
+
     company.id = input_company["id"]
     company.name = input_company["name"]
     company.update_date = input_company["updateDate"]

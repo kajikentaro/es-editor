@@ -44,6 +44,10 @@ def create_app(is_test=False):
 
     app.register_blueprint(tag_bp)
 
+    from .rest_api.company import bp as company_bp
+
+    app.register_blueprint(company_bp)
+
     from .test import bp as test_bp
 
     app.register_blueprint(test_bp)

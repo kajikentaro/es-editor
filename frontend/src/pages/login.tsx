@@ -1,10 +1,18 @@
 import { NextPage } from "next";
 import Link from "next/link";
+import useSWR from "swr";
 import { backup } from "utils/verify";
 
+const fetcher = async (url: string) => {
+  const res = await fetch(url, { credentials: "include" });
+  return await res.text();
+};
+
 const Login: NextPage = () => {
+  const { data, error } = useSWR("http://localhost:5000/test/is_logout", fetcher);
   const LOGIN_URL = process.env.NEXT_PUBLIC_LOGIN_URL;
   const REST_URL = process.env.NEXT_PUBLIC_REST_URL;
+  console.log(LOGIN_URL);
   if (!LOGIN_URL || !REST_URL) {
     throw new Error("環境変数が定義されていません");
   }
@@ -30,14 +38,24 @@ const Login: NextPage = () => {
     const status = await res.json();
     alert(status);
   };
+  console.log(data, error);
 
   return (
     <>
-      <Link href={LOGIN_URL}>
-        <a>ログイン</a>
-      </Link>
-      <button onClick={handleUpload}>アップロード</button>
-      <button onClick={handleDownload}>ダウンロード</button>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          width: "800px",
+          margin: "0 auto",
+        }}
+      >
+        <Link href={LOGIN_URL}>
+          <a>ログイン</a>
+        </Link>
+        <button onClick={handleUpload}>アップロード</button>
+        <button onClick={handleDownload}>ダウンロード</button>
+      </div>
     </>
   );
 };

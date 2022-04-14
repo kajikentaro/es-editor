@@ -60,5 +60,5 @@ def update_tag(input_tag: dict):
     tag.id = input_tag["id"]
     tag.name = input_tag["name"]
     tag.update_date = input_tag["updateDate"]
-    tag.user_id = input_tag["userId"]
+    tag.user_id = current_user.user_id
     db.session.add(tag)

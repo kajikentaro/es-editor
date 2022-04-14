@@ -3,7 +3,9 @@ from flask_login import current_user, login_required
 from flask_sqlalchemy import model
 
 from .. import db
-from ..models import Company, DeletedHistory, Document, DocumentHistory, Tag
+from ..models import (Company, CompanySchema, DeletedHistory,
+                      DeletedHistorySchema, Document, DocumentHistory,
+                      DocumentHistorySchema, DocumentSchema, Tag, TagSchema)
 from .company import update_company
 from .document import update_document
 from .document_history import update_document_history
@@ -53,3 +55,26 @@ def sync_data():
         update_document_history(document_history)
 
     return jsonify({})
+
+
+@bp.route("/get-all")
+@login_required
+def get_all():
+    res = {
+        "document": DocumentSchema(many=True).dump(
+            Document.query.filter_by(user_id=current_user.user_id).all()
+        ),
+        "tag": TagSchema(many=True).dump(
+            Tag.query.filter_by(user_id=current_user.user_id).all()
+        ),
+        "company": CompanySchema(many=True).dump(
+            Company.query.filter_by(user_id=current_user.user_id).all()
+        ),
+        "history": DocumentHistorySchema(many=True).dump(
+            DocumentHistory.query.filter_by(user_id=current_user.user_id).all()
+        ),
+        "deleted": DeletedHistorySchema(many=True).dump(
+            DeletedHistory.query.filter_by(user_id=current_user.user_id).all()
+        ),
+    }
+    return jsonify(res)

@@ -97,6 +97,6 @@ export const backup = () => {
   backupData[COMPANY_KEY] = RESTCompany.getList();
   backupData[TAG_KEY] = RESTTag.getList();
   backupData[DOCUMENT_KEY] = RESTDocument.getList();
-  backupData[HISTORY_KEY] = RESTDocument.getList();
+  backupData[HISTORY_KEY] = RESTHistory.getList();
   return JSON.stringify(backupData);
 };

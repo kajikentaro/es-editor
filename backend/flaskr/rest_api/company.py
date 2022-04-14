@@ -27,13 +27,14 @@ def post():
     payload = request.json
     _unix_sec = (datetime.utcnow() + timedelta(hours=9)).timestamp()
 
-    company = Company()
-    company.id = payload.get("id")
-    company.name = payload.get("name")
-    company.update_date = int(_unix_sec * 1000)
-    company.user_id = current_user.user_id
+    payload_company = {}
+    payload_company["id"] = payload.get("id")
+    payload_company["name"] = payload.get("name")
+    payload_company["updateDate"] = payload.get("updateDate")
+    payload_company["userId"] = current_user.user_id
 
-    db.session.add(company)
+    update_company(payload_company)
+
     latest_uuid = save_uuid(current_user, db)
     try:
         db.session.commit()
@@ -52,3 +53,12 @@ def delete(id):
     db.session.commit()
 
     return jsonify({})
+
+
+def update_company(input_company: dict):
+    company = Company()
+    company.id = input_company["id"]
+    company.name = input_company["name"]
+    company.update_date = input_company["updateDate"]
+    company.user_id = input_company["userId"]
+    db.session.add(company)

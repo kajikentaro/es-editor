@@ -4,17 +4,16 @@ import {
   faRedo,
   faSave,
   faTrash,
-  faUndo
+  faUndo,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import TermCreateSelect from "components/TermCreateSelect";
-import { defaultDocument } from "consts/default-value";
 import {
   Company,
   Document,
   DocumentHistory,
   PageProps,
-  Tag
+  Tag,
 } from "interfaces/interfaces";
 import type { NextPage } from "next";
 import Head from "next/head";
@@ -23,6 +22,7 @@ import React, { useEffect, useState } from "react";
 import styles from "styles/Edit.module.scss";
 import { RESTCompany, RESTDocument, RESTHistory, RESTTag } from "utils/REST";
 import { genRandomId } from "utils/utils";
+import { getDefaultDocument } from "../../consts/default-value";
 
 const Home: NextPage<PageProps> = (props) => {
   const router = useRouter();
@@ -42,7 +42,9 @@ const Home: NextPage<PageProps> = (props) => {
     "tagList"
   );
   const [canEdit, setCanEdit] = useState<boolean>(true);
-  const [document, setDocument] = useState<Document>({ ...defaultDocument });
+  const [document, setDocument] = useState<Document>(
+    getDefaultDocument(typeof documentId === "string" ? documentId : genRandomId())
+  );
   const [message, setMessage] = useState<string>("");
   const [selectionLength, setSelectionLength] = useState<number>(0);
 
@@ -66,11 +68,8 @@ const Home: NextPage<PageProps> = (props) => {
       setCompany(RESTCompany.get(documentToLoad.companyId));
       setTag(RESTTag.get(documentToLoad.tagId));
       setDocumentText(documentToLoad.text);
-    } else {
-      // 存在しない場合
-      documentToLoad.id = documentId as string;
+      setDocument(documentToLoad);
     }
-    setDocument(documentToLoad);
   }, [documentId]);
 
   const onClickDelete = () => {
@@ -92,8 +91,11 @@ const Home: NextPage<PageProps> = (props) => {
     RESTHistory.put(document.id, {
       ...document,
       documentId: document.id,
-      id: genRandomId(),
+      id: document.historyId,
     });
+
+    // documentのhistoryIdを更新
+    setDocument({ ...document, historyId: genRandomId() });
 
     // 親の持つドキュメント情報をアップデート
     updateDocumentList();
@@ -143,7 +145,7 @@ const Home: NextPage<PageProps> = (props) => {
     setDocumentText(text);
   };
 
-  const relatedDocumentProps = (liDocument: Document) => {
+  const relatedDocumentProps = (liDocument: Document | DocumentHistory) => {
     return {
       onMouseOver: () => {
         setDocumentText(liDocument.text);

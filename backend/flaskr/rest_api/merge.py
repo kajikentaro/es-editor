@@ -3,9 +3,18 @@ from flask_login import current_user, login_required
 from flask_sqlalchemy import model
 
 from .. import db
-from ..models import (Company, CompanySchema, DeletedHistory,
-                      DeletedHistorySchema, Document, DocumentHistory,
-                      DocumentHistorySchema, DocumentSchema, Tag, TagSchema)
+from ..models import (
+    Company,
+    CompanySchema,
+    DeletedHistory,
+    DeletedHistorySchema,
+    Document,
+    DocumentHistory,
+    DocumentHistorySchema,
+    DocumentSchema,
+    Tag,
+    TagSchema,
+)
 from .company import update_company
 from .document import update_document
 from .document_history import update_document_history
@@ -54,6 +63,7 @@ def sync_data():
     for document_history in document_history_list:
         update_document_history(document_history)
 
+    db.session.commit()
     return jsonify({})
 
 

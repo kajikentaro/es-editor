@@ -59,6 +59,7 @@ services:
     tty: true
     environment:
       - FLASK_APP=flaskr
+      - OAUTHLIB_INSECURE_TRANSPORT=1
     profiles:
       - dev
     ports:

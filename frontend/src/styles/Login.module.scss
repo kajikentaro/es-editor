@@ -1,0 +1,11 @@
+@use "common" as c;
+
+.container {
+  display: flex;
+  flex-direction: column;
+  width: 800px;
+  margin: 0 auto;
+  > * {
+    margin: 20px 0;
+  }
+}

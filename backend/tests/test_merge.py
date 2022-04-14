@@ -34,10 +34,10 @@ def gen_sample_data(update_date, item_name, item_id):
     ]
     data = json.dumps(
         {
-            "documentList": document_list,
-            "tagList": tag_list,
-            "companyList": company_list,
-            "documentHistoryList": [],
+            "document": document_list,
+            "tag": tag_list,
+            "company": company_list,
+            "history": [],
         }
     )
     return data

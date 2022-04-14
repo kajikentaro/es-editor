@@ -22,10 +22,10 @@ def is_latest_client():
 def sync_data():
     payload = request.json
 
-    document_list = payload.get("documentList")
-    document_history_list = payload.get("documentHistoryList")
-    tag_list = payload.get("tagList")
-    company_list = payload.get("companyList")
+    document_list = payload.get("document")
+    document_history_list = payload.get("history")
+    tag_list = payload.get("tag")
+    company_list = payload.get("company")
 
     users_deleted_history = DeletedHistory.query.filter_by(user_id=current_user.user_id)
 
@@ -35,7 +35,6 @@ def sync_data():
                 item_list.pop(idx)
 
     filter_deleted_item(document_list)
-    filter_deleted_item(document_history_list)
     filter_deleted_item(tag_list)
     filter_deleted_item(company_list)
 

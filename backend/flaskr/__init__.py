@@ -1,13 +1,9 @@
 import os
 
-from dotenv import load_dotenv
 from flask import Flask
 from flask_login import LoginManager
 from flask_marshmallow import Marshmallow
 from flask_sqlalchemy import SQLAlchemy
-
-dotenv_path = os.path.join(os.path.dirname(__file__), ".env")
-load_dotenv(dotenv_path, verbose=True)
 
 db = SQLAlchemy()
 login_manager = LoginManager()

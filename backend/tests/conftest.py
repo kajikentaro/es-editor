@@ -1,12 +1,8 @@
 import os
 
 import pytest
-from dotenv import load_dotenv
 from flaskr import create_app
 from flaskr import db as _db
-
-dotenv_path = os.path.join(os.path.dirname(__file__), ".env")
-load_dotenv(dotenv_path, verbose=True)
 
 
 @pytest.fixture(scope="session")

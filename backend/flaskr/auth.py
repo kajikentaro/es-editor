@@ -2,7 +2,6 @@ import json
 import os
 
 import requests
-from dotenv import load_dotenv
 from flask import Blueprint, Response, redirect, request, url_for
 from flask_login import current_user, login_required, login_user, logout_user
 from oauthlib.oauth2 import WebApplicationClient
@@ -11,8 +10,6 @@ from . import db, login_manager
 from .models import User
 
 bp = Blueprint("auth", __name__)
-dotenv_path = os.path.join(os.path.dirname(__file__), ".env")
-load_dotenv(dotenv_path, verbose=True)
 
 GOOGLE_CLIENT_ID = os.environ.get("GOOGLE_CLIENT_ID", None)
 GOOGLE_CLIENT_SECRET = os.environ.get("GOOGLE_CLIENT_SECRET", None)

@@ -4,6 +4,10 @@ from flask_sqlalchemy import model
 
 from .. import db
 from ..models import Company, DeletedHistory, Document, DocumentHistory, Tag
+from .company import update_company
+from .document import update_document
+from .document_history import update_document_history
+from .tag import update_tag
 
 bp = Blueprint("merge", __name__, url_prefix="/merge")
 
@@ -38,41 +42,14 @@ def sync_data():
     filter_deleted_item(tag_list)
     filter_deleted_item(company_list)
 
-    def update_item(item_dict_list, model: model):
-        for item_dict in item_dict_list:
-            target = model.query.filter_by(id=item_dict["id"]).one_or_none()
-            if not target:
-                target = model()
-            is_success = target.init_from_dict(item_dict, current_user.user_id)
-            if is_success:
-                db.session.add(target)
+    for document in document_list:
+        update_document(document, False)
+    for tag in tag_list:
+        update_tag(tag)
+    for company in company_list:
+        update_company(company)
 
-    update_item(document_history_list, DocumentHistory)
-    update_item(tag_list, Tag)
-    update_item(company_list, Company)
+    for document_history in document_history_list:
+        update_document_history(document_history)
 
-    for item_dict in document_list:
-        target = Document.query.filter_by(id=item_dict["id"]).one_or_none()
-        if not item_dict.get("updateDate"):
-            item_dict["updateDate"] = 1
-
-        if not target:
-            target = Document()
-            target.init_from_dict(item_dict, current_user.user_id)
-            db.session.add(target)
-            break
-
-        db.session.delete(target)
-        old_item = Document()
-        old_item.init_from_dict(item_dict, current_user.user_id)
-        if target.update_date < old_item.update_date:
-            old_item, target = target, old_item
-
-        db.session.add(target)
-
-        history_item = DocumentHistory()
-        history_item.init_from_document(old_item)
-        db.session.add(history_item)
-
-    db.session.commit()
     return jsonify({})

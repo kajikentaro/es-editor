@@ -73,7 +73,20 @@ def delete(id):
     return jsonify({})
 
 
-def update_document(input_document: dict):
+def update_document(input_document: dict, is_save_history=True):
+    if is_save_history:
+        document_history = DocumentHistory()
+        document_history.id = input_document["historyId"]
+        document_history.document_id = input_document["id"]
+        document_history.name = input_document["name"]
+        document_history.company_id = input_document["companyId"]
+        document_history.tag_id = input_document["tagId"]
+        document_history.text = input_document["text"]
+        document_history.word_count = input_document["wordCount"]
+        document_history.update_date = input_document["updateDate"]
+        document_history.user_id = current_user.user_id
+        db.session.add(document_history)
+
     saved_document = Document.query.filter_by(
         user_id=current_user.user_id, id=input_document["id"]
     ).one_or_none()
@@ -82,6 +95,11 @@ def update_document(input_document: dict):
     if saved_document == None:
         saved_document = Document()
         saved_document.id = input_document["id"]
+        saved_document.update_date = input_document["updateDate"]
+
+    # input_documentのほうが古い場合は何もしない
+    if input_document["updateDate"] < saved_document.update_date:
+        return
 
     saved_document.name = input_document["name"]
     saved_document.history_id = input_document["historyId"]
@@ -92,15 +110,3 @@ def update_document(input_document: dict):
     saved_document.update_date = input_document["updateDate"]
     saved_document.user_id = current_user.user_id
     db.session.add(saved_document)
-
-    document_history = DocumentHistory()
-    document_history.id = input_document["historyId"]
-    document_history.document_id = input_document["id"]
-    document_history.name = input_document["name"]
-    document_history.company_id = input_document["companyId"]
-    document_history.tag_id = input_document["tagId"]
-    document_history.text = input_document["text"]
-    document_history.word_count = input_document["wordCount"]
-    document_history.update_date = input_document["updateDate"]
-    document_history.user_id = input_document["userId"]
-    db.session.add(document_history)

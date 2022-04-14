@@ -60,5 +60,5 @@ def update_company(input_company: dict):
     company.id = input_company["id"]
     company.name = input_company["name"]
     company.update_date = input_company["updateDate"]
-    company.user_id = input_company["userId"]
+    company.user_id = current_user.user_id
     db.session.add(company)

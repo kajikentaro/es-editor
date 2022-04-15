@@ -7,25 +7,19 @@ from flask_login import current_user, login_required, login_user, logout_user
 from oauthlib.oauth2 import WebApplicationClient
 
 from . import db, login_manager
-from .models import (
-    Company,
-    CompanySchema,
-    DeletedHistory,
-    DeletedHistorySchema,
-    Document,
-    DocumentHistory,
-    DocumentHistorySchema,
-    DocumentSchema,
-    Tag,
-    TagSchema,
-    User,
-)
+from .models import (Company, CompanySchema, DeletedHistory,
+                     DeletedHistorySchema, Document, DocumentHistory,
+                     DocumentHistorySchema, DocumentSchema, Tag, TagSchema,
+                     User)
 
 bp = Blueprint("auth", __name__)
 
 GOOGLE_CLIENT_ID = os.environ.get("GOOGLE_CLIENT_ID", None)
 GOOGLE_CLIENT_SECRET = os.environ.get("GOOGLE_CLIENT_SECRET", None)
 GOOGLE_DISCOVERY_URL = os.environ.get("GOOGLE_DISCOVERY_URL", None)
+
+URL_AFTER_LOGIN = os.environ.get("URL_AFTER_LOGIN", None)
+URL_AFTER_LOGOUT = os.environ.get("URL_AFTER_LOGOUT", None)
 
 client = WebApplicationClient(GOOGLE_CLIENT_ID)
 
@@ -93,20 +87,23 @@ def callback():
     user = User.query.filter_by(user_id=user_id).one_or_none()
     if user:
         login_user(user)
-        return Response("ログインしました")
+        # ログインしました
+        return redirect(URL_AFTER_LOGIN)
 
     user = User(user_id, users_name, users_email)
     db.session.add(user)
     db.session.commit()
     login_user(user)
-    return Response("アカウントを作成しました")
+    # アカウントを作成しました
+    return redirect(URL_AFTER_LOGIN)
 
 
 @bp.route("/logout")
 @login_required
 def logout():
     logout_user()
-    return redirect(url_for("auth.index"))
+    # return redirect(url_for("auth.index"))
+    return redirect(URL_AFTER_LOGOUT)
 
 
 def get_google_provider_cfg():

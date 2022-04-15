@@ -9,6 +9,5 @@ RUN pip install --upgrade pip
 COPY . /root/app
 WORKDIR /root/app
 RUN pip install -e .
-CMD ["flask", "run"]
-
+CMD ["flask", "run", "--host=0.0.0.0"]
 EXPOSE 5000

@@ -57,9 +57,6 @@ services:
       context: .
       dockerfile: ./backend/dev.Dockerfile
     tty: true
-    environment:
-      - FLASK_APP=flaskr
-      - OAUTHLIB_INSECURE_TRANSPORT=1
     profiles:
       - dev
     ports:
@@ -77,8 +74,6 @@ services:
     build:
       context: ./db
     tty: true
-    environment:
-      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
     volumes:
       - type: bind
         source: ./db

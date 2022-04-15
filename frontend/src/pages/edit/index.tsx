@@ -71,6 +71,7 @@ const Home: NextPage<PageProps> = (props) => {
       setDocumentText(documentToLoad.text);
       setDocument(documentToLoad);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [documentId]);
 
   const onClickDelete = () => {

@@ -65,6 +65,7 @@ const List: NextPage<PageProps> = (props) => {
 
   useEffect(() => {
     search();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectTagId, selectCompanyId]);
 
   const search = () => {

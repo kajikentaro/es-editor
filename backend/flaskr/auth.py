@@ -20,6 +20,7 @@ GOOGLE_DISCOVERY_URL = os.environ.get("GOOGLE_DISCOVERY_URL", None)
 
 URL_AFTER_LOGIN = os.environ.get("URL_AFTER_LOGIN", None)
 URL_AFTER_LOGOUT = os.environ.get("URL_AFTER_LOGOUT", None)
+URL_LOGIN_CALLBACK = os.environ.get("URL_LOGIN_CALLBACK", None)
 
 client = WebApplicationClient(GOOGLE_CLIENT_ID)
 
@@ -45,7 +46,7 @@ def login():
     authorization_endpoint = google_provider_cfg["authorization_endpoint"]
     request_uri = client.prepare_request_uri(
         authorization_endpoint,
-        redirect_uri=request.base_url + "/callback",
+        redirect_uri=URL_LOGIN_CALLBACK,
         scope=["openid", "email", "profile"],
     )
     return redirect(request_uri)

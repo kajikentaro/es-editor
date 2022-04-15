@@ -16,11 +16,13 @@ interface Answer {
   localLatestUuid?: string;
 }
 
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
+
 export const fetchBackendAnaswer = async () => {
   if (typeof window === "undefined") {
     return undefined;
   }
-  const isLoginRes = await fetch("http://localhost:5000/test/is_login", {
+  const isLoginRes = await fetch(BACKEND_URL + "/test/is_login", {
     credentials: "include",
   });
 
@@ -36,7 +38,7 @@ export const fetchBackendAnaswer = async () => {
   }
   ans.userId = isLoginJson.user_id;
 
-  const mustMergeRes = await fetch("http://localhost:5000/merge/", {
+  const mustMergeRes = await fetch(BACKEND_URL + "/merge/", {
     headers: { "Content-Type": "application/json" },
     credentials: "include",
     method: "POST",
@@ -48,7 +50,7 @@ export const fetchBackendAnaswer = async () => {
     : "最終データはこのPCによる更新です";
   ans.serverLatestUuid = mustMergeJson.latest_uuid;
 
-  const cloudData = await fetch("http://localhost:5000/merge/download", {
+  const cloudData = await fetch(BACKEND_URL + "/merge/download", {
     credentials: "include",
   });
   ans.hoge = await cloudData.text();
@@ -115,16 +117,9 @@ const Login: NextPage = () => {
 
 const Operation = () => {
   const router = useRouter();
-  const LOGIN_URL = process.env.NEXT_PUBLIC_LOGIN_URL;
-  const LOGOUT_URL = process.env.NEXT_PUBLIC_LOGOUT_URL;
-  const REST_URL = process.env.NEXT_PUBLIC_REST_URL;
-
-  if (!REST_URL) {
-    throw new Error("環境変数が定義されていません");
-  }
 
   const handleReplaceLocal = async () => {
-    const res = await fetch("http://localhost:5000/merge/download", {
+    const res = await fetch(BACKEND_URL + "/merge/download", {
       credentials: "include",
     });
     const resJson = await res.json();
@@ -140,7 +135,7 @@ const Operation = () => {
   };
 
   const handlePushCloud = async () => {
-    const res = await fetch("http://localhost:5000/merge/sync", {
+    const res = await fetch(BACKEND_URL + "/merge/sync", {
       headers: { "Content-Type": "application/json" },
       method: "POST",
       credentials: "include",
@@ -157,8 +152,8 @@ const Operation = () => {
 
   return (
     <>
-      <a href={LOGIN_URL}>ログイン</a>
-      <a href={LOGOUT_URL}>ログアウト</a>
+      <a href={BACKEND_URL + "/login"}>ログイン</a>
+      <a href={BACKEND_URL + "/logout"}>ログアウト</a>
       <button onClick={handlePushCloud}>クラウドにプッシュする</button>
       <button onClick={handleReplaceLocal}>ローカルをクラウドのデータに置き換える</button>
     </>

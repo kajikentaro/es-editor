@@ -1,3 +1,9 @@
 {
-  "extends": "next/core-web-vitals"
+  "plugins": ["jsx-a11y"],
+  "extends": ["next/core-web-vitals", "plugin:jsx-a11y/strict"],
+  "rules": {
+    "jsx-a11y/anchor-is-valid": "off",
+    "jsx-a11y/no-onchange": "off",
+    "jsx-a11y/label-has-for": "off"
+  }
 }

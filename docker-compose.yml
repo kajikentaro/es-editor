@@ -13,6 +13,7 @@ services:
     ports:
       - 3000:3000
     env_file:
+      - .env.production
       - .env
 
   # 本番バックエンド(仮)
@@ -30,7 +31,7 @@ services:
       db:
         condition: service_healthy
     env_file:
-      - .env
+      - .env.production
 
   # 開発フロントエンド
   dev_front:
@@ -48,7 +49,7 @@ services:
         source: git_clone
         target: /root/es-editor
     env_file:
-      - .env
+      - .env.development
 
   # 開発バックエンド
   dev_back:
@@ -66,7 +67,7 @@ services:
         source: git_clone
         target: /root/es-editor
     env_file:
-      - .env
+      - .env.development
 
   # データベース
   db:
@@ -88,7 +89,7 @@ services:
       retries: 10
       start_period: 0s
     env_file:
-      - .env
+      - .env.production
 
   git_clone:
     container_name: es_editor_git_clone
@@ -102,7 +103,7 @@ services:
     profiles:
       - none
     env_file:
-      - .env
+      - .env.development
 
 volumes:
   git_clone:

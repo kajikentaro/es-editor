@@ -1,66 +1,93 @@
 import { COMPANY_KEY, DOCUMENT_KEY, HISTORY_KEY, TAG_KEY } from "consts/key";
 import { Document, DocumentHistory, Item } from "interfaces/interfaces";
 import { RESTCompany, RESTDocument, RESTHistory, RESTTag } from "utils/REST";
+import { genRandomId } from "./utils";
 
-export function isItemList(arg: any): arg is Item[] {
-  if (Array.isArray(arg)) {
-    arg.forEach((v) => {
-      if (isItem(v) === false) {
-        return false;
-      }
-    });
+function isHaveSameKeys(a: object, b: object) {
+  const keyListA = Object.keys(a).sort();
+  const keyListB = Object.keys(b).sort();
+  if (keyListA.toString() === keyListB.toString()) {
     return true;
   } else {
+    console.log(a, b);
     return false;
   }
 }
 
-export function isDocumentHistoryList(arg: any): arg is DocumentHistory[] {
-  if (Array.isArray(arg)) {
-    arg.forEach((v) => {
-      if (isDocumentHistory(v) === false) {
-        return false;
-      }
-    });
-    return true;
-  } else {
+export function isItemList(arg: any) {
+  if (!Array.isArray(arg)) {
     return false;
   }
+
+  const sampleItem: Item = {
+    id: "sample",
+    name: "sample",
+    updateDate: 123,
+  };
+
+  for (let i of arg) {
+    if (typeof i !== "object") {
+      return false;
+    }
+    if (!isHaveSameKeys(sampleItem, i)) {
+      return false;
+    }
+  }
+  return true;
 }
 
-export function isDocumentList(arg: any): arg is Document[] {
-  if (Array.isArray(arg)) {
-    arg.forEach((v) => {
-      if (isDocument(v) === false) {
-        return false;
-      }
-    });
-    return true;
-  } else {
+export function isDocumentHistoryList(arg: any) {
+  if (!Array.isArray(arg)) {
     return false;
   }
+
+  const sampleItem: DocumentHistory = {
+    id: "sample",
+    documentId: "sample",
+    name: "sample",
+    companyId: "sample",
+    tagId: "sample",
+    text: "sample",
+    wordCount: 123,
+    updateDate: 123,
+  };
+
+  for (let i of arg) {
+    if (typeof i !== "object") {
+      return false;
+    }
+    if (!isHaveSameKeys(sampleItem, i)) {
+      return false;
+    }
+  }
+  return true;
 }
 
-export function isDocument(arg: any): arg is Document {
-  return (
-    typeof arg.companyId === "string" &&
-    typeof arg.tagId === "string" &&
-    typeof arg.text === "string" &&
-    typeof arg.wordCount === "number" &&
-    isItem(arg)
-  );
-}
+export function isDocumentList(arg: any) {
+  if (!Array.isArray(arg)) {
+    return false;
+  }
 
-export function isDocumentHistory(arg: any): arg is DocumentHistory {
-  return typeof arg.documentId === "string" && isDocument(arg);
-}
+  const sampleItem: Document = {
+    id: "sample",
+    historyId: "sample",
+    name: "sample",
+    companyId: "sample",
+    tagId: "sample",
+    text: "sample",
+    wordCount: 123,
+    updateDate: 123,
+  };
 
-export function isItem(arg: any): arg is Item {
-  return (
-    typeof arg.id === "string" &&
-    typeof arg.name === "string" &&
-    typeof arg.updateDate === "number"
-  );
+  for (let i of arg) {
+    if (typeof i !== "object") {
+      return false;
+    }
+    if (!isHaveSameKeys(sampleItem, i)) {
+      return false;
+    }
+  }
+  return true;
 }
 
 export const isValidityBackup = (backupData: any) => {
@@ -78,6 +105,20 @@ export const isValidityBackup = (backupData: any) => {
 
 export const restore = (jsonStr: string, mustBeConfirm: boolean = true) => {
   const backupData = JSON.parse(jsonStr);
+
+  // 前バージョンとの整合性保持
+  for (let i of backupData[DOCUMENT_KEY]) {
+    if (typeof i.historyId === "undefined") {
+      i.historyId = genRandomId();
+    }
+  }
+  // 前バージョンとの整合性保持
+  for (let i of backupData[HISTORY_KEY]) {
+    if (typeof i.documentId === "undefined" && typeof i.id === "string") {
+      i.documentId = i.id;
+      i.id = genRandomId();
+    }
+  }
   if (isValidityBackup(backupData)) {
     if (
       mustBeConfirm &&
@@ -101,5 +142,23 @@ export const backup = () => {
   backupData[TAG_KEY] = RESTTag.getList();
   backupData[DOCUMENT_KEY] = RESTDocument.getList();
   backupData[HISTORY_KEY] = RESTHistory.getList();
+
+  // 前バージョンとの整合性保持
+  for (let i of backupData[DOCUMENT_KEY]) {
+    if (typeof i.historyId === "undefined") {
+      i.historyId = genRandomId();
+    }
+  }
+  // 前バージョンとの整合性保持
+  for (let i of backupData[HISTORY_KEY]) {
+    if (typeof i.documentId === "undefined" && typeof i.id === "string") {
+      i.documentId = i.id;
+      i.id = genRandomId();
+    }
+  }
+  if (!isValidityBackup(backupData)) {
+    alert("バックアップに失敗しました");
+    throw new Error("バックアップに失敗しました");
+  }
   return JSON.stringify(backupData);
 };

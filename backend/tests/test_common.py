@@ -9,7 +9,6 @@ def test_login(client, session):
     response = client.get("/test/is_login")
     assert response.get_json()["is_login"] == True
 
-    response = client.get("/logout", follow_redirects=True)
-    assert response.status_code == 200
+    response = client.get("/logout")
     response = client.get("/test/is_login")
     assert response.get_json()["is_login"] == False

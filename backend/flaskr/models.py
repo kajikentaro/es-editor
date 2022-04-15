@@ -160,26 +160,41 @@ class DeletedHistory(db.Model):
     update_date = Column(BigInteger)
 
 
-class DocumentSchema(ma.SQLAlchemyAutoSchema):
+def camelcase(s):
+    parts = iter(s.split("_"))
+    return next(parts) + "".join(i.title() for i in parts)
+
+
+class AutoSchema(ma.SQLAlchemyAutoSchema):
+    def on_bind_field(self, field_name, field_obj):
+        field_obj.data_key = camelcase(field_obj.data_key or field_name)
+
+
+class DocumentSchema(AutoSchema):
     class Meta:
         model = Document
 
 
-class TagSchema(ma.SQLAlchemyAutoSchema):
+class TagSchema(AutoSchema):
     class Meta:
         model = Tag
 
 
-class CompanySchema(ma.SQLAlchemyAutoSchema):
+class CompanySchema(AutoSchema):
     class Meta:
         model = Company
 
 
-class DocumentHistorySchema(ma.SQLAlchemyAutoSchema):
+class DocumentHistorySchema(AutoSchema):
     class Meta:
         model = DocumentHistory
 
 
-class DeletedHistorySchema(ma.SQLAlchemyAutoSchema):
+class DeletedHistorySchema(AutoSchema):
+    class Meta:
+        model = DeletedHistory
+
+
+class DocumentSchema2(AutoSchema):
     class Meta:
         model = DeletedHistory

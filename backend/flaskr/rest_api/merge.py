@@ -4,9 +4,18 @@ from flask_sqlalchemy import model
 from flaskr.utils.client_uuid import update_uuid
 
 from .. import db
-from ..models import (Company, CompanySchema, DeletedHistory,
-                      DeletedHistorySchema, Document, DocumentHistory,
-                      DocumentHistorySchema, DocumentSchema, Tag, TagSchema)
+from ..models import (
+    Company,
+    CompanySchema,
+    DeletedHistory,
+    DeletedHistorySchema,
+    Document,
+    DocumentHistory,
+    DocumentHistorySchema,
+    DocumentSchema2,
+    Tag,
+    TagSchema,
+)
 from .company import update_company
 from .document import update_document
 from .document_history import update_document_history
@@ -68,7 +77,7 @@ def sync_data():
 @login_required
 def get_all():
     res = {
-        "document": DocumentSchema(many=True).dump(
+        "document": DocumentSchema2(many=True).dump(
             Document.query.filter_by(user_id=current_user.user_id).all()
         ),
         "tag": TagSchema(many=True).dump(

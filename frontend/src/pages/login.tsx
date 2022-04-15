@@ -128,11 +128,14 @@ const Operation = () => {
       credentials: "include",
     });
     const resJson = await res.json();
-    if (resJson) {
-      alert(restore(JSON.stringify(resJson), false));
+    if (!resJson) {
+      console.error("データダウンロードに失敗しました");
+    }
+    const result = restore(JSON.stringify(resJson), false);
+    if (result === "success") {
       router.reload();
     } else {
-      console.error("クラウドへのデータプッシュに失敗しました");
+      console.error("データインストールに失敗しました");
     }
   };
 

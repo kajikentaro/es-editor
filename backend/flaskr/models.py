@@ -173,28 +173,29 @@ class AutoSchema(ma.SQLAlchemyAutoSchema):
 class DocumentSchema(AutoSchema):
     class Meta:
         model = Document
+        exclude = ("unique_id", "user_id")
 
 
 class TagSchema(AutoSchema):
     class Meta:
         model = Tag
+        exclude = ("unique_id", "user_id")
 
 
 class CompanySchema(AutoSchema):
     class Meta:
         model = Company
+        exclude = ("unique_id", "user_id")
 
 
 class DocumentHistorySchema(AutoSchema):
     class Meta:
         model = DocumentHistory
+        exclude = ("unique_id", "user_id")
 
 
 class DeletedHistorySchema(AutoSchema):
     class Meta:
         model = DeletedHistory
+        exclude = ("unique_id", "user_id")
 
-
-class DocumentSchema2(AutoSchema):
-    class Meta:
-        model = DeletedHistory

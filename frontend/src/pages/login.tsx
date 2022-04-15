@@ -101,15 +101,21 @@ const Login: NextPage = () => {
           <p>クラウドの最終更新識別用ID: {backendAns.serverLatestUuid}</p>
           <p>ローカルの最終更新識別用ID: {getLocalStorage(LATEST_UUID)}</p>
         </div>
+        <Operation />
+      </div>
+      <div className={styles.block}>
         <div>
           <p>クラウドのデータ:</p>
-          <code>{backendAns.hoge}</code>
+          <div className={styles.code_wrapper}>
+            <code>{backendAns.hoge}</code>
+          </div>
         </div>
         <div>
           <p>ローカルのデータ:</p>
-          <code>{backup()}</code>
+          <div className={styles.code_wrapper}>
+            <code>{backup()}</code>
+          </div>
         </div>
-        <Operation />
       </div>
     </>
   );
@@ -151,12 +157,12 @@ const Operation = () => {
   };
 
   return (
-    <>
+    <div className={styles.operations}>
       <a href={BACKEND_URL + "/login"}>ログイン</a>
       <a href={BACKEND_URL + "/logout"}>ログアウト</a>
       <button onClick={handlePushCloud}>クラウドにプッシュする</button>
       <button onClick={handleReplaceLocal}>ローカルをクラウドのデータに置き換える</button>
-    </>
+    </div>
   );
 };
 

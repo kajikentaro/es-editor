@@ -1,11 +1,42 @@
 @use "common" as c;
 
 .container {
+  padding-top: 50px;
   display: flex;
   flex-direction: column;
-  width: 800px;
+  width: 1000px;
   margin: 0 auto;
   > * {
     margin: 20px 0;
+  }
+  .operations {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    > * {
+      margin: 13px 0;
+    }
+    button {
+      width: 300px;
+      margin: 13px auto;
+    }
+  }
+}
+
+.block {
+  display: flex;
+  flex-direction: row;
+  > div {
+    width: 50%;
+    padding: 1rem;
+  }
+  .code_wrapper {
+    background-color: #111;
+    min-height: 500px;
+    padding: 0.5rem;
+    margin: 0.5rem 0;
+    code {
+      color: white;
+    }
   }
 }

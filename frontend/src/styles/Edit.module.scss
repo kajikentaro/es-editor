@@ -3,12 +3,25 @@
 .content {
   background-color: c.$white-color-b;
   max-width: c.$content-width;
-  height: calc(100vh - c.$header-height);
   margin: 0 auto;
   .content_editor {
-    height: 100%;
+    height: calc(100vh - c.$header-height);
     padding: 2rem;
     display: flex;
+
+    @include c.mq(md) {
+      height: auto;
+      display: flex;
+      flex-direction: column-reverse;
+      justify-content: right;
+      padding: 0;
+
+      .first,
+      .second {
+        width: 100%;
+        min-height: 400px;
+      }
+    }
   }
 }
 
@@ -18,6 +31,9 @@
   width: 30%;
   display: flex;
   flex-direction: column;
+  @include c.mq(md) {
+    padding-right: 0;
+  }
   .section {
     margin-bottom: 1.5rem;
     .section_title {
@@ -79,13 +95,6 @@
   width: 70%;
   display: flex;
   flex-direction: column;
-  .operation_btn {
-    margin-bottom: -1px;
-    background-color: #ccc;
-    border: none;
-    margin: 0 2px;
-    @include c.font-awesome-btn;
-  }
 
   // 戻る進むなどの操作パネル
   .row {
@@ -99,12 +108,44 @@
       padding-bottom: 4px;
       display: flex;
     }
-    .left {
+    .left,
+    .right {
       display: flex;
       flex-direction: row;
       align-items: center;
     }
   }
+
+  .operation_btn {
+    margin-bottom: -1px;
+    background-color: #ccc;
+    border: none;
+    margin: 0 2px;
+    p {
+      font-size: 1em;
+      padding: 0;
+    }
+
+    @include c.font-awesome-btn;
+    @include c.mq(md) {
+      padding: 5px;
+      margin: 0;
+      border: 1px solid c.$black-color-a;
+    }
+    @include c.mq(sm) {
+      display: flex;
+      justify-content: center;
+      height: 50px;
+      width: 50px;
+      svg {
+        margin-right: 0 !important;
+      }
+      p {
+        display: none;
+      }
+    }
+  }
+
   .edit {
     flex: 1;
     textarea {
@@ -114,6 +155,10 @@
       height: 100%;
       outline: none;
       font-size: 1.2rem;
+
+      @include c.mq(md) {
+        height: 50vh;
+      }
     }
   }
 }

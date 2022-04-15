@@ -310,7 +310,7 @@ const Home: NextPage<PageProps> = (props) => {
                 }}
               >
                 <FontAwesomeIcon className={styles.icon} icon={faUndo} />
-                戻る
+                <p>戻る</p>
               </button>
               <button
                 className={styles.operation_btn}
@@ -319,7 +319,7 @@ const Home: NextPage<PageProps> = (props) => {
                 }}
               >
                 <FontAwesomeIcon className={styles.icon} icon={faRedo} />
-                進む
+                <p>進む</p>
               </button>
             </div>
             {message && <p>{message}</p>}
@@ -333,7 +333,7 @@ const Home: NextPage<PageProps> = (props) => {
             <div className={styles.right}>
               <button className={styles.operation_btn} onClick={onClickDelete}>
                 <FontAwesomeIcon className={styles.icon} icon={faTrash} />
-                削除
+                <p>削除</p>
               </button>
               <button
                 className={styles.operation_btn}
@@ -342,7 +342,7 @@ const Home: NextPage<PageProps> = (props) => {
                 }}
               >
                 <FontAwesomeIcon className={styles.icon} icon={faSave} />
-                保存
+                <p>保存</p>
               </button>
             </div>
           </div>

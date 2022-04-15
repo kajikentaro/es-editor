@@ -23,12 +23,12 @@ def login():
 @bp.route("/is_login")
 def is_login():
     if current_user.is_authenticated:
-        return Response("ログイン中" + current_user.user_id)
-    return Response("ログアウト中"), 400
-
-
-@bp.route("/is_logout")
-def is_logout():
-    if current_user.is_authenticated:
-        return Response("ログイン中" + current_user.user_id), 400
-    return Response("ログアウト中")
+        return jsonify(
+            {"message": "ログイン中", "is_login": True, "user_id": current_user.user_id}
+        )
+    return jsonify(
+        {
+            "message": "ログアウト中",
+            "is_login": False,
+        }
+    )

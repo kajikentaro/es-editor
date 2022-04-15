@@ -3,18 +3,9 @@ from flask_login import current_user, login_required
 from flask_sqlalchemy import model
 
 from .. import db
-from ..models import (
-    Company,
-    CompanySchema,
-    DeletedHistory,
-    DeletedHistorySchema,
-    Document,
-    DocumentHistory,
-    DocumentHistorySchema,
-    DocumentSchema,
-    Tag,
-    TagSchema,
-)
+from ..models import (Company, CompanySchema, DeletedHistory,
+                      DeletedHistorySchema, Document, DocumentHistory,
+                      DocumentHistorySchema, DocumentSchema, Tag, TagSchema)
 from .company import update_company
 from .document import update_document
 from .document_history import update_document_history
@@ -29,7 +20,7 @@ def is_latest_client():
     payload = request.json
 
     client_uuid = payload.get("latestUuid")
-    return jsonify({"must_merge": current_user.latest_uuid != client_uuid})
+    return jsonify({"must_merge": current_user.latest_uuid != client_uuid, "latest_uuid": current_user.latest_uuid})
 
 
 @bp.route("/sync", methods=["POST"])

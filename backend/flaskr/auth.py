@@ -2,12 +2,24 @@ import json
 import os
 
 import requests
-from flask import Blueprint, Response, redirect, request, url_for
+from flask import Blueprint, Response, jsonify, redirect, request, url_for
 from flask_login import current_user, login_required, login_user, logout_user
 from oauthlib.oauth2 import WebApplicationClient
 
 from . import db, login_manager
-from .models import User
+from .models import (
+    Company,
+    CompanySchema,
+    DeletedHistory,
+    DeletedHistorySchema,
+    Document,
+    DocumentHistory,
+    DocumentHistorySchema,
+    DocumentSchema,
+    Tag,
+    TagSchema,
+    User,
+)
 
 bp = Blueprint("auth", __name__)
 
@@ -25,7 +37,7 @@ def load_user(id):
 
 @login_manager.unauthorized_handler
 def unauthorized():
-    return "You must be logged in to access this content.", 403
+    return jsonify({"message": "You must be logged in to access this content."}), 403
 
 
 @bp.route("/")

@@ -11,13 +11,15 @@ type Props<T> = {
   onDefineItem: (item: T) => void;
 };
 
+let skipBlur = false;
+
 const TermCreate = <T extends Item>(props: Props<T>) => {
   const { item, onDefineItem, itemList } = props;
   const [filterdItemList, setFilterdItemList] = useState<T[]>([]);
   const [inputText, setInputText] = useState<string>("");
   const [inputState, setInputState] = useState<"focus" | "blur" | "define">("blur");
-  const inputRef = useRef<HTMLInputElement>(null);
   const [focusCandidateIdx, setFocusCandidateIdx] = useState<number>(-1);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (item) {
@@ -95,21 +97,18 @@ const TermCreate = <T extends Item>(props: Props<T>) => {
       <input
         className={styles[inputState]}
         placeholder="ここに入力"
-        onBlur={(e) => {
+        onBlur={() => {
+          if (skipBlur) {
+            skipBlur = false;
+            return;
+          }
           handleDefineItem();
         }}
         onChange={(e) => {
           e.preventDefault();
-          if (inputState !== "focus") {
-            return;
-          }
           setInputText(e.target.value);
         }}
         onFocus={() => {
-          setFocusCandidateIdx(-1);
-          setInputState("focus");
-        }}
-        onClick={() => {
           setFocusCandidateIdx(-1);
           setInputState("focus");
         }}
@@ -148,6 +147,9 @@ const TermCreate = <T extends Item>(props: Props<T>) => {
                     setInputState("define");
                     setInputText(v.name);
                     onDefineItem(v);
+
+                    skipBlur = true;
+                    inputRef.current && inputRef.current.blur();
                   }}
                   onMouseDown={(e) => e.preventDefault()}
                 >

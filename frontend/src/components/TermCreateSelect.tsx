@@ -1,7 +1,7 @@
 import { faCheck } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Item } from "interfaces/interfaces";
-import { useEffect, useRef, useState } from "react";
+import { KeyboardEventHandler, useEffect, useRef, useState } from "react";
 import styles from "styles/TermSelect.module.scss";
 import { genRandomId } from "utils/utils";
 
@@ -17,7 +17,7 @@ const TermCreate = <T extends Item>(props: Props<T>) => {
   const [inputText, setInputText] = useState<string>("");
   const [inputState, setInputState] = useState<"focus" | "blur" | "define">("blur");
   const inputRef = useRef<HTMLInputElement>(null);
-  const [isHoverCandidate, setIsHoverCandidate] = useState<boolean>(false);
+  const [focusCandidateIdx, setFocusCandidateIdx] = useState<number>(-1);
 
   useEffect(() => {
     if (item) {
@@ -55,39 +55,65 @@ const TermCreate = <T extends Item>(props: Props<T>) => {
     setInputState("define");
   };
 
+  const trapKeyDown: KeyboardEventHandler<HTMLInputElement> = (e) => {
+    switch (e.key) {
+      case "ArrowDown":
+        e.preventDefault();
+        setFocusCandidateIdx((focusCandidateIdx + 1) % filterdItemList.length);
+        break;
+      case "ArrowUp":
+        e.preventDefault();
+        if (focusCandidateIdx === -1) {
+          setFocusCandidateIdx(filterdItemList.length - 1);
+        } else {
+          setFocusCandidateIdx(
+            (focusCandidateIdx - 1 + filterdItemList.length) % filterdItemList.length
+          );
+        }
+        break;
+      case "Enter":
+        if (filterdItemList[focusCandidateIdx]) {
+          e.preventDefault();
+          setInputState("define");
+          setInputText(filterdItemList[focusCandidateIdx].name);
+          onDefineItem(filterdItemList[focusCandidateIdx]);
+        }
+        break;
+    }
+  };
+
   return (
     <form
       className={styles.term_select + " " + styles[inputState]}
       onSubmit={(e) => {
         e.preventDefault();
       }}
-      onFocus={() => {
-        setInputState("focus");
-      }}
     >
-      <div
-        className={styles.define_text + " " + styles[inputState]}
-        onClick={() => {
-          if (inputRef && inputRef.current) {
-            inputRef.current.focus();
-          }
-          setInputState("focus");
-        }}
-      >
+      <div className={styles.define_text + " " + styles[inputState]}>
         <p>{inputText}</p>
       </div>
       <input
         className={styles[inputState]}
         placeholder="ここに入力"
-        onBlur={() => {
-          if (!isHoverCandidate) {
-            handleDefineItem();
+        onBlur={(e) => {
+          handleDefineItem();
+        }}
+        onChange={(e) => {
+          e.preventDefault();
+          if (inputState !== "focus") {
+            return;
           }
+          setInputText(e.target.value);
         }}
-        onChange={(v) => {
-          v.preventDefault();
-          setInputText(v.target.value);
+        onFocus={() => {
+          setFocusCandidateIdx(-1);
+          setInputState("focus");
         }}
+        onClick={() => {
+          setFocusCandidateIdx(-1);
+          setInputState("focus");
+        }}
+        onKeyDown={trapKeyDown}
         value={inputText}
         ref={inputRef}
       />
@@ -99,28 +125,34 @@ const TermCreate = <T extends Item>(props: Props<T>) => {
         style={{
           display: inputText.length > 0 && inputState === "focus" ? "inherit" : "none",
         }}
+        tabIndex={-1}
       >
         <FontAwesomeIcon icon={faCheck} color="#228B22" />
       </button>
       {filterdItemList.length > 0 && (
         <ul className={styles.candidate + " " + styles[inputState]}>
-          {filterdItemList.map((v) => {
+          {filterdItemList.map((v, idx) => {
             return (
-              <li
-                key={v.id}
-                onMouseOver={() => {
-                  setIsHoverCandidate(true);
-                }}
-                onMouseLeave={() => {
-                  setIsHoverCandidate(false);
-                }}
-                onClick={() => {
-                  setInputState("define");
-                  setInputText(v.name);
-                  onDefineItem(v);
-                }}
-              >
-                {v.name}
+              <li key={v.id} className={styles.candidate_item}>
+                {/* eslint-disable-next-line jsx-a11y/mouse-events-have-key-events */}
+                <button
+                  className={idx === focusCandidateIdx ? styles.focus : undefined}
+                  tabIndex={-1}
+                  onMouseOver={() => {
+                    setFocusCandidateIdx(idx);
+                  }}
+                  onMouseLeave={() => {
+                    setFocusCandidateIdx(-1);
+                  }}
+                  onClick={() => {
+                    setInputState("define");
+                    setInputText(v.name);
+                    onDefineItem(v);
+                  }}
+                  onMouseDown={(e) => e.preventDefault()}
+                >
+                  {v.name}
+                </button>
               </li>
             );
           })}

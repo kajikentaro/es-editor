@@ -25,13 +25,14 @@ $input-height: 1.6rem;
     font-size: $font-size;
     height: $input-height;
     &.define {
-      width: 0;
-      display: inline;
-      padding: 0;
+      top: 0;
+      right: 0;
+      height: 100%;
+      position: absolute;
+      opacity: 0;
     }
   }
   .define_text {
-    cursor: pointer;
     display: none;
     width: 100%;
     height: 100%;
@@ -82,12 +83,19 @@ $input-height: 1.6rem;
     &.focus {
       display: inherit;
     }
-    li {
-      padding: 1rem;
-      overflow: hidden;
-      cursor: pointer;
-      &:hover {
-        background-color: c.$background-color-a;
+    .candidate_item {
+      button {
+        background-color: transparent;
+        border: none;
+        width: 100%;
+        padding: 1rem;
+        font-size: 1rem;
+        overflow: hidden;
+        text-align: left;
+        cursor: pointer;
+        &.focus {
+          background-color: c.$background-color-a;
+        }
       }
     }
   }

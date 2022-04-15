@@ -163,15 +163,23 @@ class DeletedHistory(db.Model):
 class DocumentSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = Document
+
+
 class TagSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = Tag
+
+
 class CompanySchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = Company
+
+
 class DocumentHistorySchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = DocumentHistory
+
+
 class DeletedHistorySchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = DeletedHistory

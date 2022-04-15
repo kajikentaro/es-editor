@@ -1,6 +1,7 @@
 from flask import Blueprint, jsonify, request
 from flask_login import current_user, login_required
 from flask_sqlalchemy import model
+from flaskr.utils.client_uuid import update_uuid
 
 from .. import db
 from ..models import (Company, CompanySchema, DeletedHistory,
@@ -20,7 +21,12 @@ def is_latest_client():
     payload = request.json
 
     client_uuid = payload.get("latestUuid")
-    return jsonify({"must_merge": current_user.latest_uuid != client_uuid, "latest_uuid": current_user.latest_uuid})
+    return jsonify(
+        {
+            "must_merge": current_user.latest_uuid != client_uuid,
+            "latest_uuid": current_user.latest_uuid,
+        }
+    )
 
 
 @bp.route("/sync", methods=["POST"])
@@ -55,10 +61,10 @@ def sync_data():
         update_document_history(document_history)
 
     db.session.commit()
-    return jsonify({})
+    return jsonify({"uuid": update_uuid()})
 
 
-@bp.route("/get-all")
+@bp.route("/download")
 @login_required
 def get_all():
     res = {

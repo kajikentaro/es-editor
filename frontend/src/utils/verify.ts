@@ -76,10 +76,13 @@ export const isValidityBackup = (backupData: any) => {
   );
 };
 
-export const restore = (jsonStr: string) => {
+export const restore = (jsonStr: string, mustBeConfirm: boolean = true) => {
   const backupData = JSON.parse(jsonStr);
   if (isValidityBackup(backupData)) {
-    if (!confirm("今あるデータは削除され、上書きされます。復元しますか？")) {
+    if (
+      mustBeConfirm &&
+      !confirm("今あるデータは削除され、上書きされます。復元しますか？")
+    ) {
       return "cancel";
     }
     RESTCompany.putList(backupData[COMPANY_KEY]);

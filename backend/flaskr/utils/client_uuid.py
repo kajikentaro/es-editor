@@ -2,12 +2,14 @@ import uuid
 from uuid import uuid4
 
 from flask_login import current_user
+from flaskr import db
 from flaskr.models import User
 
 
-def save_uuid(current_user, db):
+def update_uuid():
     uuid = str(uuid4())
-    current_user.latest_uuid = uuid4
+    current_user.latest_uuid = uuid
+    db.session.commit()
     return uuid
 
 

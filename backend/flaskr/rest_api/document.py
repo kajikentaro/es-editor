@@ -97,6 +97,7 @@ def update_document(input_document: dict, is_save_history=True):
         saved_document = Document()
         saved_document.update_date = input_document["updateDate"]
 
+    print(input_document)
     # input_documentのほうが古い場合は何もしない
     if input_document["updateDate"] < saved_document.update_date:
         return

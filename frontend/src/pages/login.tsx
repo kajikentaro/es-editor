@@ -1,7 +1,10 @@
+import { LATEST_UUID } from "consts/key";
 import { NextPage } from "next";
+import { useRouter } from "next/router";
 import styles from "styles/Login.module.scss";
 import useSWR from "swr";
-import { backup } from "utils/verify";
+import { getLocalStorage, setLocalStorage } from "utils/storage";
+import { backup, restore } from "utils/verify";
 
 interface Answer {
   isConnectionOK: boolean;
@@ -37,7 +40,7 @@ export const fetchBackendAnaswer = async () => {
     headers: { "Content-Type": "application/json" },
     credentials: "include",
     method: "POST",
-    body: JSON.stringify({ latestUuid: "hogehoge" }),
+    body: JSON.stringify({ latestUuid: getLocalStorage(LATEST_UUID) }),
   });
   const mustMergeJson = await mustMergeRes.json();
   ans.mergeStatusMessage = mustMergeJson.must_merge
@@ -45,7 +48,7 @@ export const fetchBackendAnaswer = async () => {
     : "最終データはこのPCによる更新です";
   ans.serverLatestUuid = mustMergeJson.latest_uuid;
 
-  const cloudData = await fetch("http://localhost:5000/merge/get-all", {
+  const cloudData = await fetch("http://localhost:5000/merge/download", {
     credentials: "include",
   });
   ans.hoge = await cloudData.text();
@@ -94,7 +97,7 @@ const Login: NextPage = () => {
         <div>
           <p>マージ状態: {backendAns.mergeStatusMessage}</p>
           <p>クラウドの最終更新識別用ID: {backendAns.serverLatestUuid}</p>
-          <p>ローカルの最終更新識別用ID: {backendAns.localLatestUuid}</p>
+          <p>ローカルの最終更新識別用ID: {getLocalStorage(LATEST_UUID)}</p>
         </div>
         <div>
           <p>クラウドのデータ:</p>
@@ -111,6 +114,7 @@ const Login: NextPage = () => {
 };
 
 const Operation = () => {
+  const router = useRouter();
   const LOGIN_URL = process.env.NEXT_PUBLIC_LOGIN_URL;
   const LOGOUT_URL = process.env.NEXT_PUBLIC_LOGOUT_URL;
   const REST_URL = process.env.NEXT_PUBLIC_REST_URL;
@@ -119,32 +123,41 @@ const Operation = () => {
     throw new Error("環境変数が定義されていません");
   }
 
-  const handleDownload = async () => {
-    const param = {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username: "mergeStatusMessage" }),
-    };
-    const res = await fetch(REST_URL, param);
-    const status = await res.json();
-    alert(status);
+  const handleReplaceLocal = async () => {
+    const res = await fetch("http://localhost:5000/merge/download", {
+      credentials: "include",
+    });
+    const resJson = await res.json();
+    if (resJson) {
+      alert(restore(JSON.stringify(resJson), false));
+      router.reload();
+    } else {
+      console.error("クラウドへのデータプッシュに失敗しました");
+    }
   };
 
-  const handleUpload = async () => {
+  const handlePushCloud = async () => {
     const res = await fetch("http://localhost:5000/merge/sync", {
       headers: { "Content-Type": "application/json" },
       method: "POST",
       credentials: "include",
       body: backup(),
     });
-    console.log(await res.text());
+    const resJson = await res.json();
+    if (resJson && resJson.uuid) {
+      setLocalStorage(LATEST_UUID, resJson.uuid);
+      router.reload();
+    } else {
+      console.error("クラウドへのデータプッシュに失敗しました");
+    }
   };
+
   return (
     <>
       <a href={LOGIN_URL}>ログイン</a>
       <a href={LOGOUT_URL}>ログアウト</a>
-      <button onClick={handleUpload}>sync</button>
-      <button onClick={handleDownload}>ダウンロード</button>
+      <button onClick={handlePushCloud}>クラウドにプッシュする</button>
+      <button onClick={handleReplaceLocal}>ローカルをクラウドのデータに置き換える</button>
     </>
   );
 };

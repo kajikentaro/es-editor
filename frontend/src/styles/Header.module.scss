@@ -22,6 +22,11 @@
     display: flex;
     align-items: center;
     cursor: pointer;
+
+    // TODO: 暫定措置
+    @include c.mq(md) {
+      display: none;
+    }
   }
   .operation_btn {
     a {

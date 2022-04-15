@@ -6,7 +6,7 @@ export interface Document extends Item {
   tagId: string;
   text: string;
   wordCount: number;
-  updateDate: number;
+  updateDate?: number;
 }
 
 export interface DocumentHistory extends Item {
@@ -17,25 +17,25 @@ export interface DocumentHistory extends Item {
   tagId: string;
   text: string;
   wordCount: number;
-  updateDate: number;
+  updateDate?: number;
 }
 
 export interface Item {
   id: string;
   name: string;
-  updateDate: number;
+  updateDate?: number;
 }
 
 export interface Tag extends Item {
   id: string;
   name: string;
-  updateDate: number;
+  updateDate?: number;
 }
 
 export interface Company extends Item {
   id: string;
   name: string;
-  updateDate: number;
+  updateDate?: number;
 }
 
 export interface REST<T extends Item> {

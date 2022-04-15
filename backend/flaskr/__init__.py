@@ -10,6 +10,8 @@ db = SQLAlchemy()
 login_manager = LoginManager()
 ma = Marshmallow()
 
+CORS_ARROW_ORIGIN = os.environ.get("CORS_ARROW_ORIGIN", None)
+
 
 def create_app(is_test=False):
     app = Flask(__name__)
@@ -60,5 +62,5 @@ def create_app(is_test=False):
     with app.app_context():
         db.create_all()
 
-    CORS(app, supports_credentials=True, origins=["http://localhost:3000"])
+    CORS(app, supports_credentials=True, origins=[CORS_ARROW_ORIGIN])
     return app

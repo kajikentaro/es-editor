@@ -21,6 +21,7 @@ import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import styles from "styles/Edit.module.scss";
 import { RESTCompany, RESTDocument, RESTHistory, RESTTag } from "utils/REST";
+import useUnsaveAlert from "utils/useUnsaveAlert";
 import { genRandomId } from "utils/utils";
 import { getDefaultDocument } from "../../consts/default-value";
 
@@ -55,6 +56,10 @@ const Home: NextPage<PageProps> = (props) => {
   const [editHistory, setEditHistory] = useState<string[]>([""]);
   // 編集履歴
   const [documentHistory, setDocumentHistory] = useState<DocumentHistory[]>([]);
+  // ページ離脱時の警告
+  const [isUnsaveAlert, setIsUnsaveAlert] = useState<boolean>(false);
+
+  useUnsaveAlert(isUnsaveAlert);
 
   // 文書読み込み
   useEffect(() => {
@@ -102,6 +107,7 @@ const Home: NextPage<PageProps> = (props) => {
     };
     RESTHistory.put(document.historyId, new_history);
 
+    setIsUnsaveAlert(false);
     // documentのhistoryIdを更新
     setDocument({ ...document, historyId: genRandomId() });
 
@@ -151,6 +157,7 @@ const Home: NextPage<PageProps> = (props) => {
     setEditHistory(newEditHistory);
     setPreEditUnix(nowUnix);
     setDocumentText(text);
+    setIsUnsaveAlert(true);
   };
 
   const relatedDocumentProps = (liDocument: Document | DocumentHistory) => {

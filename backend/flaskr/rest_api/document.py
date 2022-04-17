@@ -60,19 +60,15 @@ def delete(id):
         return jsonify({"message": "存在しないドキュメントです"}), 400
     db.session.delete(target)
 
-    _unix_sec = (datetime.utcnow() + timedelta(hours=9)).timestamp()
+    deleted_history = DeletedHistory()
+    deleted_history.user_id = current_user.user_id
+    deleted_history.id = id
+    deleted_history.update_date = (datetime.utcnow() + timedelta(hours=9)).timestamp()
+    db.session.add(deleted_history)
+    
+    db.session.commit()
 
-    deleted_document = DeletedHistory()
-    deleted_document.user_id = current_user.user_id
-    deleted_document.id = id
-    deleted_document.update_date = int(_unix_sec * 1000)
-    db.session.add(deleted_document)
-
-    try:
-        db.session.commit()
-    except:
-        return jsonify({"message": "サーバーのDB書き込みに失敗しました"}), 400
-    return jsonify({})
+    return jsonify({"uuid": update_uuid()})
 
 
 def update_document(input_document: dict, is_save_history=True):

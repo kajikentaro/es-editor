@@ -7,6 +7,7 @@ from zlib import DEF_MEM_LEVEL
 
 from flask import Blueprint, Response, jsonify, request
 from flask_login import current_user, login_required
+from flaskr.rest_api.document_history import update_document_history
 from flaskr.utils.client_uuid import update_uuid
 from flaskr.utils.random_id import gen_random_local_id
 
@@ -65,7 +66,7 @@ def delete(id):
     deleted_history.id = id
     deleted_history.update_date = (datetime.utcnow() + timedelta(hours=9)).timestamp()
     db.session.add(deleted_history)
-    
+
     db.session.commit()
 
     return jsonify({"uuid": update_uuid()})
@@ -73,17 +74,10 @@ def delete(id):
 
 def update_document(input_document: dict, is_save_history=True):
     if is_save_history:
-        document_history = DocumentHistory()
-        document_history.id = input_document.get("historyId", gen_random_local_id())
-        document_history.document_id = input_document["id"]
-        document_history.name = input_document["name"]
-        document_history.company_id = input_document["companyId"]
-        document_history.tag_id = input_document["tagId"]
-        document_history.text = input_document["text"]
-        document_history.word_count = input_document["wordCount"]
-        document_history.update_date = input_document["updateDate"]
-        document_history.user_id = current_user.user_id
-        db.session.add(document_history)
+        document_history = input_document.copy()
+        document_history["id"] = input_document.get("historyId", gen_random_local_id())
+        document_history["documentId"] = input_document["id"]
+        update_document_history(document_history)
 
     saved_document = Document.query.filter_by(
         user_id=current_user.user_id, id=input_document["id"]
@@ -94,7 +88,6 @@ def update_document(input_document: dict, is_save_history=True):
         saved_document = Document()
         saved_document.update_date = input_document["updateDate"]
 
-    print(input_document)
     # input_documentのほうが古い場合は何もしない
     if input_document["updateDate"] < saved_document.update_date:
         return

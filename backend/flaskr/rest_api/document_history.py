@@ -15,7 +15,7 @@ from ..models import DeletedHistory, Document, DocumentHistory, DocumentSchema
 def update_document_history(input_document_history: dict):
     saved_document_history = DocumentHistory.query.filter_by(
         user_id=current_user.user_id, id=input_document_history["id"]
-    ).one_or_none()
+    ).first()
     if saved_document_history:
         return
 

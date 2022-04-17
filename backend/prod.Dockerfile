@@ -9,5 +9,6 @@ RUN pip install --upgrade pip
 COPY . /root/app
 WORKDIR /root/app
 RUN pip install -e .
-CMD ["flask", "run", "--host=0.0.0.0"]
+RUN pip install waitress
+CMD ["waitress-serve",  "--port=5000", "--call", "flaskr:create_app"]
 EXPOSE 5000

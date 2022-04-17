@@ -51,12 +51,14 @@ export const isBackendLogin: () => Promise<boolean> = async () => {
     }
     return true;
   }
+  console.log("未ログイン");
   return false;
 };
 
 export const syncCloudEntry = async () => {
   if ((await updateCloudEntry()) && (await replaceLocalFromCloud())) {
     console.log("クラウドとのデータ同期に成功");
+    window.location.reload();
   } else {
     console.error("クラウドとのデータ時に失敗");
   }

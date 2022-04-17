@@ -36,7 +36,7 @@ export const fetchBackendAnaswer = async () => {
   if (ans.isLogin === false) {
     return ans;
   }
-  ans.userId = isLoginJson.user_id;
+  ans.userId = isLoginJson.userId;
 
   const mustMergeRes = await fetch(MERGE_URL, {
     headers: { "Content-Type": "application/json" },
@@ -48,7 +48,7 @@ export const fetchBackendAnaswer = async () => {
   ans.mergeStatusMessage = mustMergeJson.must_merge
     ? "別のクライアントからの更新があります"
     : "最終データはこのPCによる更新です";
-  ans.serverLatestUuid = mustMergeJson.latest_uuid;
+  ans.serverLatestUuid = mustMergeJson.latestUuid;
 
   const cloudData = await fetch(DOWNLOAD_URL, {
     credentials: "include",

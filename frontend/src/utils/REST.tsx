@@ -13,7 +13,7 @@ import {
   Tag,
 } from "interfaces/interfaces";
 import { getLocalStorage } from "utils/storage";
-import { putCloud } from "./cloud";
+import { deleteCloudItem, putCloudItem } from "./cloud";
 import { setLocalStorage } from "./storage";
 
 // ストレージとのデータのやり取りはすべてこのクラスを介して行う。
@@ -51,20 +51,23 @@ class RESTMother<T extends Item> implements REST<T> {
   }
   // 更新. なかったら新規作成
   put(id: string, body: T) {
-    let list = this.delete_(id);
+    let list = this.delete_(id, true);
     body.updateDate = new Date().getTime();
     list.push(body);
     setLocalStorage(this.STORAGE_KEY, list);
     if (this.ENTRYPOINT_URL) {
-      putCloud(this.ENTRYPOINT_URL, body);
+      putCloudItem(this.ENTRYPOINT_URL, body);
     }
   }
   // 削除(削除後のデータ返す)
-  delete_ = (id: string) => {
+  delete_ = (id: string, isUpdate?: boolean) => {
     let list = this.getList().filter((v) => {
       return v.id !== id;
     });
     this.putList(list);
+    if (this.ENTRYPOINT_URL && !isUpdate) {
+      deleteCloudItem(this.ENTRYPOINT_URL, id);
+    }
     return list;
   };
 }

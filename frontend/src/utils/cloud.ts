@@ -3,8 +3,8 @@ import { CHECK_LOGIN_URL, DOWNLOAD_URL, DROP_ALL_URL, SYNC_URL } from "consts/ur
 import { getLocalStorage, setLocalStorage } from "./storage";
 import { backup, restore } from "./verify";
 
-type PutCloud = <T>(entrypointUrl: string, body: T) => Promise<void>;
-export const putCloud: PutCloud = async (entrypointUrl, body) => {
+type putCloudItem = <T>(entrypointUrl: string, body: T) => Promise<void>;
+export const putCloudItem: putCloudItem = async (entrypointUrl, body) => {
   if (!(await isBackendLogin())) {
     console.log("未ログイン");
     return;
@@ -26,6 +26,31 @@ export const putCloud: PutCloud = async (entrypointUrl, body) => {
     console.log("クラウドアップデートに成功");
   } else {
     console.error("保存エラー");
+  }
+};
+
+type DeleteCloudItem = <T>(entrypointUrl: string, id: string) => Promise<void>;
+export const deleteCloudItem: DeleteCloudItem = async (entrypointUrl, id) => {
+  if (!(await isBackendLogin())) {
+    console.log("未ログイン");
+    return;
+  }
+
+  const res = await fetch(entrypointUrl + encodeURIComponent(id), {
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    method: "DELETE",
+  });
+  if (res.status !== 200) {
+    console.log("通信エラー");
+  }
+  const resJson = await res.json();
+  console.log(resJson);
+  if (resJson && resJson.uuid) {
+    setLocalStorage(LATEST_UUID, resJson.uuid);
+    console.log("クラウドアップデートに成功");
+  } else {
+    console.error("削除エラー");
   }
 };
 
@@ -51,12 +76,14 @@ export const isBackendLogin: () => Promise<boolean> = async () => {
     }
     return true;
   }
+  console.log("未ログイン");
   return false;
 };
 
 export const syncCloudEntry = async () => {
   if ((await updateCloudEntry()) && (await replaceLocalFromCloud())) {
     console.log("クラウドとのデータ同期に成功");
+    window.location.reload();
   } else {
     console.error("クラウドとのデータ時に失敗");
   }

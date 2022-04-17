@@ -87,14 +87,14 @@ def callback():
 
     user = User.query.filter_by(user_id=user_id).one_or_none()
     if user:
-        login_user(user)
+        login_user(user, remember=True)
         # ログインしました
         return redirect(URL_AFTER_LOGIN)
 
     user = User(user_id, users_name, users_email)
     db.session.add(user)
     db.session.commit()
-    login_user(user)
+    login_user(user, remember=True)
     # アカウントを作成しました
     return redirect(URL_AFTER_LOGIN)
 

@@ -1,4 +1,13 @@
 import { LATEST_UUID } from "consts/key";
+import {
+  DOWNLOAD_URL,
+  DROP_ALL_URL,
+  LOGIN_CHECK_URL,
+  LOGIN_URL,
+  LOGOUT_URL,
+  MERGE_URL,
+  SYNC_URL,
+} from "consts/url";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
 import styles from "styles/Login.module.scss";
@@ -16,13 +25,11 @@ interface Answer {
   localLatestUuid?: string;
 }
 
-const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
-
 export const fetchBackendAnaswer = async () => {
   if (typeof window === "undefined") {
     return undefined;
   }
-  const isLoginRes = await fetch(BACKEND_URL + "/test/is_login", {
+  const isLoginRes = await fetch(LOGIN_CHECK_URL, {
     credentials: "include",
   });
 
@@ -38,7 +45,7 @@ export const fetchBackendAnaswer = async () => {
   }
   ans.userId = isLoginJson.user_id;
 
-  const mustMergeRes = await fetch(BACKEND_URL + "/merge/", {
+  const mustMergeRes = await fetch(MERGE_URL, {
     headers: { "Content-Type": "application/json" },
     credentials: "include",
     method: "POST",
@@ -50,7 +57,7 @@ export const fetchBackendAnaswer = async () => {
     : "最終データはこのPCによる更新です";
   ans.serverLatestUuid = mustMergeJson.latest_uuid;
 
-  const cloudData = await fetch(BACKEND_URL + "/merge/download", {
+  const cloudData = await fetch(DOWNLOAD_URL, {
     credentials: "include",
   });
   ans.hoge = await cloudData.text();
@@ -125,7 +132,7 @@ const Operation = () => {
   const router = useRouter();
 
   const handleReplaceLocal = async () => {
-    const res = await fetch(BACKEND_URL + "/merge/download", {
+    const res = await fetch(DOWNLOAD_URL, {
       credentials: "include",
     });
     const resJson = await res.json();
@@ -141,7 +148,7 @@ const Operation = () => {
   };
 
   const handlePushCloud = async () => {
-    const res = await fetch(BACKEND_URL + "/merge/sync", {
+    const res = await fetch(SYNC_URL, {
       headers: { "Content-Type": "application/json" },
       method: "POST",
       credentials: "include",
@@ -156,12 +163,26 @@ const Operation = () => {
     }
   };
 
+  const handleDropAll = async () => {
+    const res = await fetch(DROP_ALL_URL, {
+      credentials: "include",
+    });
+    const resJson = await res.json();
+    if (resJson && resJson.uuid) {
+      setLocalStorage(LATEST_UUID, resJson.uuid);
+      router.reload();
+    } else {
+      console.error("全データ削除に失敗しました");
+    }
+  };
+
   return (
     <div className={styles.operations}>
-      <a href={BACKEND_URL + "/login"}>ログイン</a>
-      <a href={BACKEND_URL + "/logout"}>ログアウト</a>
+      <a href={LOGIN_URL}>ログイン</a>
+      <a href={LOGOUT_URL}>ログアウト</a>
       <button onClick={handlePushCloud}>クラウドにプッシュする</button>
       <button onClick={handleReplaceLocal}>ローカルをクラウドのデータに置き換える</button>
+      <button onClick={handleDropAll}>このユーザーのクラウドの全データを削除する </button>
     </div>
   );
 };

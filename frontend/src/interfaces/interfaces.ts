@@ -39,7 +39,8 @@ export interface Company extends Item {
 }
 
 export interface REST<T extends Item> {
-  KEY: string;
+  STORAGE_KEY: string;
+  ENTRYPOINT_URL?: string;
   getList: () => T[];
   get: (id: string, cache: T[] | undefined) => T | undefined;
   putList: (body: T[]) => void;

@@ -1,7 +1,13 @@
-from flask import Blueprint, Response, jsonify, redirect
-from flask_login import current_user, login_user
+from uuid import uuid4
 
-from flaskr.models import User
+from flask import Blueprint, Response, jsonify, redirect
+from flask_login import current_user, login_required, login_user
+
+from flaskr.models import (Company, CompanySchema, DeletedHistory,
+                           DeletedHistorySchema, Document, DocumentHistory,
+                           DocumentHistorySchema, DocumentSchema, Tag,
+                           TagSchema, User)
+from flaskr.utils.client_uuid import update_uuid
 
 from . import db
 
@@ -32,3 +38,14 @@ def is_login():
             "is_login": False,
         }
     )
+
+
+@bp.route("/drop_all")
+@login_required
+def drop_all():
+    Document.query.filter_by(user_id=current_user.user_id).delete()
+    Company.query.filter_by(user_id=current_user.user_id).delete()
+    Tag.query.filter_by(user_id=current_user.user_id).delete()
+    DocumentHistory.query.filter_by(user_id=current_user.user_id).delete()
+
+    return jsonify({"uuid": str(uuid4())})

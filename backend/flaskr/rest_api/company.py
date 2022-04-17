@@ -5,7 +5,18 @@ from flask_login import current_user, login_required
 from flaskr.utils.client_uuid import update_uuid
 
 from .. import db
-from ..models import Company, Document, DocumentSchema
+from ..models import (
+    Company,
+    CompanySchema,
+    DeletedHistory,
+    DeletedHistorySchema,
+    Document,
+    DocumentHistory,
+    DocumentHistorySchema,
+    DocumentSchema,
+    Tag,
+    TagSchema,
+)
 
 bp = Blueprint("company", __name__, url_prefix="/company")
 
@@ -39,7 +50,7 @@ def post():
         db.session.commit()
     except:
         return jsonify({"message": "サーバーのDB書き込みに失敗しました"}), 400
-    return jsonify({"latest_uuid": update_uuid()})
+    return jsonify({"uuid": update_uuid()})
 
 
 @bp.route("/<string:id>", methods=["DELETE"])

@@ -39,7 +39,7 @@ def post():
         db.session.commit()
     except:
         return jsonify({"message": "サーバーのDB書き込みに失敗しました"}), 400
-    return jsonify({"latest_uuid": update_uuid()})
+    return jsonify({"uuid": update_uuid()})
 
 
 @bp.route("/<string:id>", methods=["DELETE"])

@@ -7,6 +7,7 @@ from zlib import DEF_MEM_LEVEL
 
 from flask import Blueprint, Response, jsonify, request
 from flask_login import current_user, login_required
+from flaskr.utils.client_uuid import update_uuid
 from flaskr.utils.random_id import gen_random_local_id
 
 from .. import db
@@ -48,7 +49,7 @@ def post():
         db.session.commit()
     except:
         return jsonify({"message": "サーバーのDB書き込みに失敗しました"}), 400
-    return jsonify({})
+    return jsonify({"uuid": update_uuid()})
 
 
 @bp.route("/<string:id>", methods=["DELETE"])

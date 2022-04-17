@@ -1,5 +1,10 @@
 import { COMPANY_KEY, DOCUMENT_KEY, HISTORY_KEY, TAG_KEY } from "consts/key";
 import {
+  COMPANY_ENTRYPOINT_URL,
+  DOCUMENT_ENTRYPOINT_URL,
+  TAG_ENTRYPOINT_URL,
+} from "consts/url";
+import {
   Company,
   Document,
   DocumentHistory,
@@ -8,17 +13,20 @@ import {
   Tag,
 } from "interfaces/interfaces";
 import { getLocalStorage } from "utils/storage";
+import { putCloud } from "./cloud";
 import { setLocalStorage } from "./storage";
 
 // ストレージとのデータのやり取りはすべてこのクラスを介して行う。
 class RESTMother<T extends Item> implements REST<T> {
-  KEY: string;
-  constructor(KEY: string) {
-    this.KEY = KEY;
+  STORAGE_KEY: string;
+  ENTRYPOINT_URL?: string;
+  constructor(STORAGE_KEY: string, ENTRYPOINT_URL?: string) {
+    this.STORAGE_KEY = STORAGE_KEY;
+    this.ENTRYPOINT_URL = ENTRYPOINT_URL;
   }
   // リスト取得
   getList() {
-    let res = getLocalStorage(this.KEY) as T[];
+    let res = getLocalStorage(this.STORAGE_KEY) as T[];
     res = res.sort((a: T, b: T) => {
       const aTime = a.updateDate || 0;
       const bTime = b.updateDate || 0;
@@ -39,14 +47,17 @@ class RESTMother<T extends Item> implements REST<T> {
   }
   // リスト更新する。
   putList(body: T[]) {
-    setLocalStorage(this.KEY, body);
+    setLocalStorage(this.STORAGE_KEY, body);
   }
   // 更新. なかったら新規作成
   put(id: string, body: T) {
     let list = this.delete_(id);
     body.updateDate = new Date().getTime();
     list.push(body);
-    setLocalStorage(this.KEY, list);
+    setLocalStorage(this.STORAGE_KEY, list);
+    if (this.ENTRYPOINT_URL) {
+      putCloud(this.ENTRYPOINT_URL, body);
+    }
   }
   // 削除(削除後のデータ返す)
   delete_ = (id: string) => {
@@ -76,7 +87,10 @@ class RestHistoryClass extends RESTMother<DocumentHistory> {
   }
 }
 
-export const RESTCompany = new RESTMother<Company>(COMPANY_KEY);
-export const RESTTag = new RESTMother<Tag>(TAG_KEY);
-export const RESTDocument = new RESTMother<Document>(DOCUMENT_KEY);
+export const RESTCompany = new RESTMother<Company>(COMPANY_KEY, COMPANY_ENTRYPOINT_URL);
+export const RESTTag = new RESTMother<Tag>(TAG_KEY, TAG_ENTRYPOINT_URL);
+export const RESTDocument = new RESTMother<Document>(
+  DOCUMENT_KEY,
+  DOCUMENT_ENTRYPOINT_URL
+);
 export const RESTHistory = new RestHistoryClass(HISTORY_KEY);

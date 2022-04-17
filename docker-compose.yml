@@ -82,6 +82,9 @@ services:
       - type: bind
         source: ./db
         target: /docker-entrypoint-initdb.d
+      - type: bind
+        source: ./db/DATA
+        target: /var/lib/mysql
     profiles:
       - dev
       - prod

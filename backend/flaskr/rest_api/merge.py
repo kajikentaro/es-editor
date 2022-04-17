@@ -23,8 +23,8 @@ def is_latest_client():
     client_uuid = payload.get("latestUuid")
     return jsonify(
         {
-            "must_merge": current_user.latest_uuid != client_uuid,
-            "latest_uuid": current_user.latest_uuid,
+            "mustMerge": current_user.latest_uuid != client_uuid,
+            "latestUuid": current_user.latest_uuid,
         }
     )
 
@@ -99,7 +99,7 @@ def check_login():
                 "isLogin": True,
                 "userId": current_user.user_id,
                 "latestUuid": current_user.latest_uuid,
-                "must_merge": current_user.latest_uuid != client_uuid,
+                "mustMerge": current_user.latest_uuid != client_uuid,
             }
         )
     else:

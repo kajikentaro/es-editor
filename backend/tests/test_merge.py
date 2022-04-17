@@ -6,7 +6,6 @@ from flaskr.utils.random_id import gen_random_local_id
 def gen_sample_data(update_date, item_name, item_id):
     company_list = [
         {
-            "user_id": "hoge",
             "id": item_id,
             "name": item_name,
             "updateDate": update_date,
@@ -14,7 +13,6 @@ def gen_sample_data(update_date, item_name, item_id):
     ]
     tag_list = [
         {
-            "user_id": "hoge",
             "id": item_id,
             "name": item_name,
             "updateDate": update_date,
@@ -22,20 +20,18 @@ def gen_sample_data(update_date, item_name, item_id):
     ]
     document_history_list = [
         {
-            "user_id": "hoge",
             "id": item_id,
             "documentId": gen_random_local_id(),
             "name": item_name,
             "companyId": "hoge",
             "tagId": "hoge",
-            "text": "hoge_history",
+            "text": "hoge history",
             "wordCount": 123,
             "updateDate": update_date,
         }
     ]
     document_list = [
         {
-            "user_id": "hoge",
             "id": item_id,
             "historyId": gen_random_local_id(),
             "name": item_name,
@@ -65,7 +61,7 @@ def test_latest_uuid(client, session):
     response = client.post(
         "/merge/", data=latest_uuid_data, content_type="application/json"
     )
-    assert response.get_json()["must_merge"] == True
+    assert response.get_json()["mustMerge"] == True
     assert response.status_code == 200
 
     # TODO: データを投入しUUIDの変化を確認する

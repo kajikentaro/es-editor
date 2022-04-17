@@ -53,11 +53,11 @@ def test_different_client(client, client2, session):
     data = json.dumps(payload)
     response = client.post("/company/", data=data, content_type="application/json")
     assert response.status_code == 200
-    latest_uuid = response.get_json()["latest_uuid"]
+    latest_uuid = response.get_json()["uuid"]
 
     client2.get("/test/login")
     # Companyデータを送信(client2)
     payload = {"name": "志望動機", "id": "hoge", "updateDate": 1644413074333}
     data = json.dumps(payload)
     response = client2.post("/company/", data=data, content_type="application/json")
-    assert latest_uuid != response.get_json()["latest_uuid"]
+    assert latest_uuid != response.get_json()["uuid"]

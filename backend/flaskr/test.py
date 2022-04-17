@@ -1,6 +1,6 @@
 from uuid import uuid4
 
-from flask import Blueprint, Response, jsonify, redirect
+from flask import Blueprint, Response, jsonify, redirect, request
 from flask_login import current_user, login_required, login_user
 
 from flaskr.models import (Company, CompanySchema, DeletedHistory,
@@ -26,18 +26,37 @@ def login():
     return jsonify({})
 
 
-@bp.route("/is_login")
+@bp.route("/is_login", methods=["GET", "POST"])
 def is_login():
-    if current_user.is_authenticated:
+    print(request.method)
+    if not current_user.is_authenticated:
         return jsonify(
-            {"message": "ログイン中", "is_login": True, "user_id": current_user.user_id}
+            {
+                "message": "ログアウト中",
+                "isLogin": False,
+            }
         )
-    return jsonify(
-        {
-            "message": "ログアウト中",
-            "is_login": False,
-        }
-    )
+
+    if request.method == "GET":
+        return jsonify(
+            {
+                "message": "ログイン中",
+                "isLogin": True,
+                "userId": current_user.user_id,
+                "latestUuid": current_user.latest_uuid,
+            }
+        )
+    else:
+        client_uuid = request.json.get("latestUuid")
+        return jsonify(
+            {
+                "message": "ログイン中",
+                "isLogin": True,
+                "userId": current_user.user_id,
+                "latestUuid": current_user.latest_uuid,
+                "must_merge": current_user.latest_uuid != client_uuid,
+            }
+        )
 
 
 @bp.route("/drop_all")

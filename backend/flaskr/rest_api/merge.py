@@ -85,3 +85,27 @@ def get_all():
         ),
     }
     return jsonify(res)
+
+
+@bp.route("/check_login", methods=["POST"])
+def check_login():
+    payload = request.json
+
+    if current_user.is_authenticated:
+        client_uuid = payload.get("latestUuid")
+        return jsonify(
+            {
+                "message": "ログイン中",
+                "isLogin": True,
+                "userId": current_user.user_id,
+                "latestUuid": current_user.latest_uuid,
+                "must_merge": current_user.latest_uuid != client_uuid,
+            }
+        )
+    else:
+        return jsonify(
+            {
+                "message": "ログアウト中",
+                "isLogin": False,
+            }
+        )

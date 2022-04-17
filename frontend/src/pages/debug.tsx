@@ -1,19 +1,12 @@
 import { LATEST_UUID } from "consts/key";
-import {
-  DOWNLOAD_URL,
-  DROP_ALL_URL,
-  LOGIN_CHECK_URL,
-  LOGIN_URL,
-  LOGOUT_URL,
-  MERGE_URL,
-  SYNC_URL,
-} from "consts/url";
+import { DOWNLOAD_URL, IS_LOGIN_URL, LOGIN_URL, LOGOUT_URL, MERGE_URL } from "consts/url";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
 import styles from "styles/Login.module.scss";
 import useSWR from "swr";
-import { getLocalStorage, setLocalStorage } from "utils/storage";
-import { backup, restore } from "utils/verify";
+import { dropCloudAllEntry, replaceLocalFromCloud, updateCloudEntry } from "utils/cloud";
+import { getLocalStorage } from "utils/storage";
+import { backup } from "utils/verify";
 
 interface Answer {
   isConnectionOK: boolean;
@@ -29,7 +22,7 @@ export const fetchBackendAnaswer = async () => {
   if (typeof window === "undefined") {
     return undefined;
   }
-  const isLoginRes = await fetch(LOGIN_CHECK_URL, {
+  const isLoginRes = await fetch(IS_LOGIN_URL, {
     credentials: "include",
   });
 
@@ -39,7 +32,7 @@ export const fetchBackendAnaswer = async () => {
   }
 
   const isLoginJson = await isLoginRes.json();
-  ans.isLogin = isLoginJson.is_login;
+  ans.isLogin = isLoginJson.isLogin;
   if (ans.isLogin === false) {
     return ans;
   }
@@ -132,47 +125,20 @@ const Operation = () => {
   const router = useRouter();
 
   const handleReplaceLocal = async () => {
-    const res = await fetch(DOWNLOAD_URL, {
-      credentials: "include",
-    });
-    const resJson = await res.json();
-    if (!resJson) {
-      console.error("データダウンロードに失敗しました");
-    }
-    const result = restore(JSON.stringify(resJson), false);
-    if (result === "success") {
+    if (await updateCloudEntry()) {
       router.reload();
-    } else {
-      console.error("データインストールに失敗しました");
     }
   };
 
   const handlePushCloud = async () => {
-    const res = await fetch(SYNC_URL, {
-      headers: { "Content-Type": "application/json" },
-      method: "POST",
-      credentials: "include",
-      body: backup(),
-    });
-    const resJson = await res.json();
-    if (resJson && resJson.uuid) {
-      setLocalStorage(LATEST_UUID, resJson.uuid);
+    if (await replaceLocalFromCloud()) {
       router.reload();
-    } else {
-      console.error("クラウドへのデータプッシュに失敗しました");
     }
   };
 
   const handleDropAll = async () => {
-    const res = await fetch(DROP_ALL_URL, {
-      credentials: "include",
-    });
-    const resJson = await res.json();
-    if (resJson && resJson.uuid) {
-      setLocalStorage(LATEST_UUID, resJson.uuid);
+    if (await dropCloudAllEntry()) {
       router.reload();
-    } else {
-      console.error("全データ削除に失敗しました");
     }
   };
 

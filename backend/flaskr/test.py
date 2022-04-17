@@ -1,12 +1,21 @@
 from uuid import uuid4
 
-from flask import Blueprint, Response, jsonify, redirect
+from flask import Blueprint, Response, jsonify, redirect, request
 from flask_login import current_user, login_required, login_user
 
-from flaskr.models import (Company, CompanySchema, DeletedHistory,
-                           DeletedHistorySchema, Document, DocumentHistory,
-                           DocumentHistorySchema, DocumentSchema, Tag,
-                           TagSchema, User)
+from flaskr.models import (
+    Company,
+    CompanySchema,
+    DeletedHistory,
+    DeletedHistorySchema,
+    Document,
+    DocumentHistory,
+    DocumentHistorySchema,
+    DocumentSchema,
+    Tag,
+    TagSchema,
+    User,
+)
 from flaskr.utils.client_uuid import update_uuid
 
 from . import db
@@ -26,18 +35,24 @@ def login():
     return jsonify({})
 
 
-@bp.route("/is_login")
+@bp.route("/is_login", methods=["GET"])
 def is_login():
     if current_user.is_authenticated:
         return jsonify(
-            {"message": "ログイン中", "is_login": True, "user_id": current_user.user_id}
+            {
+                "message": "ログイン中",
+                "isLogin": True,
+                "userId": current_user.user_id,
+                "latestUuid": current_user.latest_uuid,
+            }
         )
-    return jsonify(
-        {
-            "message": "ログアウト中",
-            "is_login": False,
-        }
-    )
+    else:
+        return jsonify(
+            {
+                "message": "ログアウト中",
+                "isLogin": False,
+            }
+        )
 
 
 @bp.route("/drop_all")

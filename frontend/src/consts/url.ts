@@ -11,7 +11,8 @@ export const COMPANY_ENTRYPOINT_URL = BACKEND_URL + "/company/";
 export const LOGIN_URL = BACKEND_URL + "/login";
 export const LOGOUT_URL = BACKEND_URL + "/logout";
 
-export const LOGIN_CHECK_URL = BACKEND_URL + "/test/is_login";
+export const CHECK_LOGIN_URL = BACKEND_URL + "/merge/check_login";
+export const IS_LOGIN_URL = BACKEND_URL + "/test/is_login";
 export const MERGE_URL = BACKEND_URL + "/merge/";
 export const DOWNLOAD_URL = BACKEND_URL + "/merge/download";
 export const SYNC_URL = BACKEND_URL + "/merge/sync";

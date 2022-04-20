@@ -106,3 +106,23 @@ def test_save_two_times(client, session):
     assert history_data != None
     history_data = DocumentHistory.query.filter_by(text="hoge2")
     assert history_data != None
+
+
+def test_multibyte4(client, session):
+    DOCUMENT_ID = "XY.24tpi3E"
+    client.get("/test/login")
+    payload = {
+        "id": DOCUMENT_ID,
+        "hidsotyId": gen_random_local_id(),
+        "name": "",
+        "companyId": "hoge",
+        "tagId": "hoge",
+        "text": "🎶",
+        "wordCount": 123,
+        "updateDate": 1644413074333,
+    }
+    data = json.dumps(payload)
+    response = client.post("/document/", data=data, content_type="application/json")
+    assert response.status_code == 200
+    saved_data = Document.query.first()
+    assert saved_data.id == DOCUMENT_ID

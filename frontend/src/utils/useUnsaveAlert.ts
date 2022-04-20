@@ -10,7 +10,7 @@ const beforeUnloadhandler = (event: BeforeUnloadEvent) => {
 const useUnsaveAlert = (isMustWarn: boolean) => {
   useEffect(() => {
     const routeChangeStart = () => {
-      if (isMustWarn && window.confirm(ALERT_MESSAGE)) {
+      if (isMustWarn && !window.confirm(ALERT_MESSAGE)) {
         throw "canceled by user to prevent lost data";
       }
     };

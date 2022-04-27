@@ -20,7 +20,7 @@ jobs:
 
       - name: copy .env.template
         shell: bash
-        run: cp .env.secret.template .env.secret
+        run: cp .env.secret.template .env.secret && mkdir ./db/DATA
 
       - name: docker-compose db, backend
         shell: bash

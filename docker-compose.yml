@@ -16,6 +16,7 @@ services:
       - 3000:3000
     env_file:
       - .env
+      - .env.secret
 
   # 本番バックエンド(仮)
   prod_back:
@@ -33,6 +34,7 @@ services:
         condition: service_healthy
     env_file:
       - .env
+      - .env.secret
 
   # 開発フロントエンド
   dev_front:
@@ -52,6 +54,7 @@ services:
     env_file:
       - .env
       - .env.development
+      - .env.secret
 
   # 開発バックエンド
   dev_back:
@@ -71,6 +74,7 @@ services:
     env_file:
       - .env
       - .env.development
+      - .env.secret
 
   # データベース
   db:
@@ -96,6 +100,7 @@ services:
       start_period: 0s
     env_file:
       - .env
+      - .env.secret
 
   git_clone:
     container_name: es_editor_git_clone

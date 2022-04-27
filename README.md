@@ -3,20 +3,25 @@
 就活生のためのエントリーシートエディター  
 https://es-editor.kajindowsxp.com
 
+[![backend_pytest](https://github.com/kajikentaro/es-editor/actions/workflows/backend-pytest.yml/badge.svg)](https://github.com/kajikentaro/es-editor/actions/workflows/backend-pytest.yml)
+
+[![frontend_build_check](https://github.com/kajikentaro/es-editor/actions/workflows/frontend-build-check.yml/badge.svg)](https://github.com/kajikentaro/es-editor/actions/workflows/frontend-build-check.yml)
+
 ## Feature
 
 - バージョン管理<br/>変更履歴をすべて保存し、好きなバージョンにロールバック,
 - 検索機能<br/>文章中の文字、企業名、項目名を併せて検索,
 - 企業、項目別管理<br/>「ガクチカ」「長所」「志望動機」などの項目ラベルを付けて、まとめて管理,
 - 文字数カウント<br/>一文字入力するごとにリアルタイム表示。(coming soon)更に指定文字数の目安となる目印を表示,
-- ローカル保存 | (coming soon)クラウド保存<br/>端末内かクラウド、またはその両方に書いたデータを保存。更に word 形式でダウンロードすることも可能,
+- ローカル保存 | クラウド保存<br/>端末内かクラウド、またはその両方に書いたデータを保存。
 - (coming soon)コメントアウト機能<br/>一瞬思いついた語彙を逃さず保存。コメントとして記入することで、ダウンロードやまとめてコピー時にはその部分を無視して取得できます。
 
 ## How to Dev
 
 1. このリポジトリをクローンします
-1. `/backend/flaskr/.env.template`を`/backend/flaskr/.env`にコピーします。
-1. Google の client id と client secret を取得し、`/backend/flaskr/.env`に記載します
+1. `.env.secret.template`を`.env.secret`にコピーします。
+1. Google の client id と client secret を取得し、`.env.secret`に記載します
+1. `db`フォルダのなかに,`DATA`という名前の空フォルダを作成します
 1. 下記を参考に開発用環境を作成してください
 
 ## Docker Compose
@@ -63,7 +68,9 @@ dev_front, dev_back でマウントされている docker volume に git のソ�
 ## How to Prod
 
 1. このリポジトリをクローンします
-1. `/backend/flaskr/.env.template`を`/backend/flaskr/.env`にコピーします。
-1. Google の client id と client secret を取得し、`/backend/flaskr/.env`に記載します
+1. `.env.secret.template`を`.env.secret`にコピーします。
+1. Google の client id と client secret を取得し、`.env.secret`に記載します
+1. Google Analytics の 測定 ID を取得し、`.env.secret`に記載します
+1. `db`フォルダのなかに,`DATA`という名前の空フォルダを作成します
 1. `docker-compose --profile prod up`を実行
 1. `localhost:3000` に Web サーバー、`localhost:5000` にバックエンドサーバーが立ちます

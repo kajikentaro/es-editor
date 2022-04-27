@@ -17,6 +17,10 @@
     flex-direction: row-reverse;
   }
 
+  @include c.mq(md) {
+    justify-content: right;
+  }
+
   .icon {
     margin-left: 5px;
     display: flex;
@@ -36,6 +40,14 @@
       color: white;
       height: 100%;
       padding: 1rem;
+    }
+
+    @include c.mq(md) {
+      display: flex;
+      flex-wrap: wrap;
+      a {
+        padding: 0 0.7rem;
+      }
     }
   }
 }

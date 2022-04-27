@@ -17,6 +17,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Build the Docker image
-        working-directory: ./frontend
-        run: docker build . --file prod.Dockerfile --tag my-image-name:$(date +%s)
+
+      - name: copy .env.template
+        shell: bash
+        run: cp .env.secret.template .env.secret
+
+      - name: build the docker image
+        shell: bash
+        run: docker-compose up -d prod_front

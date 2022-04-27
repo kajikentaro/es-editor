@@ -9,7 +9,6 @@ function isHaveSameKeys(a: object, b: object) {
   if (keyListA.toString() === keyListB.toString()) {
     return true;
   } else {
-    console.log(a, b);
     return false;
   }
 }

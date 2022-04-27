@@ -6,7 +6,7 @@ import { backup, restore } from "./verify";
 type putCloudItem = <T>(entrypointUrl: string, body: T) => Promise<void>;
 export const putCloudItem: putCloudItem = async (entrypointUrl, body) => {
   if (!(await isBackendLogin())) {
-    console.log("未ログイン");
+    console.debug("未ログイン");
     return;
   }
 
@@ -17,22 +17,21 @@ export const putCloudItem: putCloudItem = async (entrypointUrl, body) => {
     body: JSON.stringify(body),
   });
   if (res.status !== 200) {
-    console.log("通信エラー");
+    console.error("バックエンドとの通信に失敗しました");
   }
   const resJson = await res.json();
-  console.log(resJson);
   if (resJson && resJson.uuid) {
     setLocalStorage(LATEST_UUID, resJson.uuid);
-    console.log("クラウドアップデートに成功");
+    console.debug("クラウドアップデートに成功");
   } else {
-    console.error("保存エラー");
+    console.error("サーバーDBまたはローカルストレージの保存に失敗しました");
   }
 };
 
 type DeleteCloudItem = <T>(entrypointUrl: string, id: string) => Promise<void>;
 export const deleteCloudItem: DeleteCloudItem = async (entrypointUrl, id) => {
   if (!(await isBackendLogin())) {
-    console.log("未ログイン");
+    console.debug("未ログイン");
     return;
   }
 
@@ -42,15 +41,14 @@ export const deleteCloudItem: DeleteCloudItem = async (entrypointUrl, id) => {
     method: "DELETE",
   });
   if (res.status !== 200) {
-    console.log("通信エラー");
+    console.error("バックエンドとの通信に失敗しました");
   }
   const resJson = await res.json();
-  console.log(resJson);
   if (resJson && resJson.uuid) {
     setLocalStorage(LATEST_UUID, resJson.uuid);
-    console.log("クラウドアップデートに成功");
+    console.debug("クラウドアップデートに成功");
   } else {
-    console.error("削除エラー");
+    console.error("サーバーDBまたはローカルストレージの保存に失敗しました");
   }
 };
 
@@ -69,23 +67,23 @@ export const isBackendLogin: () => Promise<boolean> = async () => {
   const resJson = await res.json();
   if (resJson.isLogin) {
     if (resJson.mustMerge) {
-      console.log("ログイン中: 同期を開始します");
+      console.debug("ログイン中: 同期を開始します");
       syncCloudEntry();
     } else {
-      console.log("ログイン中: 同期は不要です");
+      console.debug("ログイン中: 同期は不要です");
     }
     return true;
   }
-  console.log("未ログイン");
+  console.debug("未ログイン");
   return false;
 };
 
 export const syncCloudEntry = async () => {
   if ((await updateCloudEntry()) && (await replaceLocalFromCloud())) {
-    console.log("クラウドとのデータ同期に成功");
+    console.debug("クラウドとのデータ同期に成功");
     window.location.reload();
   } else {
-    console.error("クラウドとのデータ時に失敗");
+    console.error("クラウドとのデータリンクに失敗");
   }
 };
 

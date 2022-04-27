@@ -39,12 +39,34 @@ function MyApp({ Component, pageProps }: AppProps) {
     updateDocumentList,
   };
 
+  const GA_TRACKING_ID = process.env.NEXT_PUBLIC_GA_TRACKING_ID || "";
+
   return (
     <>
       <Head>
         <title>ESエディター</title>
         <meta name="description" content="就活生のためのエントリーシートエディター" />
         <link rel="icon" href="/favicon.ico" />
+        {/* <!-- Global site tag (gtag.js) - Google Analytics --> */}
+        {GA_TRACKING_ID && (
+          <>
+            <script
+              async
+              src={`https://www.googletagmanager.com/gtag/js?id=${GA_TRACKING_ID}`}
+            ></script>
+
+            <script
+              dangerouslySetInnerHTML={{
+                __html: `
+                  window.dataLayer = window.dataLayer || [];
+                  function gtag(){dataLayer.push(arguments);}
+                  gtag('js', new Date());
+                  gtag('config', '${GA_TRACKING_ID}');
+                `,
+              }}
+            ></script>
+          </>
+        )}
       </Head>
       <Header />
       <main>

@@ -1,4 +1,6 @@
 import {
+  faArrowTurnDown,
+  faBan,
   faHistory,
   faList,
   faRedo,
@@ -163,16 +165,6 @@ const Home: NextPage<PageProps> = (props) => {
     setIsUnsaveAlert(true);
   };
 
-  const onClickRelatedDocumentMark = (relatedDocument: Document | DocumentHistory) => {
-    if (selectedRelatedDocument && selectedRelatedDocument.id === relatedDocument.id) {
-      const message = "読み込みますか？現在編集している文章は変更履歴に保存されます";
-      if (!confirm(message)) return;
-      onClickSave("読み込み完了");
-      documentTextUpdate(selectedRelatedDocument.text);
-    } else {
-    }
-  };
-
   return (
     <div className={styles.content}>
       <Head>
@@ -332,51 +324,88 @@ const Home: NextPage<PageProps> = (props) => {
           </div>
         </div>
         <div className={styles.second}>
-          <div className={styles.row}>
-            <div className={styles.left}>
-              <button
-                className={styles.operation_btn}
-                onClick={() => {
-                  rollBackText(viewingHistoryIdx - 1);
-                }}
-              >
-                <FontAwesomeIcon className={styles.icon} icon={faUndo} />
-                <p>戻る</p>
-              </button>
-              <button
-                className={styles.operation_btn}
-                onClick={() => {
-                  rollBackText(viewingHistoryIdx + 1);
-                }}
-              >
-                <FontAwesomeIcon className={styles.icon} icon={faRedo} />
-                <p>進む</p>
-              </button>
-            </div>
-            {message && <p>{message}</p>}
-            {!message && (
+          {selectedRelatedDocument ? (
+            <div className={styles.row}>
+              <div className={styles.left}>
+                <button
+                  className={styles.operation_btn}
+                  onClick={() => {
+                    setSelectedRelatedDocument(undefined);
+                  }}
+                >
+                  <FontAwesomeIcon className={styles.icon} icon={faBan} />
+                  <p>キャンセル</p>
+                </button>
+              </div>
               <p>
                 {selectionLength === 0 ? "" : selectionLength + "/"}
-                {documentText.length}
+                {selectedRelatedDocument.text.length}
                 文字
               </p>
-            )}
-            <div className={styles.right}>
-              <button className={styles.operation_btn} onClick={onClickDelete}>
-                <FontAwesomeIcon className={styles.icon} icon={faTrash} />
-                <p>削除</p>
-              </button>
-              <button
-                className={styles.operation_btn}
-                onClick={() => {
-                  onClickSave();
-                }}
-              >
-                <FontAwesomeIcon className={styles.icon} icon={faSave} />
-                <p>保存</p>
-              </button>
+              <div className={styles.right}>
+                <button
+                  className={styles.operation_btn}
+                  onClick={() => {
+                    const message =
+                      "読み込みますか？現在編集している文章は変更履歴に保存されます";
+                    if (!confirm(message)) return;
+                    setSelectedRelatedDocument(undefined);
+                    onClickSave("読み込み完了");
+                    documentTextUpdate(selectedRelatedDocument.text);
+                  }}
+                >
+                  <FontAwesomeIcon className={styles.icon} icon={faArrowTurnDown} />
+                  <p>この文章を読み込む</p>
+                </button>
+              </div>
             </div>
-          </div>
+          ) : (
+            <div className={styles.row}>
+              <div className={styles.left}>
+                <button
+                  className={styles.operation_btn}
+                  onClick={() => {
+                    rollBackText(viewingHistoryIdx - 1);
+                  }}
+                >
+                  <FontAwesomeIcon className={styles.icon} icon={faUndo} />
+                  <p>戻る</p>
+                </button>
+                <button
+                  className={styles.operation_btn}
+                  onClick={() => {
+                    rollBackText(viewingHistoryIdx + 1);
+                  }}
+                >
+                  <FontAwesomeIcon className={styles.icon} icon={faRedo} />
+                  <p>進む</p>
+                </button>
+              </div>
+              {message && <p>{message}</p>}
+              {!message && (
+                <p>
+                  {selectionLength === 0 ? "" : selectionLength + "/"}
+                  {documentText.length}
+                  文字
+                </p>
+              )}
+              <div className={styles.right}>
+                <button className={styles.operation_btn} onClick={onClickDelete}>
+                  <FontAwesomeIcon className={styles.icon} icon={faTrash} />
+                  <p>削除</p>
+                </button>
+                <button
+                  className={styles.operation_btn}
+                  onClick={() => {
+                    onClickSave();
+                  }}
+                >
+                  <FontAwesomeIcon className={styles.icon} icon={faSave} />
+                  <p>保存</p>
+                </button>
+              </div>
+            </div>
+          )}
           <div className={styles.edit}>
             <textarea
               value={documentText}

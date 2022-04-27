@@ -8,6 +8,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import TermCreateSelect from "components/TermCreateSelect";
+import RelatedDocumentMark from "components/uiParts/RelatedDocumentMark";
 import {
   Company,
   Document,
@@ -42,7 +43,9 @@ const Home: NextPage<PageProps> = (props) => {
   const [relatedDocumentType, setRelatedDocumentType] = useState<"history" | "tagList">(
     "tagList"
   );
-  const [canEdit, setCanEdit] = useState<boolean>(true);
+  const [selectedRelatedDocument, setSelectedRelatedDocument] = useState<
+    Document | DocumentHistory | undefined
+  >(undefined);
   const [document, setDocument] = useState<Document>(
     getDefaultDocument(typeof documentId === "string" ? documentId : genRandomId())
   );
@@ -160,23 +163,14 @@ const Home: NextPage<PageProps> = (props) => {
     setIsUnsaveAlert(true);
   };
 
-  const relatedDocumentProps = (liDocument: Document | DocumentHistory) => {
-    return {
-      onMouseOver: () => {
-        setDocumentText(liDocument.text);
-        setCanEdit(false);
-      },
-      onMouseLeave: () => {
-        setDocumentText(editHistory[viewingHistoryIdx]);
-        setCanEdit(true);
-      },
-      onClick: () => {
-        const message = "読み込みますか？現在編集している文章は変更履歴に保存されます";
-        if (!confirm(message)) return;
-        onClickSave("読み込み完了");
-        documentTextUpdate(liDocument.text);
-      },
-    };
+  const onClickRelatedDocumentMark = (relatedDocument: Document | DocumentHistory) => {
+    if (selectedRelatedDocument && selectedRelatedDocument.id === relatedDocument.id) {
+      const message = "読み込みますか？現在編集している文章は変更履歴に保存されます";
+      if (!confirm(message)) return;
+      onClickSave("読み込み完了");
+      documentTextUpdate(selectedRelatedDocument.text);
+    } else {
+    }
   };
 
   return (
@@ -227,10 +221,22 @@ const Home: NextPage<PageProps> = (props) => {
                       return v.companyId === company?.id && v.id !== document.id;
                     })
                     .map((v) => {
+                      const isPined =
+                        typeof selectedRelatedDocument !== "undefined" &&
+                        v.id === selectedRelatedDocument.id;
                       return (
-                        <li key={v.id} {...relatedDocumentProps(v)}>
-                          {RESTTag.get(v.tagId, tagList)?.name || "項目未設定"}
-                        </li>
+                        <RelatedDocumentMark
+                          key={v.id}
+                          onClick={() => {
+                            if (isPined) {
+                              setSelectedRelatedDocument(undefined);
+                            } else {
+                              setSelectedRelatedDocument(v);
+                            }
+                          }}
+                          isPined={isPined}
+                          label={RESTTag.get(v.tagId, tagList)?.name || "項目未設定"}
+                        />
                       );
                     })}
                 </ul>
@@ -244,10 +250,20 @@ const Home: NextPage<PageProps> = (props) => {
                     })
                     .map((v) => {
                       return (
-                        <li key={v.id} {...relatedDocumentProps(v)}>
-                          {RESTCompany.get(v.companyId, companyList)?.name ||
-                            "企業未設定"}
-                        </li>
+                        <RelatedDocumentMark
+                          key={v.id}
+                          onClick={() => {
+                            setSelectedRelatedDocument(v);
+                          }}
+                          isPined={
+                            typeof selectedRelatedDocument !== "undefined" &&
+                            v.id === selectedRelatedDocument.id
+                          }
+                          label={
+                            RESTCompany.get(v.companyId, companyList)?.name ||
+                            "企業未設定"
+                          }
+                        />
                       );
                     })}
                 </ul>
@@ -273,9 +289,17 @@ const Home: NextPage<PageProps> = (props) => {
                     updateText += updateDate.getHours() + "時";
                     updateText += updateDate.getMinutes() + "分";
                     return (
-                      <li key={v.id} {...relatedDocumentProps(v)}>
-                        {v.updateDate ? updateText : "変更履歴不明"}
-                      </li>
+                      <RelatedDocumentMark
+                        key={v.id}
+                        onClick={() => {
+                          setSelectedRelatedDocument(v);
+                        }}
+                        isPined={
+                          typeof selectedRelatedDocument !== "undefined" &&
+                          v.id === selectedRelatedDocument.id
+                        }
+                        label={v.updateDate ? updateText : "変更履歴不明"}
+                      />
                     );
                   })}
               </ul>
@@ -355,7 +379,6 @@ const Home: NextPage<PageProps> = (props) => {
           </div>
           <div className={styles.edit}>
             <textarea
-              {...(!canEdit && { readOnly: true, style: { backgroundColor: "#ccc" } })}
               value={documentText}
               onChange={(e) => {
                 documentTextUpdate(e.target.value);
@@ -368,6 +391,11 @@ const Home: NextPage<PageProps> = (props) => {
                   setSelectionLength(0);
                 }
               }}
+              {...(selectedRelatedDocument && {
+                readOnly: true,
+                style: { backgroundColor: "#ddd" },
+                value: selectedRelatedDocument.text,
+              })}
             />
           </div>
         </div>

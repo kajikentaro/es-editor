@@ -1,0 +1,37 @@
+@use "../../styles/common"as c;
+
+.element {
+  width: 100%;
+  background-color: white;
+  padding: 0.5rem 1rem;
+  list-style: none;
+  border: none;
+  font-size: 1rem;
+  border-bottom: #ddd solid 1px;
+  position: relative;
+  text-align: left;
+  cursor: pointer;
+
+
+  &::before {
+    height: 50%;
+    top: 0px;
+    bottom: 0;
+    left: 10px;
+    margin: auto;
+    width: 3px;
+    content: "";
+    background-color: c.$base-color-c;
+    position: absolute;
+
+  }
+
+  &.is_pined {
+    background-color: #dcdcdc;
+
+    &::before {
+      background-color: c.$base-color-c2;
+    }
+  }
+
+}

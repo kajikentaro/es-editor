@@ -1,6 +1,7 @@
 import { LATEST_UUID } from "consts/key";
 import { DOWNLOAD_URL, IS_LOGIN_URL, LOGIN_URL, LOGOUT_URL, MERGE_URL } from "consts/url";
 import { NextPage } from "next";
+import Head from "next/head";
 import { useRouter } from "next/router";
 import styles from "styles/Login.module.scss";
 import useSWR from "swr";
@@ -89,6 +90,9 @@ const Login: NextPage = () => {
 
   return (
     <>
+      <Head>
+        <meta name="robots" content="noindex" />
+      </Head>
       <div className={styles.container}>
         <div>
           <p>ログイン状態: ログイン中</p>

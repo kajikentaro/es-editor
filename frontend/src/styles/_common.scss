@@ -3,6 +3,7 @@ $content_width: 1200px;
 $base-color-a: #101841;
 $base-color-b: #144da0;
 $base-color-c: #70acce;
+$base-color-c2: #ce709c;
 
 $black-color-a: #808080;
 $black-color-b: #474747;
@@ -16,7 +17,12 @@ $background-color-a: #eaf2ff;
 
 $opacity-hover: 0.8;
 
-$document-font-family: "游明朝", "Yu Mincho", YuMincho, "Hiragino Mincho Pro", serif;
+$document-font-family: "游明朝",
+"Yu Mincho",
+YuMincho,
+"Hiragino Mincho Pro",
+serif;
+
 @mixin font-awesome-btn {
   font-size: 1rem;
   display: inline-flex;
@@ -24,17 +30,18 @@ $document-font-family: "游明朝", "Yu Mincho", YuMincho, "Hiragino Mincho Pro"
   padding: 0.5rem 1rem;
   cursor: pointer;
   user-select: none;
+
   .icon {
     width: 1em;
     margin-right: 7px;
   }
+
   &:hover {
     opacity: $opacity-hover;
   }
 }
 
-$breakpoints: (
-  "sm": 500px,
+$breakpoints: ("sm": 500px,
   "md": 768px,
   "lg": 992px,
   "xl": 1200px,

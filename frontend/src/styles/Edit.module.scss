@@ -4,6 +4,7 @@
   background-color: c.$white-color-b;
   max-width: c.$content-width;
   margin: 0 auto;
+
   .content_editor {
     height: calc(100vh - c.$header-height);
     padding: 2rem;
@@ -31,48 +32,36 @@
   width: 30%;
   display: flex;
   flex-direction: column;
+
   @include c.mq(md) {
     padding-right: 0;
   }
+
   .section {
     margin-bottom: 1.5rem;
+
     .section_title {
       font-weight: normal;
       margin-bottom: 0.3rem;
       font-size: 1.1rem;
     }
+
     // この企業の他の文章, 変更履歴
     &.related_document {
       display: flex;
       flex-direction: column;
       flex: 1;
       overflow: hidden;
+
       ul.list_wrapper {
         overflow: auto;
         flex: 1;
-        li {
-          background-color: white;
-          padding: 0.8rem 1rem;
-          list-style: none;
-          border-bottom: #ddd solid 1px;
-          position: relative;
-          cursor: pointer;
-          &::before {
-            height: 50%;
-            top: 2px;
-            bottom: 0;
-            left: 10px;
-            margin: auto;
-            width: 3px;
-            content: "";
-            background-color: c.$base-color-c;
-            position: absolute;
-          }
-        }
       }
     }
+
     &.toggle_btn_wrapper {
       margin: 0;
+
       button {
         @include c.font-awesome-btn;
         width: 50%;
@@ -81,6 +70,7 @@
         border-radius: none;
         justify-content: center;
         border: none;
+
         &.active {
           background-color: c.$base-color-a;
           color: white;
@@ -102,12 +92,14 @@
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+
     p {
       font-size: 1.3rem;
       align-items: flex-end;
       padding-bottom: 4px;
       display: flex;
     }
+
     .left,
     .right {
       display: flex;
@@ -121,25 +113,30 @@
     background-color: #ccc;
     border: none;
     margin: 0 2px;
+
     p {
       font-size: 1em;
       padding: 0;
     }
 
     @include c.font-awesome-btn;
+
     @include c.mq(md) {
       padding: 5px;
       margin: 0;
       border: 1px solid c.$black-color-a;
     }
+
     @include c.mq(sm) {
       display: flex;
       justify-content: center;
       height: 50px;
       width: 50px;
+
       svg {
         margin-right: 0 !important;
       }
+
       p {
         display: none;
       }
@@ -148,6 +145,7 @@
 
   .edit {
     flex: 1;
+
     textarea {
       font-family: c.$document-font-family;
       resize: none;

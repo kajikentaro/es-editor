@@ -37,7 +37,6 @@ const Header: NextPage = () => {
           </Link>
         )}
         <div className={styles.operation_btn}>
-          <Link href="/debug">デバッグ</Link>
           {isLogin && <a href={LOGOUT_URL}>ログアウト</a>}
           {!isLogin && <a href={LOGIN_URL}>ログイン</a>}
           <Link href="/">サイトトップ</Link>

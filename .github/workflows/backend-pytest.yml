@@ -18,6 +18,10 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: copy .env.template
+        shell: bash
+        run: cp .env.secret.template .env.secret
+
       - name: docker-compose db, backend
         shell: bash
         run: docker-compose up -d db prod_back

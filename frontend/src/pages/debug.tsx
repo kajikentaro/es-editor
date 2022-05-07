@@ -3,7 +3,7 @@ import { DOWNLOAD_URL, IS_LOGIN_URL, MERGE_URL } from "consts/url";
 import { NextPage } from "next";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import styles from "styles/Login.module.scss";
+import styles from "styles/Debug.module.scss";
 import useSWR from "swr";
 import {
   dropCloudAllEntry,
@@ -124,7 +124,7 @@ const Login: NextPage = () => {
         <div>
           <p>ローカルのデータ:</p>
           <div className={styles.code_wrapper}>
-            <code>{backup()}</code>
+            <code>{backup(true)}</code>
           </div>
         </div>
       </div>

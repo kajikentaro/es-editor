@@ -33,6 +33,8 @@
   .code_wrapper {
     background-color: #111;
     min-height: 500px;
+    max-height: 800px;
+    overflow: auto;
     padding: 0.5rem;
     margin: 0.5rem 0;
     code {

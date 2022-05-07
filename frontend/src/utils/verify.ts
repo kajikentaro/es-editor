@@ -135,7 +135,7 @@ export const restore = (jsonStr: string, mustBeConfirm: boolean = true) => {
   }
 };
 
-export const backup = () => {
+export const backup = (isFormat?: boolean) => {
   let backupData: any = {};
   backupData[COMPANY_KEY] = RESTCompany.getList();
   backupData[TAG_KEY] = RESTTag.getList();
@@ -158,6 +158,9 @@ export const backup = () => {
   if (!isValidityBackup(backupData)) {
     alert("バックアップに失敗しました");
     throw new Error("バックアップに失敗しました");
+  }
+  if (isFormat) {
+    return JSON.stringify(backupData, null, "\t");
   }
   return JSON.stringify(backupData);
 };

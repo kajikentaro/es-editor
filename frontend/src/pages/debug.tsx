@@ -1,11 +1,17 @@
 import { LATEST_UUID } from "consts/key";
-import { DOWNLOAD_URL, IS_LOGIN_URL, LOGIN_URL, LOGOUT_URL, MERGE_URL } from "consts/url";
+import { DOWNLOAD_URL, IS_LOGIN_URL, MERGE_URL } from "consts/url";
 import { NextPage } from "next";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import styles from "styles/Login.module.scss";
 import useSWR from "swr";
-import { dropCloudAllEntry, replaceLocalFromCloud, updateCloudEntry } from "utils/cloud";
+import {
+  dropCloudAllEntry,
+  loginES,
+  logoutES,
+  replaceLocalFromCloud,
+  updateCloudEntry,
+} from "utils/cloud";
 import { getLocalStorage } from "utils/storage";
 import { backup } from "utils/verify";
 
@@ -83,6 +89,7 @@ const Login: NextPage = () => {
     return (
       <div className={styles.container}>
         <p>ログイン状態: 未ログイン</p>
+        <p>ローカルの最終更新識別用ID: {getLocalStorage(LATEST_UUID)}</p>
         <Operation />
       </div>
     );
@@ -148,8 +155,8 @@ const Operation = () => {
 
   return (
     <div className={styles.operations}>
-      <a href={LOGIN_URL}>ログイン</a>
-      <a href={LOGOUT_URL}>ログアウト</a>
+      <button onClick={loginES}>ログイン</button>
+      <button onClick={logoutES}>ログアウト</button>
       <button onClick={handlePushCloud}>クラウドにプッシュする</button>
       <button onClick={handleReplaceLocal}>ローカルをクラウドのデータに置き換える</button>
       <button onClick={handleDropAll}>このユーザーのクラウドの全データを削除する </button>

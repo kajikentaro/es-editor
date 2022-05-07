@@ -1,6 +1,14 @@
 import { LATEST_UUID } from "consts/key";
-import { CHECK_LOGIN_URL, DOWNLOAD_URL, DROP_ALL_URL, SYNC_URL } from "consts/url";
+import {
+  CHECK_LOGIN_URL,
+  DOWNLOAD_URL,
+  DROP_ALL_URL,
+  LOGIN_URL,
+  LOGOUT_URL,
+  SYNC_URL,
+} from "consts/url";
 import { getLocalStorage, setLocalStorage } from "./storage";
+import { genRandomId } from "./utils";
 import { backup, restore } from "./verify";
 
 type putCloudItem = <T>(entrypointUrl: string, body: T) => Promise<void>;
@@ -133,4 +141,13 @@ export const replaceLocalFromCloud = async () => {
     console.error("データインストールに失敗しました");
   }
   return false;
+};
+
+export const loginES = () => {
+  window.location.href = LOGIN_URL;
+};
+
+export const logoutES = () => {
+  setLocalStorage(LATEST_UUID, genRandomId());
+  window.location.href = LOGOUT_URL;
 };

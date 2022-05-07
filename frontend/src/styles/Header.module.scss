@@ -33,13 +33,17 @@
     }
   }
   .operation_btn {
-    a {
+    a,
+    button {
       text-decoration: none;
       border-radius: 20px;
       font-size: 1.1rem;
       color: white;
       height: 100%;
       padding: 1rem;
+      background-color: transparent;
+      border: none;
+      cursor: pointer;
     }
 
     @include c.mq(md) {

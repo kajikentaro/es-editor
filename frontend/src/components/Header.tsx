@@ -1,4 +1,3 @@
-import { LOGIN_URL, LOGOUT_URL } from "consts/url";
 import logo from "img/logo.png";
 import type { NextPage } from "next";
 import Image from "next/image";
@@ -6,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import styles from "styles/Header.module.scss";
-import { isBackendLogin } from "utils/cloud";
+import { isBackendLogin, loginES, logoutES } from "utils/cloud";
 
 const Header: NextPage = () => {
   const router = useRouter();
@@ -37,8 +36,8 @@ const Header: NextPage = () => {
           </Link>
         )}
         <div className={styles.operation_btn}>
-          {isLogin && <a href={LOGOUT_URL}>ログアウト</a>}
-          {!isLogin && <a href={LOGIN_URL}>ログイン</a>}
+          {isLogin && <button onClick={logoutES}>ログアウト</button>}
+          {!isLogin && <button onClick={loginES}>ログイン</button>}
           <Link href="/">サイトトップ</Link>
           <Link href="/list">一覧</Link>
         </div>

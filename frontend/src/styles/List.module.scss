@@ -24,9 +24,6 @@
     @include c.mq(xl) {
       padding: 1rem 0;
     }
-    @include c.mq(md) {
-      padding: 0 0 1rem 0;
-    }
   }
 }
 
@@ -112,6 +109,21 @@
     height: 300px;
     padding: 0.5rem;
     display: flex;
+
+    @include c.mq(lg) {
+      width: calc(100% / 3);
+    }
+    @include c.mq(md) {
+      width: calc(100% / 2);
+    }
+    @include c.mq(sm) {
+      width: calc(100% / 1);
+      padding: 0.5rem 0;
+      &.new_document {
+        height: 150px;
+        max-height: 10vh;
+      }
+    }
   }
   .document {
     width: 100%;
@@ -156,21 +168,6 @@
       @include c.font-awesome-btn;
     }
   }
-  .document_li {
-    @include c.mq(lg) {
-      width: calc(100% / 3);
-    }
-    @include c.mq(md) {
-      width: calc(100% / 2);
-    }
-    @include c.mq(sm) {
-      width: calc(100% / 1);
-      &.new_document {
-        height: 150px;
-        max-height: 10vh;
-      }
-    }
-  }
 }
 
 // タグ編集
@@ -182,22 +179,39 @@
   .second {
     width: calc(50% - 1rem);
   }
+
+  @include c.mq(sm) {
+    flex-direction: column;
+    .first {
+      width: 100%;
+      margin-bottom: 1.5rem;
+    }
+    .second {
+      width: 100%;
+    }
+  }
 }
 
 .backup {
   border-bottom: none !important;
   .operation_btn {
     text-align: center;
-    margin: 2rem 0;
+    margin: 1rem 0;
     button,
     label {
-      margin: 0 1rem;
+      margin: 1rem 1rem;
       font-size: 1rem;
       height: 2.8rem;
       @include c.font-awesome-btn;
       border: none;
       background-color: c.$base-color-b;
       color: white;
+
+      @include c.mq(sm) {
+        margin: 0.5rem 1rem;
+        width: 170px;
+        justify-content: center;
+      }
     }
     input {
       display: none;

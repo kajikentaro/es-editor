@@ -60,8 +60,14 @@ const Header: NextPage = () => {
 
           <div className={styles.section}>
             <p className={styles.section_title}>Technology used</p>
-            <Link href="https://rubyonrails.org/">
-              <a className={styles.link}>Ruby on Rails</a>
+            <Link href="https://nextjs.org/">
+              <a className={styles.link}>Next.js</a>
+            </Link>
+            <Link href="https://flask.palletsprojects.com/">
+              <a className={styles.link}>Flask</a>
+            </Link>
+            <Link href="https://www.mysql.com/">
+              <a className={styles.link}>MySql</a>
             </Link>
             <Link href="https://www.docker.com/">
               <a className={styles.link}>Docker</a>

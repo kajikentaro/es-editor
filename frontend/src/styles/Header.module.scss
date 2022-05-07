@@ -49,8 +49,12 @@
     @include c.mq(md) {
       display: flex;
       flex-wrap: wrap;
-      a {
+      a,
+      button {
         padding: 0 0.7rem;
+        height: 50px;
+        align-items: center;
+        display: flex;
       }
     }
   }

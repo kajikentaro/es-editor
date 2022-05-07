@@ -17,20 +17,11 @@
     flex-direction: row-reverse;
   }
 
-  @include c.mq(md) {
-    justify-content: right;
-  }
-
-  .icon {
+  .logo {
     margin-left: 5px;
     display: flex;
     align-items: center;
     cursor: pointer;
-
-    // TODO: 暫定措置
-    @include c.mq(md) {
-      display: none;
-    }
   }
   .operation_btn {
     a,
@@ -47,15 +38,20 @@
     }
 
     @include c.mq(md) {
+      display: none;
+    }
+  }
+
+  .hamberger_btn {
+    @include c.font-awesome-btn;
+    font-size: 40px;
+    background-color: transparent;
+    border: none;
+    color: white;
+    display: none;
+
+    @include c.mq(md) {
       display: flex;
-      flex-wrap: wrap;
-      a,
-      button {
-        padding: 0 0.7rem;
-        height: 50px;
-        align-items: center;
-        display: flex;
-      }
     }
   }
 }

@@ -1,0 +1,99 @@
+@use "common" as c;
+
+.sidebar {
+  display: none;
+
+  @include c.mq(md) {
+    display: flex;
+  }
+  &.is_close {
+    transition-property: visibility;
+    transition-delay: 0.3s;
+    visibility: hidden;
+
+    .background {
+      transition-duration: 0.3s;
+      transition-property: opacity;
+      opacity: 0;
+    }
+
+    .content {
+      transition-duration: 0.3s;
+      transition-property: transform;
+      transform: translateX(100%);
+    }
+  }
+
+  &.is_open {
+    .background {
+      transition-duration: 0.3s;
+      transition-property: opacity;
+      opacity: 0.7;
+    }
+
+    .content {
+      transition-duration: 0.3s;
+      transition-property: transform;
+      transform: translateX(0);
+    }
+  }
+}
+
+.background {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 10;
+  background-color: c.$base-color-a;
+}
+
+.content {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 15;
+  background-color: c.$base-color-a;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  width: 70%;
+  max-width: 400px;
+  min-width: min(100vw, 200px);
+
+  .close_btn {
+    @include c.font-awesome-btn;
+    font-size: 40px;
+    background-color: transparent;
+    border: none;
+    width: fit-content;
+    color: white;
+  }
+
+  .operation_btn {
+    margin-top: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+
+    a,
+    button {
+      text-decoration: none;
+      font-size: 1.1rem;
+      align-items: center;
+      justify-content: right;
+      display: flex;
+      height: 50px;
+      width: 100%;
+      padding: 1rem;
+      background-color: transparent;
+      border: none;
+      border-bottom: white solid 1px;
+      cursor: pointer;
+      text-align: right;
+      color: white;
+    }
+  }
+}

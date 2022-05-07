@@ -241,16 +241,20 @@ const Home: NextPage<PageProps> = (props) => {
                       return v.tagId === tag?.id && v.id !== document.id;
                     })
                     .map((v) => {
+                      const isPined =
+                        typeof selectedRelatedDocument !== "undefined" &&
+                        v.id === selectedRelatedDocument.id;
                       return (
                         <RelatedDocumentMark
                           key={v.id}
                           onClick={() => {
-                            setSelectedRelatedDocument(v);
+                            if (isPined) {
+                              setSelectedRelatedDocument(undefined);
+                            } else {
+                              setSelectedRelatedDocument(v);
+                            }
                           }}
-                          isPined={
-                            typeof selectedRelatedDocument !== "undefined" &&
-                            v.id === selectedRelatedDocument.id
-                          }
+                          isPined={isPined}
                           label={
                             RESTCompany.get(v.companyId, companyList)?.name ||
                             "企業未設定"
@@ -280,16 +284,20 @@ const Home: NextPage<PageProps> = (props) => {
                     updateText += weekday[updateDate.getDay()] + ") ";
                     updateText += updateDate.getHours() + "時";
                     updateText += updateDate.getMinutes() + "分";
+                    const isPined =
+                      typeof selectedRelatedDocument !== "undefined" &&
+                      v.id === selectedRelatedDocument.id;
                     return (
                       <RelatedDocumentMark
                         key={v.id}
                         onClick={() => {
-                          setSelectedRelatedDocument(v);
+                          if (isPined) {
+                            setSelectedRelatedDocument(undefined);
+                          } else {
+                            setSelectedRelatedDocument(v);
+                          }
                         }}
-                        isPined={
-                          typeof selectedRelatedDocument !== "undefined" &&
-                          v.id === selectedRelatedDocument.id
-                        }
+                        isPined={isPined}
                         label={v.updateDate ? updateText : "変更履歴不明"}
                       />
                     );

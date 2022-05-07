@@ -31,9 +31,10 @@ const DocumentTile: React.VFC<{
     <li className={styles.document_li}>
       <Link href={{ pathname: "/edit", query: { documentId: props.document.id } }}>
         <a className={styles.document}>
-          <p className={styles.tec}>{attachedCompany?.name || "企業未選択"}</p>
-          <p className={styles.tec}>{attachedTag?.name || "項目未選択"}</p>
+          <p className={styles.document_attr}>{attachedCompany?.name || "企業未選択"}</p>
+          <p className={styles.document_attr}>{attachedTag?.name || "項目未選択"}</p>
           <p className={styles.document_text}>{props.document.text}</p>
+          <p className={styles.word_count}>{props.document.wordCount}文字</p>
         </a>
       </Link>
     </li>

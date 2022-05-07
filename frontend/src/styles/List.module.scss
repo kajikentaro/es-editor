@@ -121,10 +121,30 @@
     padding: 1rem;
     text-decoration: none;
     color: black;
-    .tec {
+    position: relative;
+    .document_attr {
       text-align: center;
+      font-weight: 500;
+      font-size: 1.05rem;
+      line-clamp: 1;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      white-space: nowrap;
     }
-    font-family: c.$document-font-family;
+    .document_text {
+      font-family: c.$document-font-family;
+      font-weight: lighter;
+      margin-top: 1px;
+    }
+    .word_count {
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      background-color: white;
+      padding: 4px;
+      border-radius: 5px;
+      font-size: 0.9rem;
+    }
   }
   .new_document .document {
     display: flex;

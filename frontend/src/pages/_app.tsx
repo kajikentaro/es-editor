@@ -3,6 +3,7 @@ import Header from "components/Header";
 import { Company, Document, Tag } from "interfaces/interfaces";
 import type { AppProps } from "next/app";
 import Head from "next/head";
+import Script from "next/script";
 import { useEffect, useState } from "react";
 import "styles/globals.css";
 import "styles/reset.css";
@@ -50,10 +51,10 @@ function MyApp({ Component, pageProps }: AppProps) {
         {/* <!-- Global site tag (gtag.js) - Google Analytics --> */}
         {GA_TRACKING_ID && (
           <>
-            <script
+            <Script
               async
               src={`https://www.googletagmanager.com/gtag/js?id=${GA_TRACKING_ID}`}
-            ></script>
+            ></Script>
 
             <script
               dangerouslySetInnerHTML={{

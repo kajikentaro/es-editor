@@ -3,7 +3,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "next build && next-sitemap",
     "start": "next start",
     "lint": "next lint"
   },
@@ -25,6 +25,7 @@
     "eslint": "8.15.0",
     "eslint-config-next": "12.1.6",
     "eslint-plugin-jsx-a11y": "^6.5.1",
+    "next-sitemap": "^2.5.20",
     "sass": "^1.51.0",
     "typescript": "^4.6.4"
   },

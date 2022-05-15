@@ -168,6 +168,7 @@ const Home: NextPage<PageProps> = (props) => {
   return (
     <div className={styles.content}>
       <Head>
+        <meta name="robots" content="noindex" />
         <title>
           {company ? company.name : "企業未設定"} - {tag ? tag.name : "項目未設定"}
         </title>

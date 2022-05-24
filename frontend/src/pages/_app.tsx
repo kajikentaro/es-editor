@@ -45,8 +45,11 @@ function MyApp({ Component, pageProps }: AppProps) {
   return (
     <>
       <Head>
-        <title>ESエディター</title>
-        <meta name="description" content="就活生のためのエントリーシートエディター" />
+        <title>就活生のためのエントリーシートエディター</title>
+        <meta
+          name="description"
+          content="バージョン管理、検索機能、企業・項目タグ別管理、文字数カウント、クラウド同期。豊富な機能がWebサイトで実現。就活ESエディター"
+        />
         <link rel="icon" href="/favicon.ico" />
         {/* <!-- Global site tag (gtag.js) - Google Analytics --> */}
         {GA_TRACKING_ID && (

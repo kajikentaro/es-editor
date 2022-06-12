@@ -65,7 +65,7 @@ export const fetchBackendAnaswer = async () => {
   return ans;
 };
 
-const Login: NextPage = () => {
+const LoginContent = () => {
   const { data: backendAns, error: backendError } = useSWR("fill", fetchBackendAnaswer);
 
   if (typeof backendAns === "undefined") {
@@ -97,9 +97,6 @@ const Login: NextPage = () => {
 
   return (
     <>
-      <Head>
-        <meta name="robots" content="noindex" />
-      </Head>
       <div className={styles.container}>
         <div>
           <p>ログイン状態: ログイン中</p>
@@ -161,6 +158,17 @@ const Operation = () => {
       <button onClick={handleReplaceLocal}>ローカルをクラウドのデータに置き換える</button>
       <button onClick={handleDropAll}>このユーザーのクラウドの全データを削除する </button>
     </div>
+  );
+};
+
+const Login: NextPage = () => {
+  return (
+    <>
+      <Head>
+        <meta name="robots" content="noindex" />
+      </Head>
+      <LoginContent />
+    </>
   );
 };
 

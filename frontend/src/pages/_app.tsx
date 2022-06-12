@@ -7,7 +7,9 @@ import Script from "next/script";
 import { useEffect, useState } from "react";
 import "styles/globals.css";
 import "styles/reset.css";
+import { GA_TRACKING_ID } from "utils/gtag";
 import { RESTCompany, RESTDocument, RESTTag } from "utils/REST";
+import { usePageView } from "utils/usePageView";
 
 function MyApp({ Component, pageProps }: AppProps) {
   const [companyList, setCompanyList] = useState<Company[]>([]);
@@ -40,42 +42,15 @@ function MyApp({ Component, pageProps }: AppProps) {
     updateDocumentList,
   };
 
-  const GA_TRACKING_ID = process.env.NEXT_PUBLIC_GA_TRACKING_ID || "";
+  usePageView();
 
   return (
     <>
       <Head>
         <title>就活生のためのエントリーシートエディター</title>
-        <meta
-          name="description"
-          content="バージョン管理、検索機能、企業・項目タグ別管理、文字数カウント、クラウド同期。豊富な機能がWebサイトで実現。就活ESエディター"
-        />
-        <link rel="icon" href="/favicon.ico" />
-        {/* <!-- Global site tag (gtag.js) - Google Analytics --> */}
-        {GA_TRACKING_ID && (
-          <>
-            <Script
-              async
-              src={`https://www.googletagmanager.com/gtag/js?id=${GA_TRACKING_ID}`}
-            ></Script>
-
-            <script
-              dangerouslySetInnerHTML={{
-                __html: `
-                  window.dataLayer = window.dataLayer || [];
-                  function gtag(){dataLayer.push(arguments);}
-                  gtag('js', new Date());
-                  gtag('config', '${GA_TRACKING_ID}');
-                `,
-              }}
-            ></script>
-          </>
-        )}
       </Head>
       <Header />
-      <main>
-        <Component {...pageProps} {...props} />
-      </main>
+      <Component {...pageProps} {...props} />
       <Footer />
     </>
   );

@@ -9,6 +9,7 @@ services:
       dockerfile: prod.Dockerfile
       args:
         - NEXT_PUBLIC_BACKEND_URL=$NEXT_PUBLIC_BACKEND_URL
+        - NEXT_PUBLIC_GA_TRACKING_ID=$NEXT_PUBLIC_GA_TRACKING_ID
     tty: true
     profiles:
       - prod

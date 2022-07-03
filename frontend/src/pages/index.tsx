@@ -1,5 +1,4 @@
 import mockup from "img/mockup.png";
-import title from "img/title.svg";
 import { NextPage } from "next";
 import Image from "next/image";
 import Link from "next/link";
@@ -38,8 +37,14 @@ const Home: NextPage = () => {
       <div className={styles.title_bg}>
         <div className={styles.title_wrapper}>
           <div className={styles.first}>
-            <div className={styles.title_img}>
-              <Image src={title} alt="タイトル画像" />
+            <div className={styles.title}>
+              <h1>
+                <span className={styles.a}>就活</span>
+                生のための
+                <br />
+                <span className={styles.b}>ESエディター</span>
+              </h1>
+              <p>Syukatsu ES Editor</p>
             </div>
             <Link href="/list">
               <a className={styles.start_btn}>始める</a>

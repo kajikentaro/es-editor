@@ -23,10 +23,67 @@
     .first {
       display: flex;
       flex-direction: column;
+
+      .title {
+        h1 {
+          $title-size: 27px;
+          color: white;
+          font-size: $title-size;
+          font-weight: bold;
+
+          .a {
+            -webkit-text-stroke: 1px c.$base-color-c;
+            text-shadow: 2px 2px 6px c.$base-color-c, 2px -2px 6px c.$base-color-c,
+              -2px 2px 6px c.$base-color-c, -2px -2px 6px c.$base-color-c, 0 0 10px black;
+          }
+          .b {
+            -webkit-text-stroke: 1px c.$base-color-b;
+            text-shadow: 3px 3px 6px c.$base-color-b, 3px -3px 6px c.$base-color-b,
+              -3px 3px 6px c.$base-color-b, -3px -3px 6px c.$base-color-b, 0 0 10px white;
+          }
+
+          .a,
+          .b {
+            font-size: calc($title-size * 2.6);
+          }
+
+          @include c.mq(lg) {
+            $title-size: 21px;
+            font-size: $title-size;
+            .a,
+            .b {
+              font-size: calc($title-size * 2.6);
+            }
+          }
+
+          @include c.mq(md) {
+            $title-size: 23px;
+            font-size: $title-size;
+            .a,
+            .b {
+              font-size: calc($title-size * 2.6);
+            }
+          }
+
+          @include c.mq(sm) {
+            $title-size: 5vw;
+            font-size: $title-size;
+            .a,
+            .b {
+              font-size: calc($title-size * 2.6);
+            }
+          }
+        }
+        p {
+          color: white;
+          font-size: 20px;
+        }
+      }
+
       .start_btn {
         background-color: white;
         padding: 0.7rem 2rem;
-        margin-top: 3.5rem;
+        margin-top: 2.2rem;
         border-radius: 7px;
         text-decoration: none;
         color: c.$base-color-a;
@@ -43,7 +100,7 @@
         padding: 2rem 1rem;
         width: 100%;
       }
-      .title_img {
+      .title {
         margin-top: 3rem;
       }
       .mockup_img {

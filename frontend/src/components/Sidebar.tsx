@@ -9,7 +9,7 @@ import { loginES, logoutES } from "utils/cloud";
 interface Props {
   isOpen: boolean;
   setIsOpen: Dispatch<SetStateAction<boolean>>;
-  isLogin: boolean;
+  isLogin: "login" | "logout" | "loading";
 }
 
 const Sidebar: NextPage<Props> = (props) => {
@@ -42,8 +42,8 @@ const Sidebar: NextPage<Props> = (props) => {
           <FontAwesomeIcon icon={faXmark} className={styles.icon} />
         </button>
         <div className={styles.operation_btn}>
-          {props.isLogin && <button onClick={logoutES}>ログアウト</button>}
-          {!props.isLogin && <button onClick={loginES}>ログイン</button>}
+          {props.isLogin === "login" && <button onClick={logoutES}>ログアウト</button>}
+          {props.isLogin === "logout" && <button onClick={loginES}>ログイン</button>}
           <Link href="/">サイトトップ</Link>
           <Link href="/list">一覧</Link>
         </div>

@@ -12,7 +12,7 @@ import Sidebar from "./Sidebar";
 
 const Header: NextPage = () => {
   const router = useRouter();
-  const [isLogin, setIsLogin] = useState<boolean>(false);
+  const [isLogin, setIsLogin] = useState<"login" | "logout" | "loading">("loading");
   const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
 
   const injectClassName = () => {
@@ -25,7 +25,7 @@ const Header: NextPage = () => {
 
   useEffect(() => {
     (async () => {
-      setIsLogin(await isBackendLogin());
+      setIsLogin((await isBackendLogin()) ? "login" : "logout");
     })();
   }, [router.asPath]);
 
@@ -41,8 +41,8 @@ const Header: NextPage = () => {
             </Link>
           )}
           <div className={styles.operation_btn}>
-            {isLogin && <button onClick={logoutES}>ログアウト</button>}
-            {!isLogin && (
+            {isLogin === "login" && <button onClick={logoutES}>ログアウト</button>}
+            {isLogin === "logout" && (
               <button onClick={loginES} className={styles.login_button}>
                 ログイン
               </button>

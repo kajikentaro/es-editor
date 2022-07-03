@@ -42,7 +42,11 @@ const Header: NextPage = () => {
           )}
           <div className={styles.operation_btn}>
             {isLogin && <button onClick={logoutES}>ログアウト</button>}
-            {!isLogin && <button onClick={loginES}>ログイン</button>}
+            {!isLogin && (
+              <button onClick={loginES} className={styles.login_button}>
+                ログイン
+              </button>
+            )}
             <Link href="/">サイトトップ</Link>
             <Link href="/list">一覧</Link>
           </div>

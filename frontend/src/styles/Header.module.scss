@@ -31,10 +31,19 @@
       font-size: 1.1rem;
       color: white;
       height: 100%;
-      padding: 1rem;
       background-color: transparent;
       border: none;
       cursor: pointer;
+      padding: 0.5rem 1rem;
+      margin-top: 0.5rem 0;
+    }
+
+    .login_button {
+      background-color: white;
+      color: c.$base-color-a;
+      font-weight: bolder;
+      padding: 0.5rem 1rem;
+      margin-top: 0.5rem 0;
     }
 
     @include c.mq(md) {

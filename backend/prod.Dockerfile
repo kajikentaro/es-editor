@@ -1,14 +1,13 @@
-FROM python:3.8.12-alpine
+FROM python:3.7-slim
 
-WORKDIR /root
-RUN apk add git vim
-RUN apk add build-base libffi-dev
-RUN apk add mysql-client
-RUN pip install --upgrade pip
-
-COPY . /root/app
 WORKDIR /root/app
-RUN pip install -e .
-RUN pip install waitress
-CMD ["waitress-serve",  "--port=5000", "--call", "flaskr:create_app"]
+RUN apt-get update && apt-get install -y curl
+RUN curl -sSL https://install.python-poetry.org | POETRY_VERSION=1.2.0 python3 - 
+ENV PATH $PATH:/root/.local/bin
+
+COPY pyproject.toml poetry.lock ./
+RUN poetry install
+
+COPY . .
+CMD ["poetry", "run", "waitress-serve",  "--port=5000", "--call", "flaskr:create_app"]
 EXPOSE 5000

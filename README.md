@@ -21,7 +21,6 @@ https://es-editor.kajindowsxp.com
 1. このリポジトリをクローンします
 1. `.env.secret.template`を`.env.secret`にコピーします。
 1. Google の client id と client secret を取得し、`.env.secret`に記載します
-1. `db`フォルダのなかに,`DATA`という名前の空フォルダを作成します
 1. 下記を参考に開発用環境を作成してください
 
 ## Docker Compose
@@ -71,6 +70,5 @@ dev_front, dev_back でマウントされている docker volume に git のソ�
 1. `.env.secret.template`を`.env.secret`にコピーします。
 1. Google の client id と client secret を取得し、`.env.secret`に記載します
 1. Google Analytics の 測定 ID を取得し、`.env.secret`に記載します
-1. `db`フォルダのなかに,`DATA`という名前の空フォルダを作成します
 1. `docker-compose --profile prod up`を実行
 1. `localhost:3000` に Web サーバー、`localhost:5000` にバックエンドサーバーが立ちます

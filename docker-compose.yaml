@@ -48,7 +48,7 @@ services:
     volumes:
       - type: bind
         source: .
-        target: /root/es-editor
+        target: /root/app
     env_file:
       - .env
       - .env.development
@@ -67,7 +67,7 @@ services:
     volumes:
       - type: bind
         source: .
-        target: /root/es-editor
+        target: /root/app
     env_file:
       - .env
       - .env.development
@@ -97,4 +97,3 @@ services:
     env_file:
       - .env
       - .env.secret
-

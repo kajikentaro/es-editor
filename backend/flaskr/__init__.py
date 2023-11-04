@@ -17,7 +17,7 @@ def create_app(is_test=False):
     app = Flask(__name__)
     app.config[
         "SQLALCHEMY_DATABASE_URI"
-    ] = "mysql+pymysql://{user}:{password}@{host}/{db_name}".format(
+    ] = "mysql+pymysql://{user}:{password}@{host}/{db_name}?charset=utf8mb4".format(
         **{
             "user": os.environ.get("RDS_USER", None),
             "password": os.environ.get("RDS_PASS", None),

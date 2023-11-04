@@ -29,7 +29,7 @@ def create_app(is_test=False):
     )
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY") or os.urandom(24)
-    app.config["JSON_AS_ASCII"] = False
+    app.json.ensure_ascii = False
 
     login_manager.init_app(app)
     ma.init_app(app)

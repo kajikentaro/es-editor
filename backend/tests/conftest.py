@@ -1,5 +1,4 @@
-import os
-
+from flask_sqlalchemy import SQLAlchemy
 import pytest
 from flaskr import create_app
 from flaskr import db as _db
@@ -21,36 +20,26 @@ def app(request):
     return app
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="function")
 def db(app, request):
     def teardown():
         _db.drop_all()
-
-    _db.init_app(app)
-    _db.create_all()
+        _db.create_all()
 
     request.addfinalizer(teardown)
     return _db
 
 
 @pytest.fixture(scope="function")
-def session(db, request):
+def session(db: SQLAlchemy, request):
     """Creates a new database session for a test."""
-    connection = db.engine.connect()
-    transaction = connection.begin()
-
-    options = dict(bind=connection, binds={})
-    session = db.create_scoped_session(options=options)
-
-    db.session = session
-
     def teardown():
-        transaction.rollback()
-        connection.close()
-        session.remove()
+        db.session.rollback()
+        db.session.close()
+        db.session.remove()
 
     request.addfinalizer(teardown)
-    return session
+    return db.session
 
 
 # https://github.com/pytest-dev/pytest-flask/issues/70

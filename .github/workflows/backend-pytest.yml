@@ -20,12 +20,12 @@ jobs:
 
       - name: copy .env.template
         shell: bash
-        run: cp .env.secret.template .env.secret && mkdir ./db/DATA
-
-      - name: docker-compose db, backend
+        run: cp .env.secret.template .env.secret
+      
+      - name: start db
         shell: bash
-        run: docker-compose up -d db prod_back
+        run: docker-compose up -d db
 
-      - name: pytest
+      - name: execute pytest
         shell: bash
-        run: docker-compose exec -T prod_back sh -c 'pytest'
+        run: docker-compose run prod_back bash -c "poetry run python -m pytest"

@@ -1,7 +1,6 @@
 version: "3.4"
 
 services:
-  # 本番フロントエンド
   prod_front:
     container_name: es_editor_prod_front
     build:
@@ -19,7 +18,6 @@ services:
       - .env
       - .env.secret
 
-  # 本番バックエンド(仮)
   prod_back:
     container_name: es_editor_prod_back
     build:
@@ -37,7 +35,6 @@ services:
       - .env
       - .env.secret
 
-  # 開発フロントエンド
   dev_front:
     container_name: es_editor_dev_front
     build:
@@ -49,15 +46,14 @@ services:
     ports:
       - 3000:3000
     volumes:
-      - type: volume
-        source: git_clone
-        target: /root/es-editor
+      - type: bind
+        source: .
+        target: /root/app
     env_file:
       - .env
       - .env.development
       - .env.secret
 
-  # 開発バックエンド
   dev_back:
     container_name: es_editor_dev_back
     build:
@@ -69,15 +65,14 @@ services:
     ports:
       - 5000:5000
     volumes:
-      - type: volume
-        source: git_clone
-        target: /root/es-editor
+      - type: bind
+        source: .
+        target: /root/app
     env_file:
       - .env
       - .env.development
       - .env.secret
 
-  # データベース
   db:
     container_name: es_editor_db
     build:
@@ -94,7 +89,7 @@ services:
       - dev
       - prod
     healthcheck:
-      test: "mysql --password=${MYSQL_ROOT_PASSWORD} --execute 'show databases;'"
+      test: "mysql --password=${MARIADB_ROOT_PASSWORD} --execute 'show databases;'"
       interval: 3s
       timeout: 30s
       retries: 10
@@ -102,18 +97,3 @@ services:
     env_file:
       - .env
       - .env.secret
-
-  git_clone:
-    container_name: es_editor_git_clone
-    build:
-      context: .
-      dockerfile: gitclone.Dockerfile
-    volumes:
-      - type: volume
-        source: git_clone
-        target: /root/es-editor
-    profiles:
-      - none
-
-volumes:
-  git_clone:

@@ -17,17 +17,17 @@ def generate_Document():
     return document
 
 
-def test_write_db(session):
+def test_write_db(transaction):
     document = generate_Document()
-    session.add(document)
-    session.commit()
+    transaction.add(document)
+    transaction.commit()
     assert document.unique_id > 0
 
     data = Document.query.first()
     assert data.name == "hoge"
 
 
-def test_save_delete(client, session):
+def test_save_delete(client, transaction):
     DOCUMENT_ID = "XY.24tpi3E"
     # テスト用ユーザーでログイン
     client.get("/test/login")
@@ -64,7 +64,7 @@ def test_save_delete(client, session):
     assert history_data.text == "hoge"
 
 
-def test_save_two_times(client, session):
+def test_save_two_times(client, transaction):
     DOCUMENT_ID = "XY.24tpi3E"
     # テスト用ユーザーでログイン
     client.get("/test/login")
@@ -108,7 +108,7 @@ def test_save_two_times(client, session):
     assert history_data != None
 
 
-def test_multibyte4(client, session):
+def test_multibyte4(client, transaction):
     DOCUMENT_ID = "XY.24tpi3E"
     client.get("/test/login")
     payload = {

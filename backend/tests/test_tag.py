@@ -11,17 +11,17 @@ def generate_Tag():
     return tag
 
 
-def test_write_db(session):
+def test_write_db(transaction):
     tag = generate_Tag()
-    session.add(tag)
-    session.commit()
+    transaction.add(tag)
+    transaction.commit()
     assert tag.unique_id > 0
 
     data = Tag.query.first()
     assert data.name == "hoge"
 
 
-def test_save_delete(client, session):
+def test_save_delete(client, transaction):
     TAG_ID = "XY.24tpi3E"
     # テスト用ユーザーでログイン
     client.get("/test/login")
@@ -45,7 +45,7 @@ def test_save_delete(client, session):
     assert saved_data == None
 
 
-def test_different_client(client, client2, session):
+def test_different_client(client, client2, transaction):
     client.get("/test/login")
 
     # Tagデータを送信(client1)

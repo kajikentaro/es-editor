@@ -24,7 +24,7 @@ jobs:
       
       - name: start db
         shell: bash
-        run: docker-compose up db
+        run: docker-compose up -d db
 
       - name: execute pytest
         shell: bash

@@ -53,7 +53,7 @@ def gen_sample_data(update_date, item_name, item_id):
     return data
 
 
-def test_latest_uuid(client, session):
+def test_latest_uuid(client, transaction):
     client.get("/test/login")
 
     # 初回アクセス時
@@ -67,7 +67,7 @@ def test_latest_uuid(client, session):
     # TODO: データを投入しUUIDの変化を確認する
 
 
-def test_merge(client, session):
+def test_merge(client, transaction):
     client.get("/test/login")
 
     item_id = gen_random_local_id()
